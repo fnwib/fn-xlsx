@@ -42,7 +42,9 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
     @Override
     public String getPreTitle(int rowNum, int cellNum) {
-
+        if (TITLE == -1) {
+            findTitle();
+        }
         Row row = PRE_DATA.get(rowNum);
         if (row == null) {
             return null;
@@ -71,6 +73,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             }
             boolean match = operator.match(row);
             if (match) {
+                TITLE = row.getRowNum();
                 return true;
             } else {
                 PRE_DATA.put(row.getRowNum(), row);
