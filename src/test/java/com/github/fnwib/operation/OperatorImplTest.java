@@ -62,6 +62,7 @@ public class OperatorImplTest {
 
                     Assert.assertEquals("LocalDate support", LocalDate.of(2017, 1, 1), model.getLocalDate1());
                     Assert.assertEquals("LocalDate support", LocalDate.of(2017, 1, 1), model.getLocalDate2());
+                    Assert.assertEquals("LocalDate support", null, model.getLocalDate3());
 
                     Assert.assertSame("'Map \\d+'  support", 4, model.getIntKeyMap().size());
                     Assert.assertSame("'Map [A-Z]' support", 3, model.getStringKeyMap().size());
