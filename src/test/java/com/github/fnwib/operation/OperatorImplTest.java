@@ -58,6 +58,8 @@ public class OperatorImplTest {
                     Assert.assertTrue("Number double support", 10.0d - model.getDoubleNum() < 0.01d);
                     Assert.assertTrue("Number BigDecimal support", BigDecimal.TEN.compareTo(model.getBigDecimal()) == 0);
 
+                    Assert.assertEquals("'Number Null' Integer support", null, model.getIntNumNull());
+
                     Assert.assertEquals("LocalDate support", LocalDate.of(2017, 1, 1), model.getLocalDate1());
                     Assert.assertEquals("LocalDate support", LocalDate.of(2017, 1, 1), model.getLocalDate2());
 

@@ -2,7 +2,7 @@ package com.github.fnwib.convert;
 
 import com.github.fnwib.operation.Title;
 import com.github.fnwib.operation.TitleDesc;
-import com.github.fnwib.util.ParamUtils;
+import com.github.fnwib.util.ValueUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -33,6 +33,6 @@ public class StringExcelConverter implements ExcelConverter<String> {
         }
         TitleDesc titleDesc = list.get(0);
         Cell cell = row.getCell(titleDesc.getIndex());
-        return ParamUtils.getValue(cell, toSingleByte, filterInsideSpace);
+        return ValueUtil.getValue(cell, toSingleByte, filterInsideSpace);
     }
 }

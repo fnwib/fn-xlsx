@@ -1,6 +1,8 @@
 package com.github.fnwib.read;
 
 
+import com.github.fnwib.exception.ExcelException;
+
 import java.util.List;
 
 /**
@@ -22,6 +24,6 @@ public interface ExcelReader<T> {
      */
     boolean findTitle(int num);
 
-    List<T> getData();
+    List<T> getData() throws ExcelException;
 
 }

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalInt;
@@ -26,10 +26,10 @@ public final class Title {
 
     private ExcelConverter<?> converter;
 
-    public Title(String fieldName, CellType cellType) {
+    Title(String fieldName, CellType cellType) {
         this.fieldName = fieldName;
         this.cellType = cellType;
-        this.list = Collections.EMPTY_LIST;
+        this.list = new ArrayList<>(0);
         this.min = 0;
     }
 
@@ -38,10 +38,10 @@ public final class Title {
         this.cellType = cellType;
         this.list = list;
         OptionalInt min = list.stream().mapToInt(TitleDesc::getIndex).min();
-        if (min.isPresent()){
+        if (min.isPresent()) {
             this.min = min.getAsInt();
-        }else {
-            this.min =0;
+        } else {
+            this.min = 0;
         }
     }
 
@@ -84,7 +84,7 @@ public final class Title {
         LOGGER.debug("---> fieldName is '{}', title is '{}' ", fieldName, titles);
         boolean parsable = titles.stream()
                 .map(s -> s.substring(between.getPositiveOffset(), s.length() - 1 - between.getFlashbackOffSet()))
-                .anyMatch(s -> NumberUtils.isParsable(s));
+                .anyMatch(NumberUtils::isParsable);
         List<TitleDesc> titleDescList;
 
         if (parsable) {

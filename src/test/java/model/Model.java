@@ -34,10 +34,15 @@ public class Model {
     @CellType(title = "Number")
     private BigDecimal bigDecimal;
 
+    @CellType(title = "Number Null")
+    private Integer intNumNull;
+
     @CellType(title = "LocalDate1")
     private LocalDate localDate1;
     @CellType(title = "LocalDate2")
     private LocalDate localDate2;
+    @CellType(title = "LocalDate3")
+    private LocalDate localDate3;
 
     @CellType(title = "Map \\d+")
     private Map<Integer, String> intKeyMap;

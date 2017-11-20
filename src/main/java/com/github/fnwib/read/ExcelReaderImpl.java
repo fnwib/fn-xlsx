@@ -12,7 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
@@ -77,13 +80,13 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
     }
 
     @Override
-    public List<T> getData() {
+    public List<T> getData() throws ExcelException {
         Sheet sheet = workbook.getSheetAt(sheetNum);
         if (TITLE == -1 && !findTitle()) {
             throw new ExcelException("模版错误");
         }
         if (RULE == null) {
-            return Collections.EMPTY_LIST;
+            return new ArrayList<>(0);
         }
         List<T> list = new ArrayList<>(sheet.getLastRowNum());
         for (Row row : sheet) {

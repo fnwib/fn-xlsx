@@ -2,7 +2,7 @@ package com.github.fnwib.convert;
 
 import com.github.fnwib.operation.Title;
 import com.github.fnwib.operation.TitleDesc;
-import com.github.fnwib.util.ParamUtils;
+import com.github.fnwib.util.ValueUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -30,7 +30,7 @@ public class SeqKeyMapExcelConverter implements ExcelConverter<Map<Integer, Stri
         Map<Integer, String> hashMap = new HashMap<>();
         for (TitleDesc titleDesc : title.getList()) {
             Cell cell = row.getCell(titleDesc.getIndex());
-            hashMap.put(titleDesc.getIndex() - title.getMinIndex(), ParamUtils.getValue(cell, toSingleByte, filterInsideSpace));
+            hashMap.put(titleDesc.getIndex() - title.getMinIndex(), ValueUtil.getValue(cell, toSingleByte, filterInsideSpace));
         }
         return hashMap;
     }

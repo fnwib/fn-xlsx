@@ -2,12 +2,14 @@ package com.github.fnwib.operation;
 
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
-import com.github.fnwib.convert.*;
+import com.github.fnwib.convert.ExcelConversionService;
+import com.github.fnwib.convert.ExcelConverter;
+import com.github.fnwib.convert.ExcelGenericConversionService;
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.util.ParamUtils;
+import com.github.fnwib.util.ValueUtil;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,10 +20,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class OperatorImpl<T> implements Operator<T> {
 
@@ -106,7 +110,7 @@ public class OperatorImpl<T> implements Operator<T> {
         List<TitleDesc> list = new ArrayList<>();
         Pattern titlePattern = Pattern.compile(title);
         for (Cell cell : row) {
-            String value = ParamUtils.getValue(cell, true, false);
+            String value = ValueUtil.getValue(cell, true, false);
             Matcher titleMatcher = titlePattern.matcher(value);
             if (titleMatcher.matches()) {
                 if (StringUtils.isNotBlank(exclude) && Pattern.matches(exclude, value)) {
@@ -119,7 +123,7 @@ public class OperatorImpl<T> implements Operator<T> {
     }
 
     @Override
-    public T convert(Row row) {
+    public T convert(Row row) throws ExcelException {
         try {
             Constructor<T> constructor = clazz.getConstructor();
             T t = constructor.newInstance();
@@ -134,9 +138,11 @@ public class OperatorImpl<T> implements Operator<T> {
                     ExcelConverter<?> converter = title.getConverter();
                     Object value = converter.convert(title, row);
                     if (cellType.type() == Operation.REORDER) {
-                        value = ParamUtils.sortAndTrim(value.toString(), "/");
+                        value = ValueUtil.sortAndTrim(value.toString(), "/");
                     }
                     method.invoke(t, value);
+                } catch (ExcelException e) {
+                    throw e;
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException(e);
                 }

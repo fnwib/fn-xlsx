@@ -11,7 +11,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParamUtils {
+public class ValueUtil {
 
     private static final Collator COLLATOR = Collator.getInstance(Locale.CHINA);
 
@@ -94,7 +94,7 @@ public class ParamUtils {
             value = BCConvert.toSingleByte(value);
         }
         if (filterInsideSpace) {
-            value = ParamUtils.filterInsideSpace(value);
+            value = ValueUtil.filterInsideSpace(value);
         }
         return value.trim();
     }
