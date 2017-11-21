@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 public class OperatorImplTest {
@@ -43,8 +44,10 @@ public class OperatorImplTest {
             for (Row row : sheet) {
                 if (row.getRowNum() == 1) {
                     boolean match = operator.match(row);
-
                     Assert.assertTrue("title match error", match);
+                    Map<String, List<TitleDesc>> titles = operator.getTitles(row);
+                    Assert.assertSame("titles match error", 12, titles.size());
+
                 } else if (row.getRowNum() == 2) {
                     Model model = operator.convert(row);
                     Assert.assertSame("lineNum integer support", 3, model.getLineNum());

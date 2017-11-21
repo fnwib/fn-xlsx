@@ -31,9 +31,7 @@ public class OperatorImpl<T> implements Operator<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OperatorImpl.class);
 
-    private Map<Method, Title> RULES = new HashMap<>();
-
-    private static final Pattern SEQUENCE_PATTERN = Pattern.compile("\\d+");
+    private final Map<Method, Title> RULES = new HashMap<>();
 
     private final double RATIO;
 
@@ -53,6 +51,14 @@ public class OperatorImpl<T> implements Operator<T> {
     public boolean match(Row row) {
         if (row == null)
             return false;
+        this.getTitles(row);
+        return !RULES.isEmpty();
+    }
+
+    @Override
+    public Map<String, List<TitleDesc>> getTitles(Row row) {
+        if (row == null)
+            return Maps.newHashMap();
         Map<String, List<TitleDesc>> map = new HashMap<>();
         List<Field> fields = FieldUtils.getFieldsListWithAnnotation(clazz, CellType.class);
         for (Field field : fields) {
@@ -69,9 +75,13 @@ public class OperatorImpl<T> implements Operator<T> {
         }
         Map<String, List<TitleDesc>> matched = Maps.filterValues(map, l -> l.size() > 0);
         if ((double) matched.size() / map.size() < RATIO) {
-            return false;
+            return Maps.newHashMap();
         }
+        makeRules(map, fields);
+        return map;
+    }
 
+    private void makeRules(Map<String, List<TitleDesc>> map, List<Field> fields) {
         for (Field field : fields) {
             field.setAccessible(true);
             CellType type = field.getAnnotation(CellType.class);
@@ -99,8 +109,6 @@ public class OperatorImpl<T> implements Operator<T> {
             }
 
         }
-
-        return true;
     }
 
     private List<TitleDesc> getRule(Row row, CellType type) {
