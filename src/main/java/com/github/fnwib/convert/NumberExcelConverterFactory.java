@@ -42,16 +42,17 @@ public class NumberExcelConverterFactory implements ExcelConverterFactory<Number
                 case BLANK:
                     return null;
                 case STRING:
-                    String cellValue = cell.getStringCellValue();
-                    try {
-                        if (NumberUtils.isParsable(cellValue)) {
+                    String cellValue = cell.getStringCellValue().trim();
+                    if (NumberUtils.isParsable(cellValue)) {
+                        try {
                             Number parse = NumberFormat.getInstance().parse(cellValue);
                             return NumberFormatUtils.convertNumberToTargetClass(parse, this.targetType);
+                        } catch (java.text.ParseException e) {
+                            throw new ExcelException(title.getExcelTitles() + " [" + cellValue + "] can't parse number");
                         }
-                    } catch (java.text.ParseException e) {
+                    } else {
                         throw new ExcelException(title.getExcelTitles() + " [" + cellValue + "] can't parse number");
                     }
-                    break;
                 case NUMERIC:
                     double value = cell.getNumericCellValue();
                     return NumberFormatUtils.convertNumberToTargetClass(value, this.targetType);
@@ -64,7 +65,6 @@ public class NumberExcelConverterFactory implements ExcelConverterFactory<Number
                     throw new NotSupportedException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] unknown type ");
 
             }
-            return null;
         }
 
     }
