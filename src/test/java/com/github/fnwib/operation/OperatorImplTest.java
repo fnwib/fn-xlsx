@@ -23,7 +23,7 @@ public class OperatorImplTest {
     @Before
     public void initDate() {
         ClassLoader classLoader = getClass().getClassLoader();
-        file = new File(classLoader.getResource("test.xlsx").getFile());
+        file = new File(classLoader.getResource("test-file/test.xlsx").getFile());
     }
 
     @Test
@@ -42,15 +42,15 @@ public class OperatorImplTest {
                 .open(file);
         for (Sheet sheet : workbook) {
             for (Row row : sheet) {
-                if (row.getRowNum() == 1) {
+                if (row.getRowNum() == 0) {
                     boolean match = operator.match(row);
                     Assert.assertTrue("title match error", match);
                     Map<String, List<TitleDesc>> titles = operator.getTitles(row);
                     Assert.assertSame("titles match error", 12, titles.size());
 
-                } else if (row.getRowNum() == 2) {
+                } else if (row.getRowNum() == 1) {
                     Model model = operator.convert(row);
-                    Assert.assertSame("lineNum integer support", 3, model.getLineNum());
+                    Assert.assertSame("lineNum integer support", 2, model.getLineNum());
                     Assert.assertEquals("Text One toSingleByte support", "Text", model.getText1());
                     Assert.assertEquals("Text Two string support", "Text", model.getText2());
                     Assert.assertEquals("Text Reorder string support", "1/Ac/Tex/Text/重排", model.getText3());
