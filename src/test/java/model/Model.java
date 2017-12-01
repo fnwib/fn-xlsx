@@ -44,6 +44,12 @@ public class Model {
     @CellType(title = "LocalDate3")
     private LocalDate localDate3;
 
+
+    @CellType(title = "授权开始日期")
+    private LocalDate a;
+    @CellType(title = "授权截止日期")
+    private LocalDate b;
+
     @CellType(title = "Map \\d+")
     private Map<Integer, String> intKeyMap;
 
