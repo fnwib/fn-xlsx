@@ -48,12 +48,17 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
                 Instant instant = date.toInstant();
                 return instant.atZone(ZoneId.systemDefault()).toLocalDate();
             case STRING:
-                try {
-                    String value = ValueUtil.getValue(cell, false, false);
-                    return LocalDate.parse(value, dateTimeFormatter);
-                } catch (Exception e) {
-                    throw new ExcelException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] 不支持除'yyyy-M-d'类型的文本转日期");
+                if (dateTimeFormatter != null) {
+                    try {
+                        String value = ValueUtil.getValue(cell, false, false);
+                        return LocalDate.parse(value, dateTimeFormatter);
+                    } catch (Exception e) {
+                        throw new ExcelException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] 不支持除'yyyy-M-d'类型的文本转日期");
+                    }
+                } else {
+                    throw new ExcelException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] 不是Excel日期类型");
                 }
+
             case BOOLEAN:
             case FORMULA:
                 throw new NotSupportedException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] not support boolean|formula");
