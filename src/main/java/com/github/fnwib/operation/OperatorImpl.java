@@ -149,8 +149,6 @@ public class OperatorImpl<T> implements Operator<T> {
                         value = ValueUtil.sortAndTrim(value.toString(), "/");
                     }
                     method.invoke(t, value);
-                } catch (ExcelException e) {
-                    throw e;
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException(e);
                 }
