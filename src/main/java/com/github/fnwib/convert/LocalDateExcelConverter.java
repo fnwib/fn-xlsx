@@ -14,14 +14,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
-
-    private Map<Pattern, DateTimeFormatter> formatterMap = new HashMap<>();
 
     private DateTimeFormatter dateTimeFormatter;
 
