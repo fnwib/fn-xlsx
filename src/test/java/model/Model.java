@@ -49,6 +49,8 @@ public class Model {
     private LocalDate localDate4;
     @CellType(title = "yyyy/MM/dd")
     private LocalDate localDate5;
+    @CellType(title = "yyyy/MM/dd2")
+    private LocalDate localDate8;
     @CellType(title = "yyyy\\\\MM\\\\dd")
     private LocalDate localDate6;
     @CellType(title = "yyyyMMdd")

@@ -46,7 +46,7 @@ public class OperatorImplTest {
                     boolean match = operator.match(row);
                     Assert.assertTrue("title match error", match);
                     Map<String, List<TitleDesc>> titles = operator.getTitles(row);
-                    Assert.assertSame("titles match error", 16, titles.size());
+                    Assert.assertSame("titles match error", 17, titles.size());
 
                 } else if (row.getRowNum() == 1) {
                     Model model = operator.convert(row);
@@ -69,6 +69,7 @@ public class OperatorImplTest {
 
                     Assert.assertEquals("LocalDate 'yyyy-MM-dd'support", LocalDate.of(2017, 1, 1), model.getLocalDate4());
                     Assert.assertEquals("LocalDate 'yyyy/MM/dd'support", LocalDate.of(2017, 1, 1), model.getLocalDate5());
+                    Assert.assertEquals("LocalDate 'yyyy/MM/dd2'support", LocalDate.of(2017, 1, 1), model.getLocalDate8());
                     Assert.assertEquals("LocalDate 'yyyy\\MM\\dd'support", LocalDate.of(2017, 1, 1), model.getLocalDate6());
                     Assert.assertEquals("LocalDate 'yyyyMMdd'support", LocalDate.of(2017, 1, 1), model.getLocalDate7());
 

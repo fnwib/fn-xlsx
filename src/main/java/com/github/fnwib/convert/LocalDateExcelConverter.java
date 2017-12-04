@@ -23,7 +23,7 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
 
     private static final Pattern SHORT_DATE_PATTERN_LINE = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
 
-    private static final Pattern SHORT_DATE_PATTERN_SLASH = Pattern.compile("^\\d{4}/\\d{2}/\\d{2}$");
+    private static final Pattern SHORT_DATE_PATTERN_SLASH = Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}$");
 
     private static final Pattern SHORT_DATE_PATTERN_DOUBLE_SLASH = Pattern.compile("^\\d{4}\\\\\\d{2}\\\\\\d{2}$");
 
@@ -83,7 +83,7 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
         if (SHORT_DATE_PATTERN_LINE.matcher(value).matches()) {
             return DateTimeFormatter.ofPattern("yyyy-MM-dd");
         } else if (SHORT_DATE_PATTERN_SLASH.matcher(value).matches()) {
-            return DateTimeFormatter.ofPattern("yyyy/MM/dd");
+            return DateTimeFormatter.ofPattern("yyyy/M/d");
         } else if (SHORT_DATE_PATTERN_DOUBLE_SLASH.matcher(value).matches()) {
             return DateTimeFormatter.ofPattern("yyyy\\MM\\dd");
         } else if (SHORT_DATE_PATTERN_NONE.matcher(value).matches()) {
