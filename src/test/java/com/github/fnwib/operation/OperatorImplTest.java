@@ -13,7 +13,6 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ public class OperatorImplTest {
     public void convert() {
         ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
         converterRegistry.addConverter(String.class, new StringExcelConverter());
-        converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter(DateTimeFormatter.ofPattern("yyyy-M-d")));
+        converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter());
         converterRegistry.addConverter(Map.class, new SeqKeyMapExcelConverter());
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
         Operator<Model> operator = new OperatorImpl<>(Model.class, converterRegistry, 0.6);
@@ -47,7 +46,7 @@ public class OperatorImplTest {
                     boolean match = operator.match(row);
                     Assert.assertTrue("title match error", match);
                     Map<String, List<TitleDesc>> titles = operator.getTitles(row);
-                    Assert.assertSame("titles match error", 14, titles.size());
+                    Assert.assertSame("titles match error", 16, titles.size());
 
                 } else if (row.getRowNum() == 1) {
                     Model model = operator.convert(row);
@@ -64,11 +63,14 @@ public class OperatorImplTest {
 
                     Assert.assertEquals("'Number Null' Integer support", null, model.getIntNumNull());
 
-                    Assert.assertEquals("LocalDate support", LocalDate.of(2017, 1, 1), model.getLocalDate1());
-                    Assert.assertEquals("LocalDate support", LocalDate.of(2017, 1, 1), model.getLocalDate2());
-                    Assert.assertEquals("LocalDate support", null, model.getLocalDate3());
+                    Assert.assertEquals("LocalDate support data1", LocalDate.of(2017, 1, 1), model.getLocalDate1());
+                    Assert.assertEquals("LocalDate support data2", LocalDate.of(2017, 1, 1), model.getLocalDate2());
+                    Assert.assertEquals("LocalDate support null", null, model.getLocalDate3());
 
-                    Assert.assertEquals("LocalDate 'yyyy-M-d'support", LocalDate.of(2017, 1, 1), model.getA());
+                    Assert.assertEquals("LocalDate 'yyyy-MM-dd'support", LocalDate.of(2017, 1, 1), model.getLocalDate4());
+                    Assert.assertEquals("LocalDate 'yyyy/MM/dd'support", LocalDate.of(2017, 1, 1), model.getLocalDate5());
+                    Assert.assertEquals("LocalDate 'yyyy\\MM\\dd'support", LocalDate.of(2017, 1, 1), model.getLocalDate6());
+                    Assert.assertEquals("LocalDate 'yyyyMMdd'support", LocalDate.of(2017, 1, 1), model.getLocalDate7());
 
                     Assert.assertSame("'Map \\d+'  support", 4, model.getIntKeyMap().size());
                     Assert.assertSame("'Map [A-Z]' support", 3, model.getStringKeyMap().size());

@@ -45,10 +45,14 @@ public class Model {
     private LocalDate localDate3;
 
 
-    @CellType(title = "授权开始日期")
-    private LocalDate a;
-    @CellType(title = "授权截止日期")
-    private LocalDate b;
+    @CellType(title = "yyyy-MM-dd")
+    private LocalDate localDate4;
+    @CellType(title = "yyyy/MM/dd")
+    private LocalDate localDate5;
+    @CellType(title = "yyyy\\\\MM\\\\dd")
+    private LocalDate localDate6;
+    @CellType(title = "yyyyMMdd")
+    private LocalDate localDate7;
 
     @CellType(title = "Map \\d+")
     private Map<Integer, String> intKeyMap;
