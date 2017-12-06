@@ -1,8 +1,8 @@
 package com.github.fnwib.read;
 
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.operation.Operator;
-import com.github.fnwib.operation.Title;
+import com.github.fnwib.read.operation.Operator;
+import com.github.fnwib.read.operation.Title;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

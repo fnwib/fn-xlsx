@@ -1,4 +1,4 @@
-package com.github.fnwib.convert;
+package com.github.fnwib.read.convert;
 
 public interface ExcelConversionService {
 

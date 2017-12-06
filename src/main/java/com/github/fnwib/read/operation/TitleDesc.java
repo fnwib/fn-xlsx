@@ -1,4 +1,4 @@
-package com.github.fnwib.operation;
+package com.github.fnwib.read.operation;
 
 import lombok.Getter;
 import lombok.ToString;
