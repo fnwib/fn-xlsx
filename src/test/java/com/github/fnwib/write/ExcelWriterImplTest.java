@@ -62,7 +62,7 @@ public class ExcelWriterImplTest {
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(xssfWorkbook);
 
 
-        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(sxssfWorkbook, exportFile, parser);
+        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(sxssfWorkbook, null, exportFile, parser);
 
         List<WriteModel> source = getDataList(6);
         for (int i = 0; i < 6; i++) {
@@ -119,7 +119,7 @@ public class ExcelWriterImplTest {
         converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
-        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(new XSSFWorkbook(tempTemplateFile), exportFile, parser);
+        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(new XSSFWorkbook(tempTemplateFile), null, exportFile, parser);
         List<WriteModel> source = getDataList(6);
 
         excelWriter.writeMergedRegion(source.subList(0, 1), Arrays.asList(0, 1, 2));
