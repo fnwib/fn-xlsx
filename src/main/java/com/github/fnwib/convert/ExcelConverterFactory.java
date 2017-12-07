@@ -1,4 +1,4 @@
-package com.github.fnwib.read.convert;
+package com.github.fnwib.convert;
 
 public interface ExcelConverterFactory<R> {
 

@@ -1,6 +1,7 @@
-package com.github.fnwib.read.operation;
+package com.github.fnwib.parse;
 
-import com.github.fnwib.read.convert.*;
+import com.github.fnwib.convert.*;
+import com.github.fnwib.read.ReadParser;
 import com.monitorjbl.xlsx.StreamingReader;
 import model.Model;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,10 +14,9 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
-public class OperatorImplTest {
+public class ReadParseImplTest {
 
     private File file;
 
@@ -33,7 +33,7 @@ public class OperatorImplTest {
         converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter());
         converterRegistry.addConverter(Map.class, new SeqKeyMapExcelConverter());
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
-        Operator<Model> operator = new OperatorImpl<>(Model.class, converterRegistry, 0.6);
+        Parser<Model> parser = new ParseImpl<>(Model.class, converterRegistry, 0.6);
 
 
         Workbook workbook = StreamingReader.builder()
@@ -43,13 +43,11 @@ public class OperatorImplTest {
         for (Sheet sheet : workbook) {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) {
-                    boolean match = operator.match(row);
+                    boolean match = parser.match(row);
                     Assert.assertTrue("title match error", match);
-                    Map<String, List<TitleDesc>> titles = operator.getTitles(row);
-                    Assert.assertSame("titles match error", 17, titles.size());
-
                 } else if (row.getRowNum() == 1) {
-                    Model model = operator.convert(row);
+                    ReadParser<Model> readParser = parser.createReadParser();
+                    Model model = readParser.convert(row);
                     Assert.assertSame("lineNum integer support", 2, model.getLineNum());
                     Assert.assertEquals("Text One toSingleByte support", "Text", model.getText1());
                     Assert.assertEquals("Text Two string support", "Text", model.getText2());
@@ -78,8 +76,6 @@ public class OperatorImplTest {
                     Assert.assertSame("'Map 1 (Chinese Name)' support", 2, model.getIntKeyMap2().size());
                     Assert.assertSame("'Map \\d+ (Chinese Name)' support", 4, model.getIntKeyMap3().size());
 
-                } else {
-                    continue;
                 }
             }
         }

@@ -1,19 +1,22 @@
-package com.github.fnwib.read.convert;
+package com.github.fnwib.convert;
 
-import com.github.fnwib.read.operation.Title;
-import com.github.fnwib.read.operation.TitleDesc;
+import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.parse.Title;
+import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
+import com.github.fnwib.write.CellText;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class StringExcelConverter implements ExcelConverter<String> {
 
 
-    boolean toSingleByte;
+    private final boolean toSingleByte;
 
-    boolean filterInsideSpace;
+    private final boolean filterInsideSpace;
 
     public StringExcelConverter() {
         this.toSingleByte = true;
@@ -35,4 +38,12 @@ public class StringExcelConverter implements ExcelConverter<String> {
         Cell cell = row.getCell(titleDesc.getIndex());
         return ValueUtil.getValue(cell, toSingleByte, filterInsideSpace);
     }
+
+    @Override
+    public List<CellText> writeValue(Object obj, Title title) throws ExcelException {
+        String s = (String) obj;
+        TitleDesc desc = title.getList().get(0);
+        return Arrays.asList(new CellText(desc.getIndex(), s));
+    }
+
 }

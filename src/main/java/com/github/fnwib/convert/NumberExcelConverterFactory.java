@@ -1,15 +1,17 @@
-package com.github.fnwib.read.convert;
+package com.github.fnwib.convert;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.read.operation.Title;
-import com.github.fnwib.read.operation.TitleDesc;
+import com.github.fnwib.parse.Title;
+import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.NumberFormatUtils;
+import com.github.fnwib.write.CellText;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.List;
 
 public class NumberExcelConverterFactory implements ExcelConverterFactory<Number> {
@@ -22,6 +24,9 @@ public class NumberExcelConverterFactory implements ExcelConverterFactory<Number
     private static class NumberConverter<T extends Number> implements ExcelConverter<T> {
 
         private final Class<T> targetType;
+
+
+        private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
         public NumberConverter(Class<T> targetType) {
             this.targetType = targetType;
@@ -67,5 +72,10 @@ public class NumberExcelConverterFactory implements ExcelConverterFactory<Number
             }
         }
 
+        @Override
+        public List<CellText> writeValue(Object obj, Title title) throws ExcelException {
+            TitleDesc desc = title.getList().get(0);
+            return Arrays.asList(new CellText(desc.getIndex(), NUMBER_FORMAT.format(obj)));
+        }
     }
 }
