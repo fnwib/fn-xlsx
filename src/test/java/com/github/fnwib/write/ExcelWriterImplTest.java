@@ -9,7 +9,7 @@ import com.github.fnwib.read.ExcelReaderImpl;
 import com.monitorjbl.xlsx.StreamingReader;
 import model.WriteModel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -45,7 +45,7 @@ public class ExcelWriterImplTest {
     @After
     public void deleteData() {
         tempTemplateFile.delete();
-        exportFile.delete();
+//        exportFile.delete();
     }
 
 
@@ -60,9 +60,8 @@ public class ExcelWriterImplTest {
 
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(tempTemplateFile);
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(xssfWorkbook);
-
-
-        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(sxssfWorkbook, null, exportFile, parser);
+        CellStyle cellStyle = ExcelWriterImplTest.createCellStyle(xssfWorkbook);
+        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(sxssfWorkbook, cellStyle, exportFile, parser);
 
         List<WriteModel> source = getDataList(6);
         for (int i = 0; i < 6; i++) {
@@ -119,7 +118,9 @@ public class ExcelWriterImplTest {
         converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
-        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(new XSSFWorkbook(tempTemplateFile), null, exportFile, parser);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(tempTemplateFile);
+        CellStyle cellStyle = ExcelWriterImplTest.createCellStyle(xssfWorkbook);
+        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(xssfWorkbook, cellStyle, exportFile, parser);
         List<WriteModel> source = getDataList(6);
 
         excelWriter.writeMergedRegion(source.subList(0, 1), Arrays.asList(0, 1, 2));
@@ -181,6 +182,23 @@ public class ExcelWriterImplTest {
             result.add(model);
         }
         return result;
+    }
+
+
+    private static CellStyle createCellStyle(Workbook workbook) {
+        CellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("text"));
+        Font font2 = workbook.createFont();
+        font2.setFontName("Arial");
+        font2.setFontHeightInPoints((short) 10);
+        cellStyle.setFont(font2);
+        return cellStyle;
     }
 
 }

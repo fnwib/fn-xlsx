@@ -18,7 +18,10 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -110,20 +113,9 @@ public class WriteParser<T> {
             CellRangeAddress cellRangeAddress = new CellRangeAddress(rowNum, rowNum + elements.size() - 1,
                     mergedRangeIndex, mergedRangeIndex);
             sheet.addMergedRegion(cellRangeAddress);
-
-            Stream<CellText> matrixColumn = cellTextMatrix.getMatrixColumn(mergedRangeIndex);
-            Optional<CellText> first = matrixColumn.findFirst();
-            CellText cellText = first.get();
-            Row row = sheet.getRow(cellText.getRowNum());
-            Cell cell = row.createCell(cellText.getCellNum());
-            cell.setCellStyle(defaultCellStyle);
-            cell.setCellValue(cellText.getText());
         }
         for (List<CellText> cellTexts : cellTextMatrix.getMatrix()) {
             for (CellText cellText : cellTexts) {
-                if (mergedRangeIndexes.contains(cellText.getCellNum())) {
-                    continue;
-                }
                 Row row = sheet.getRow(cellText.getRowNum());
                 Cell cell = row.createCell(cellText.getCellNum());
                 cell.setCellStyle(defaultCellStyle);
