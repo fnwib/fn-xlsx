@@ -7,6 +7,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,18 +51,23 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
         this.exportFile = exportFile;
         this.parser = parser;
         this.workbook = workbook;
+
         currentSheet.set(workbook.getSheetAt(0));
         initTitleRow();
     }
 
-    public ExcelWriterImpl cellStyle(CellStyle cellStyle) {
-        this.cellStyle = cellStyle;
-        return this;
-    }
 
     private void initTitleRow() {
         boolean flag = false;
-        for (Row row : currentSheet.get()) {
+        Sheet sheet;
+        if (SXSSFWorkbook.class == workbook.getClass()) {
+            SXSSFWorkbook sxssfWorkbook = (SXSSFWorkbook) workbook;
+            XSSFWorkbook xssfWorkbook = sxssfWorkbook.getXSSFWorkbook();
+            sheet = xssfWorkbook.getSheetAt(0);
+        } else {
+            sheet = currentSheet.get();
+        }
+        for (Row row : sheet) {
             boolean matched = parser.match(row);
             if (matched) {
                 currentRowNum.set(row.getRowNum() + 1);
@@ -73,6 +80,12 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
         if (!flag) {
             throw new ExcelException("模版错误");
         }
+    }
+
+    @Override
+    public ExcelWriterImpl setCellStyle(CellStyle cellStyle) {
+        this.cellStyle = cellStyle;
+        return this;
     }
 
     @Override

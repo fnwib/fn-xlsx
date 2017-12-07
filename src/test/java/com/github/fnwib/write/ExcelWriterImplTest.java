@@ -10,6 +10,7 @@ import com.monitorjbl.xlsx.StreamingReader;
 import model.WriteModel;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
 import org.junit.Assert;
@@ -56,7 +57,11 @@ public class ExcelWriterImplTest {
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
 
-        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(new XSSFWorkbook(tempTemplateFile), exportFile, parser);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(tempTemplateFile);
+        SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(xssfWorkbook);
+
+
+        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(sxssfWorkbook, exportFile, parser);
 
         List<WriteModel> source = getDataList(6);
         excelWriter.write(source);
