@@ -10,6 +10,7 @@ import com.monitorjbl.xlsx.StreamingReader;
 import model.WriteModel;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,7 +55,8 @@ public class ExcelWriterImplTest {
         converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
-        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(tempTemplateFile, exportFile, parser);
+
+        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(new XSSFWorkbook(tempTemplateFile), exportFile, parser);
 
         List<WriteModel> source = getDataList(6);
         excelWriter.write(source);
@@ -96,7 +98,7 @@ public class ExcelWriterImplTest {
         converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
-        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(tempTemplateFile, exportFile, parser);
+        ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(new XSSFWorkbook(tempTemplateFile), exportFile, parser);
         List<WriteModel> source = getDataList(6);
         excelWriter.writeMergedRegion(source, Arrays.asList(0, 1, 2));
         File file = excelWriter.write2File();

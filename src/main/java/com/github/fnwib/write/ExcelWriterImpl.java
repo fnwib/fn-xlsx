@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +31,6 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
 
     private CellStyle cellStyle;
 
-    private final File templateFile;
-
     private final File exportFile;
 
     private final Parser<T> parser;
@@ -46,13 +43,12 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
 
     private WriteParser<T> writeParser;
 
-    public ExcelWriterImpl(File templateFile,
+    public ExcelWriterImpl(Workbook workbook,
                            File exportFile,
                            Parser<T> parser) throws IOException, InvalidFormatException {
-        this.templateFile = templateFile;
         this.exportFile = exportFile;
         this.parser = parser;
-        workbook = new XSSFWorkbook(templateFile);
+        this.workbook = workbook;
         currentSheet.set(workbook.getSheetAt(0));
         initTitleRow();
     }
