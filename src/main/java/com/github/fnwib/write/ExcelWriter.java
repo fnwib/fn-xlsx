@@ -1,14 +1,11 @@
 package com.github.fnwib.write;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public interface ExcelWriter<T> {
 
-    ExcelWriterImpl setCellStyle(CellStyle cellStyle);
     /**
      * 写入excel
      *
@@ -26,6 +23,12 @@ public interface ExcelWriter<T> {
      */
     void writeMergedRegion(List<T> list, List<Integer> cellIndexes);
 
+    /**
+     * 写出到文件
+     *
+     * @return
+     * @throws IOException
+     */
     File write2File() throws IOException;
 
 }

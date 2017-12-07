@@ -46,12 +46,13 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
     private WriteParser<T> writeParser;
 
     public ExcelWriterImpl(Workbook workbook,
+                           CellStyle cellStyle,
                            File exportFile,
                            Parser<T> parser) throws IOException, InvalidFormatException {
         this.exportFile = exportFile;
         this.parser = parser;
         this.workbook = workbook;
-
+        this.cellStyle = cellStyle;
         currentSheet.set(workbook.getSheetAt(0));
         initTitleRow();
     }
@@ -80,12 +81,6 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
         if (!flag) {
             throw new ExcelException("模版错误");
         }
-    }
-
-    @Override
-    public ExcelWriterImpl setCellStyle(CellStyle cellStyle) {
-        this.cellStyle = cellStyle;
-        return this;
     }
 
     @Override
