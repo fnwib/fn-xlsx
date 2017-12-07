@@ -45,7 +45,7 @@ public class ExcelWriterImplTest {
     @After
     public void deleteData() {
         tempTemplateFile.delete();
-//        exportFile.delete();
+        exportFile.delete();
     }
 
 
@@ -69,7 +69,8 @@ public class ExcelWriterImplTest {
             if (i == 0) {
                 WriteModel writeModel = source.get(i);
                 writeModel.setString(null);
-                writeModel.setInteger(null);
+                writeModel.setIntNum(null);
+                writeModel.setLongNum(null);
                 writeModel.setLocalDate(null);
 
                 Map<TitleDesc, String> mapNumber = writeModel.getMapNumber();
@@ -87,10 +88,13 @@ public class ExcelWriterImplTest {
             WriteModel sourceModel = source.get(i);
             WriteModel targetModel = target.get(i);
             Assert.assertEquals("字符串不一致", StringUtils.trimToEmpty(sourceModel.getString()), StringUtils.trimToEmpty(targetModel.getString()));
-            Assert.assertEquals("数字不一致", sourceModel.getInteger(), targetModel.getInteger());
+            Assert.assertEquals("数字int不一致", sourceModel.getIntNum(), targetModel.getIntNum());
+            Assert.assertEquals("数字long不一致", sourceModel.getLongNum(), targetModel.getLongNum());
             Assert.assertEquals("日期不一致", sourceModel.getLocalDate(), targetModel.getLocalDate());
             Map<TitleDesc, String> sourceNumberMap = sourceModel.getMapNumber();
             Map<TitleDesc, String> targetNumberMap = targetModel.getMapNumber();
+            System.out.println(sourceNumberMap);
+            System.out.println(targetNumberMap);
             sourceNumberMap.forEach((titleDesc, s) -> {
                 String s1 = targetNumberMap.get(titleDesc);
                 Assert.assertEquals("MAP number 值不一致", StringUtils.trimToEmpty(s), StringUtils.trimToEmpty(s1));
@@ -117,7 +121,9 @@ public class ExcelWriterImplTest {
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
         ExcelWriter<WriteModel> excelWriter = new ExcelWriterImpl<>(new XSSFWorkbook(tempTemplateFile), exportFile, parser);
         List<WriteModel> source = getDataList(6);
-        excelWriter.writeMergedRegion(source, Arrays.asList(0, 1, 2));
+
+        excelWriter.writeMergedRegion(source.subList(0, 1), Arrays.asList(0, 1, 2));
+        excelWriter.writeMergedRegion(source.subList(1, source.size()), Arrays.asList(0, 1, 2));
         File file = excelWriter.write2File();
 
         Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file);
@@ -129,7 +135,8 @@ public class ExcelWriterImplTest {
             WriteModel targetModel = target.get(i);
             if (i == 0) {
                 Assert.assertEquals("字符串不一致", StringUtils.trimToEmpty(sourceModel.getString()), StringUtils.trimToEmpty(targetModel.getString()));
-                Assert.assertEquals("数字不一致", sourceModel.getInteger(), targetModel.getInteger());
+                Assert.assertEquals("数字int不一致", sourceModel.getIntNum(), targetModel.getIntNum());
+                Assert.assertEquals("数字long不一致", sourceModel.getLongNum(), targetModel.getLongNum());
                 Assert.assertEquals("日期不一致", sourceModel.getLocalDate(), targetModel.getLocalDate());
             } else {
                 Map<TitleDesc, String> sourceNumberMap = sourceModel.getMapNumber();
@@ -156,19 +163,20 @@ public class ExcelWriterImplTest {
         for (int i = 0; i < length; i++) {
 
             Map<TitleDesc, String> mapNumber = new HashMap<>();
-            mapNumber.put(new TitleDesc("MAP 1", 3), "Map1");
-            mapNumber.put(new TitleDesc("MAP 2", 4), "Map2");
-            mapNumber.put(new TitleDesc("MAP 3", 5), "Map3");
+            mapNumber.put(new TitleDesc("MAP 1", 4), "Map1");
+            mapNumber.put(new TitleDesc("MAP 2", 5), "Map2");
+            mapNumber.put(new TitleDesc("MAP 3", 6), "Map3");
             Map<TitleDesc, String> mapString = new HashMap<>();
-            mapString.put(new TitleDesc("MAP A", 6), "Map1");
-            mapString.put(new TitleDesc("MAP B", 7), "Map2");
-            mapString.put(new TitleDesc("MAP C", 8), "Map3");
+            mapString.put(new TitleDesc("MAP A", 7), "Map1");
+            mapString.put(new TitleDesc("MAP B", 8), "Map2");
+            mapString.put(new TitleDesc("MAP C", 9), "Map3");
 
             if (i == 0) {
-                mapNumber.put(new TitleDesc("MAP 1", 3), null);
-                mapString.put(new TitleDesc("MAP C", 8), null);
+                mapNumber.put(new TitleDesc("MAP 1", 4), null);
+                mapString.put(new TitleDesc("MAP C", 9), null);
             }
-            WriteModel model = WriteModel.builder().string("A").integer(1)
+            WriteModel model = WriteModel.builder().string("A").intNum(1000000000)
+                    .longNum(1111111111111111111L)
                     .localDate(LocalDate.now()).mapString(mapString).mapNumber(mapNumber).build();
             result.add(model);
         }

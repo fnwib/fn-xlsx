@@ -18,8 +18,10 @@ import java.util.Map;
 public class WriteModel {
     @CellType(title = "字符串")
     private String                 string;
-    @CellType(title = "数字")
-    private Integer                integer;
+    @CellType(title = "数字Int")
+    private Integer                intNum;
+    @CellType(title = "数字Long")
+    private Long                   longNum;
     @CellType(title = "日期")
     private LocalDate              localDate;
     @CellType(title = "MAP \\d+")

@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class NumberExcelConverterFactory implements ExcelConverterFactory<Number> {
 
@@ -26,7 +27,11 @@ public class NumberExcelConverterFactory implements ExcelConverterFactory<Number
         private final Class<T> targetType;
 
 
-        private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+        private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(Locale.CHINA);
+
+        static {
+            NUMBER_FORMAT.setGroupingUsed(false);
+        }
 
         public NumberConverter(Class<T> targetType) {
             this.targetType = targetType;
