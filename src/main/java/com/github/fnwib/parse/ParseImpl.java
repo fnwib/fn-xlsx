@@ -71,6 +71,9 @@ public class ParseImpl<T> implements Parser<T> {
                 title = new Title(field.getName(), type);
             } else if (conversionService.canConvert(field.getType())) {
                 List<TitleDesc> list = this.getRule(row, type);
+                if (list.isEmpty()) {
+                    continue;
+                }
                 title = new Title(field.getName(), type, list);
                 if (!title.isSerial()) {
                     throw new NotSupportedException(title.getFieldName() + " matched index is not continuous");
@@ -83,8 +86,7 @@ public class ParseImpl<T> implements Parser<T> {
             }
             map.put(field.getName(), title);
         }
-        Map<String, Title> matched = Maps.filterValues(map, title -> title.getList().size() > 0);
-        if ((double) matched.size() / map.size() < RATIO) {
+        if ((double) map.size() / fields.size() < RATIO) {
             return;
         }
         try {

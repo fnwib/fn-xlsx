@@ -4,12 +4,15 @@ import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.convert.ExcelConverter;
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.parse.Title;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -20,6 +23,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class WriteParser<T> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WriteParser.class);
 
     private Class<T> entityClass;
 
@@ -43,7 +48,14 @@ public class WriteParser<T> {
     }
 
     private void initRules(Map<PropertyDescriptor, Title> rules) throws IntrospectionException {
-        rules.forEach((propertyDescriptor, title) -> RULES.put(propertyDescriptor.getReadMethod(), title));
+        rules.forEach((propertyDescriptor, title) -> {
+            if (propertyDescriptor.getReadMethod() == null) {
+                throw new PropertyException(propertyDescriptor.getName() + "没有标准的getter");
+            } else {
+                LOGGER.debug("property is '{}' , setter is '{}'", propertyDescriptor.getName(), propertyDescriptor.getReadMethod().getName());
+                RULES.put(propertyDescriptor.getReadMethod(), title);
+            }
+        });
     }
 
     public void convert(Sheet sheet, int rowNum, T element) {
