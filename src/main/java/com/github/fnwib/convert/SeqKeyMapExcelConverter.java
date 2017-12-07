@@ -1,6 +1,7 @@
 package com.github.fnwib.convert;
 
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
@@ -8,7 +9,6 @@ import com.github.fnwib.write.CellText;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,15 +42,7 @@ public class SeqKeyMapExcelConverter implements ExcelConverter<Map<Integer, Stri
 
     @Override
     public List<CellText> writeValue(Object obj, Title title) throws ExcelException {
-        Map<Integer, String> map = (Map<Integer, String>) obj;
-        List<TitleDesc> list = title.getList();
-        List<CellText> result = new ArrayList<>(list.size());
-        for (TitleDesc desc : list) {
-            String s = map.get(desc.getIndex());
-            CellText text = new CellText(desc.getIndex(), s);
-            result.add(text);
-        }
-        return result;
+        throw new NotSupportedException("Map<Integer,String>类型不支持写操作 请使用 Map<TitleDesc,String>");
     }
 
 }

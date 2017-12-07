@@ -44,7 +44,9 @@ public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc,
     public List<CellText> writeValue(Object obj, Title title) throws ExcelException {
         Map<TitleDesc, String> map = (Map<TitleDesc, String>) obj;
         Map<Integer, String> newMap = new HashMap<>();
-        map.forEach((titleDesc, s) -> newMap.put(titleDesc.getIndex(), s));
+        if (map != null) {
+            map.forEach((titleDesc, s) -> newMap.put(titleDesc.getIndex(), s));
+        }
         List<TitleDesc> list = title.getList();
         List<CellText> result = new ArrayList<>(list.size());
         for (TitleDesc desc : list) {

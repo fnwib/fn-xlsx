@@ -99,7 +99,7 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
     public List<CellText> writeValue(Object obj, Title title) throws ExcelException {
         LocalDate localDate = (LocalDate) obj;
         TitleDesc desc = title.getList().get(0);
-        return Arrays.asList(new CellText(desc.getIndex(), localDate.toString()));
+        return Arrays.asList(new CellText(desc.getIndex(), obj == null ? null : localDate.toString()));
     }
 
 }

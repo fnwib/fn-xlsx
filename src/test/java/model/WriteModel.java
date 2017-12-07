@@ -27,5 +27,6 @@ public class WriteModel {
     @CellType(title = "MAP [A-Z]")
     private Map<TitleDesc, String> mapString;
 
-
+    @CellType(title = "MAP [A-Z] null")
+    private Map<TitleDesc, String> mapNull;
 }

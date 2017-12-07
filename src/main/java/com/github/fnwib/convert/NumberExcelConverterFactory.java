@@ -75,7 +75,7 @@ public class NumberExcelConverterFactory implements ExcelConverterFactory<Number
         @Override
         public List<CellText> writeValue(Object obj, Title title) throws ExcelException {
             TitleDesc desc = title.getList().get(0);
-            return Arrays.asList(new CellText(desc.getIndex(), NUMBER_FORMAT.format(obj)));
+            return Arrays.asList(new CellText(desc.getIndex(), obj == null ? null : NUMBER_FORMAT.format(obj)));
         }
     }
 }
