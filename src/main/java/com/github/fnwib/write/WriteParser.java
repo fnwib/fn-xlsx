@@ -107,9 +107,7 @@ public class WriteParser<T> {
             CellRangeAddress cellRangeAddress = new CellRangeAddress(rowNum, rowNum + elements.size() - 1,
                     mergedRangeIndex, mergedRangeIndex);
             sheet.addMergedRegion(cellRangeAddress);
-        }
 
-        for (Integer mergedRangeIndex : mergedRangeIndexes) {
             Stream<CellText> matrixColumn = cellTextMatrix.getMatrixColumn(mergedRangeIndex);
             Optional<CellText> first = matrixColumn.findFirst();
             CellText cellText = first.get();
