@@ -102,7 +102,14 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
 
     @Override
     public void writeMergedRegion(List<T> elements, List<Integer> mergedRangeIndexes) {
-        writeParser.convert(currentSheet.get(), currentRowNum.getAndAdd(elements.size()), elements, mergedRangeIndexes);
+        if (elements.isEmpty()) {
+            return;
+        }
+        if (elements.size() == 1) {
+            writeParser.convert(currentSheet.get(), currentRowNum.getAndAdd(1), elements.get(0));
+        } else {
+            writeParser.convert(currentSheet.get(), currentRowNum.getAndAdd(elements.size()), elements, mergedRangeIndexes);
+        }
     }
 
     @Override

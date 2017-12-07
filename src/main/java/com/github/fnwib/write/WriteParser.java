@@ -60,6 +60,9 @@ public class WriteParser<T> {
 
     public void convert(Sheet sheet, int rowNum, T element) {
         Row row = sheet.createRow(rowNum);
+        if (element == null) {
+            return;
+        }
         Stream<CellText> stream = getCellTextStream(element);
         stream.forEach(cellText -> {
             Cell cell = row.createCell(cellText.getCellNum());
