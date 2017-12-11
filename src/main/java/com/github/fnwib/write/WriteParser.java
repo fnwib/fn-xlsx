@@ -80,7 +80,7 @@ public class WriteParser<T> {
             try {
                 Object value = method.invoke(element);
                 CellType cellType = title.getCellType();
-                if (cellType.type() == Operation.DEFAULT) {
+                if (cellType.type() != Operation.LINE_NUM) {
                     ExcelConverter<?> converter = title.getConverter();
                     List<CellText> cellTexts = converter.writeValue(value, title);
                     builder.add(cellTexts);
