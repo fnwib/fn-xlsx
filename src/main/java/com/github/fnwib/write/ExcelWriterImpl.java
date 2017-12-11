@@ -2,7 +2,6 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.parse.Parser;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -48,7 +47,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
     public ExcelWriterImpl(Workbook workbook,
                            CellStyle cellStyle,
                            File exportFile,
-                           Parser<T> parser) throws IOException, InvalidFormatException {
+                           Parser<T> parser) {
         this.exportFile = exportFile;
         this.parser = parser;
         this.workbook = workbook;
