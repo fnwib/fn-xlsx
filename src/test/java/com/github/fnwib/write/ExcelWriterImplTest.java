@@ -45,7 +45,7 @@ public class ExcelWriterImplTest {
     @After
     public void deleteData() {
         tempTemplateFile.delete();
-//        exportFile.delete();
+        exportFile.delete();
     }
 
 
