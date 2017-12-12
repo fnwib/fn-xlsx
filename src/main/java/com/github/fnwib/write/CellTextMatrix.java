@@ -16,11 +16,13 @@ public class CellTextMatrix {
     }
 
     public void addMatrixRow(List<CellText> matrixRow) {
+        checkMatrix(matrixRow);
         this.matrix.add(matrixRow);
     }
 
     public void addMatrixRow(Stream<CellText> matrixRow) {
-        this.matrix.add(matrixRow.collect(Collectors.toList()));
+        List<CellText> cellTexts = matrixRow.collect(Collectors.toList());
+        this.addMatrixRow(cellTexts);
     }
 
     public void checkMatrix(List<CellText> matrixRow) {

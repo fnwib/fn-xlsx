@@ -109,7 +109,7 @@ public class WriteParser<T> {
         for (Integer mergedRangeIndex : mergedRangeIndexes) {
             boolean sameMatrixColumn = cellTextMatrix.isSameMatrixColumn(mergedRangeIndex);
             if (!sameMatrixColumn) {
-                throw new ExcelException("元素值不同不能合并单元格");
+                throw new ExcelException("列值不同不能合并单元格");
             }
             CellRangeAddress cellRangeAddress = new CellRangeAddress(rowNum, rowNum + elements.size() - 1,
                     mergedRangeIndex, mergedRangeIndex);
