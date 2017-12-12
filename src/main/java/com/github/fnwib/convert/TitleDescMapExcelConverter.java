@@ -52,9 +52,9 @@ public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc,
         }
         List<CellText> result = new ArrayList<>(list.size());
         for (TitleDesc desc : list) {
-            String s = newIndexMap.get(desc.getIndex());
+            String s = newTitleMap.get(desc.getTitle());
             if (s == null) {
-                s = newTitleMap.get(desc.getTitle());
+                s = newIndexMap.get(desc.getIndex());
             }
             CellText text = new CellText(desc.getIndex(), s);
             result.add(text);

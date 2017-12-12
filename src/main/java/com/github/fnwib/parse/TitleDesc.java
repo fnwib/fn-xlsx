@@ -8,16 +8,19 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public final class TitleDesc {
-    private final String title;
-    private final int    index;
-    private       int    seq;
+    private final String  title;
+    private final Integer index;
+    private       Integer seq;
 
-    public TitleDesc(int index) {
-        this.title = null;
-        this.index = index;
+    public TitleDesc(Integer index) {
+        this(null, index);
     }
 
-    public TitleDesc(String title, int index) {
+    public TitleDesc(String title) {
+        this(title, null);
+    }
+
+    public TitleDesc(String title, Integer index) {
         this.title = title;
         this.index = index;
     }
