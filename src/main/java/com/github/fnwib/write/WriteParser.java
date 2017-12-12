@@ -86,7 +86,8 @@ public class WriteParser<T> {
                     builder.add(cellTexts);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                LOGGER.error("error", e);
+                throw new PropertyException(e);
             }
         });
         return builder.build().flatMap(List::stream).sorted(Comparator.comparing(CellText::getCellNum));
