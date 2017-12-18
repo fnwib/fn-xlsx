@@ -30,7 +30,7 @@ public enum BeanHelper {
             for (PropertyDescriptor descriptor : propertyDescriptors) {
                 for (Field field : fields) {
                     if (field.getName().equalsIgnoreCase(descriptor.getName())) {
-                        Property property = new Property(field, descriptor.getReadMethod(), descriptor.getWriteMethod());
+                        Property property = new Property(field, descriptor);
                         properties.add(property);
                     }
                 }

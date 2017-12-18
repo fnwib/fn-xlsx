@@ -3,8 +3,8 @@ package com.github.fnwib.reflect;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 @Getter
 @AllArgsConstructor
@@ -12,9 +12,7 @@ public class Property {
 
     private final Field field;
 
-    private final Method readMethod;
-
-    private final Method writeMethod;
+    private final PropertyDescriptor propertyDescriptor;
 
     public String getName() {
         if (field == null) {

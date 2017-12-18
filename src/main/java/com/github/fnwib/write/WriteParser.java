@@ -15,6 +15,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -46,11 +47,12 @@ public class WriteParser<T> {
 
     private void initRules(Map<Property, Title> rules) {
         rules.forEach((property, title) -> {
-            if (property.getReadMethod() == null) {
-                throw new PropertyException(property.getName() + "没有标准的getter");
+            PropertyDescriptor propertyDescriptor = property.getPropertyDescriptor();
+            if (propertyDescriptor.getReadMethod() == null) {
+                throw new PropertyException(propertyDescriptor.getName() + "没有标准的getter");
             } else {
-                LOGGER.debug("property is '{}' , setter is '{}'", property.getName(), property.getReadMethod().getName());
-                RULES.put(property.getReadMethod(), title);
+                LOGGER.debug("property is '{}' , setter is '{}'", property.getName(), propertyDescriptor.getReadMethod().getName());
+                RULES.put(propertyDescriptor.getReadMethod(), title);
             }
         });
     }

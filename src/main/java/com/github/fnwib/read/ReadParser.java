@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,11 +35,12 @@ public class ReadParser<T> {
 
     private void initRules(Map<Property, Title> rules) {
         rules.forEach((property, title) -> {
-            if (property.getWriteMethod() == null) {
-                throw new PropertyException(property.getName() + "没有标准的setter");
+            PropertyDescriptor propertyDescriptor = property.getPropertyDescriptor();
+            if (propertyDescriptor.getWriteMethod() == null) {
+                throw new PropertyException(propertyDescriptor.getName() + "没有标准的setter");
             } else {
-                LOGGER.debug("property is '{}' , setter is '{}'", property.getName(), property.getWriteMethod().getName());
-                RULES.put(property.getWriteMethod(), title);
+                LOGGER.debug("property is '{}' , setter is '{}'", property.getName(), propertyDescriptor.getWriteMethod().getName());
+                RULES.put(propertyDescriptor.getWriteMethod(), title);
             }
         });
     }
