@@ -6,13 +6,12 @@ import com.github.fnwib.convert.ExcelConverter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.parse.Title;
+import com.github.fnwib.reflect.Property;
 import com.github.fnwib.util.ValueUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,23 +26,19 @@ public class ReadParser<T> {
 
     private final Map<Method, Title> RULES = new HashMap<>();
 
-    public ReadParser(Class<T> entityClass, Map<PropertyDescriptor, Title> rules) {
+    public ReadParser(Class<T> entityClass, Map<Property, Title> rules) {
         this.entityClass = entityClass;
-        try {
-            initRules(rules);
-        } catch (IntrospectionException e) {
-            throw new ExcelException(e);
-        }
+        initRules(rules);
     }
 
 
-    private void initRules(Map<PropertyDescriptor, Title> rules) throws IntrospectionException {
-        rules.forEach((propertyDescriptor, title) -> {
-            if (propertyDescriptor.getWriteMethod() == null) {
-                throw new PropertyException(propertyDescriptor.getName() + "没有标准的setter");
+    private void initRules(Map<Property, Title> rules) {
+        rules.forEach((property, title) -> {
+            if (property.getWriteMethod() == null) {
+                throw new PropertyException(property.getName() + "没有标准的setter");
             } else {
-                LOGGER.debug("property is '{}' , setter is '{}'", propertyDescriptor.getName(), propertyDescriptor.getWriteMethod().getName());
-                RULES.put(propertyDescriptor.getWriteMethod(), title);
+                LOGGER.debug("property is '{}' , setter is '{}'", property.getName(), property.getWriteMethod().getName());
+                RULES.put(property.getWriteMethod(), title);
             }
         });
     }

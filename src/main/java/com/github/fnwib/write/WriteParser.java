@@ -6,6 +6,7 @@ import com.github.fnwib.convert.ExcelConverter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.parse.Title;
+import com.github.fnwib.reflect.Property;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,8 +15,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -35,14 +34,9 @@ public class WriteParser<T> {
 
     private CellStyle defaultCellStyle;
 
-    public WriteParser(Class<T> entityClass, Map<PropertyDescriptor, Title> rules) {
+    public WriteParser(Class<T> entityClass, Map<Property, Title> rules) {
         this.entityClass = entityClass;
-        try {
-            initRules(rules);
-        } catch (IntrospectionException e) {
-            throw new ExcelException(e);
-        }
-
+        initRules(rules);
     }
 
     public WriteParser defaultCellStyle(CellStyle defaultCellStyle) {
@@ -50,13 +44,13 @@ public class WriteParser<T> {
         return this;
     }
 
-    private void initRules(Map<PropertyDescriptor, Title> rules) throws IntrospectionException {
-        rules.forEach((propertyDescriptor, title) -> {
-            if (propertyDescriptor.getReadMethod() == null) {
-                throw new PropertyException(propertyDescriptor.getName() + "没有标准的getter");
+    private void initRules(Map<Property, Title> rules) {
+        rules.forEach((property, title) -> {
+            if (property.getReadMethod() == null) {
+                throw new PropertyException(property.getName() + "没有标准的getter");
             } else {
-                LOGGER.debug("property is '{}' , setter is '{}'", propertyDescriptor.getName(), propertyDescriptor.getReadMethod().getName());
-                RULES.put(propertyDescriptor.getReadMethod(), title);
+                LOGGER.debug("property is '{}' , setter is '{}'", property.getName(), property.getReadMethod().getName());
+                RULES.put(property.getReadMethod(), title);
             }
         });
     }
