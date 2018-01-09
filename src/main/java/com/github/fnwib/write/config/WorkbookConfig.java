@@ -8,8 +8,7 @@ import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 
@@ -49,7 +48,27 @@ public class WorkbookConfig<T> {
 
 
     public WriteParser<T> getWriteParser() {
-        return parser.createWriteParser();
+        WriteParser<T> writeParser = parser.createWriteParser();
+        if (templateSetting.isUseDefaultCellStyle()) {
+            writeParser.defaultCellStyle(createCellStyle(templateWorkBook));
+        }
+        return writeParser;
+    }
+
+    private CellStyle createCellStyle(Workbook workbook) {
+        CellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("text"));
+        Font font2 = workbook.createFont();
+        font2.setFontName("Arial");
+        font2.setFontHeightInPoints((short) 10);
+        cellStyle.setFont(font2);
+        return cellStyle;
     }
 
     public int getTitleRowNum() {

@@ -88,7 +88,7 @@ public class ExcelWriterBuilder {
         public ExcelWriter<T> build() {
             ResultFileSetting resultFileSetting = new ResultFileSetting(filename, resultFolder);
             TemplateSetting templateSetting = TemplateSetting.builder().template(template)
-                    .cellStyle(cellStyle).addLastTitles(addLastTitles).sheetName(sheetName).build();
+                    .useDefaultCellStyle(true).addLastTitles(addLastTitles).sheetName(sheetName).build();
             ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
             converterRegistry.addConverter(String.class, new StringExcelConverter());
             converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter());

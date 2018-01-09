@@ -3,7 +3,6 @@ package com.github.fnwib.write.config;
 import com.github.fnwib.exception.SettingException;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.poi.ss.usermodel.CellStyle;
 
 import java.io.File;
 import java.util.List;
@@ -19,7 +18,7 @@ public class TemplateSetting {
     private File         template;
     private String       sheetName;
     @Getter
-    private CellStyle    cellStyle;
+    private boolean      useDefaultCellStyle;
     @Getter
     private List<String> addLastTitles;
 
