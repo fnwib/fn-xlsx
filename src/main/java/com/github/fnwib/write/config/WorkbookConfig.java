@@ -5,10 +5,10 @@ import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.parse.Parser;
 import com.github.fnwib.write.WriteParser;
+import com.google.common.collect.Queues;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -20,17 +20,20 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
 
 @Getter
 public class WorkbookConfig<T> {
 
     private final Parser<T> parser;
 
-    private ResultFileSetting resultFileSetting;
+    private final ResultFileSetting resultFileSetting;
 
-    private TemplateSetting templateSetting;
+    private final TemplateSetting templateSetting;
 
-    private ExportType exportType;
+    private final ExportType exportType;
+
+    private final Queue<File> tempTemplateFile;
 
     private XSSFWorkbook templateWorkBook;
 
@@ -46,6 +49,7 @@ public class WorkbookConfig<T> {
         this.exportType = exportType;
         this.resultFileSetting = resultFileSetting;
         this.templateSetting = templateSetting;
+        this.tempTemplateFile = Queues.newArrayDeque();
         this.templateWorkBook = getXSSFWorkbook();
     }
 
@@ -88,7 +92,7 @@ public class WorkbookConfig<T> {
             } else {
                 File newTemplate = resultFileSetting.copyFile(template);
                 try {
-                    xssfWorkbook = new XSSFWorkbook(newTemplate);
+                    xssfWorkbook = new XSSFWorkbook(FileUtils.openInputStream(newTemplate));
                     XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
                     XSSFRow row = sheet.getRow(this.findTitle(sheet));
                     int cellNum = row.getLastCellNum();
@@ -99,12 +103,12 @@ public class WorkbookConfig<T> {
                         cell.setCellValue(title);
                     }
                 } finally {
-                    FileUtils.forceDelete(newTemplate);
+                    tempTemplateFile.add(newTemplate);
                 }
             }
             this.findTitle(xssfWorkbook.getSheetAt(0));
             return xssfWorkbook;
-        } catch (IOException | InvalidFormatException e) {
+        } catch (IOException e) {
             throw new SettingException(e);
         }
 
@@ -162,6 +166,10 @@ public class WorkbookConfig<T> {
             return;
         }
         try (OutputStream outputStream = new FileOutputStream(resultFileSetting.getNextResultFile())) {
+            File temp = tempTemplateFile.poll();
+            if (temp != null) {
+                FileUtils.forceDelete(temp);
+            }
             this.currentWriteWorkBook.write(outputStream);
         } catch (IOException e) {
             throw new SettingException(e);

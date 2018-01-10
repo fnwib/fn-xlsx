@@ -105,7 +105,8 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         writerProcessor.writeMergedRegion(source.subList(1, source.size()), Arrays.asList(0, 1, 2));
         writerProcessor.write2File();
         List<WriteModel> target = new ArrayList<>();
-        for (File file1 : writerProcessor.getFiles()) {
+        List<File> files = writerProcessor.getFiles();
+        for (File file1 : files) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file1);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(parser, workbook, 0);
             target.addAll(excelReader.getData());
@@ -137,5 +138,12 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
         }
 
+    }
+
+    public static void main(String[] args) {
+        String separator = File.separator;
+        System.out.println(separator);
+        String pathSeparator = File.pathSeparator;
+        System.out.println(pathSeparator);
     }
 }
