@@ -45,7 +45,7 @@ public class WorkbookConfig<T> {
         this.resultFileSetting = resultFileSetting;
         this.templateSetting = templateSetting;
         this.templateFile = resultFileSetting.copyFile(templateSetting.getTemplate());
-        this.templateWorkbook = buildWorkbook();
+        this.templateWorkbook = buildWorkbook(this.templateFile);
         this.writeWorkbooks = new Stack<>();
     }
 
@@ -79,9 +79,9 @@ public class WorkbookConfig<T> {
         return titleRowNum;
     }
 
-    private XSSFWorkbook buildWorkbook() {
+    private XSSFWorkbook buildWorkbook(File template) {
         try {
-            XSSFWorkbook workbook = new XSSFWorkbook(FileUtils.openInputStream(templateFile));
+            XSSFWorkbook workbook = new XSSFWorkbook(FileUtils.openInputStream(template));
             if (templateSetting.updateTitle()) {
                 XSSFSheet sheet = workbook.getSheetAt(0);
                 XSSFRow row = sheet.getRow(this.findTitle(sheet));
@@ -144,7 +144,7 @@ public class WorkbookConfig<T> {
     }
 
 
-    private void write() {
+    public void write() {
         try (OutputStream outputStream = new FileOutputStream(resultFileSetting.getNextResultFile())) {
             writeWorkbooks.peek().write(outputStream);
         } catch (IOException e) {
