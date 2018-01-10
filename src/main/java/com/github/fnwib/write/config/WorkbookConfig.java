@@ -51,7 +51,7 @@ public class WorkbookConfig<T> {
         WriteParser<T> writeParser = parser.createWriteParser();
         if (templateSetting.isUseDefaultCellStyle()) {
             CellStyle cellStyle = workbookWraps.peek().getCellStyle();
-            writeParser.defaultCellStyle(cellStyle);
+            writeParser.setCellStyle(cellStyle);
         }
         return writeParser;
     }
@@ -115,6 +115,11 @@ public class WorkbookConfig<T> {
             throw new NotSupportedException("不支持导出类型, " + exportType.name());
         }
     }
+
+    public CellStyle getCellStyle() {
+        return workbookWraps.peek().getCellStyle();
+    }
+
 
 
     public void write() {

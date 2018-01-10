@@ -1,6 +1,7 @@
 package com.github.fnwib.write;
 
 import com.github.fnwib.write.config.WorkbookConfig;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.File;
@@ -22,7 +23,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
     private final AtomicInteger currentRowNum = new AtomicInteger();
 
-    private WriteParser<T> writeParser;
+    private final WriteParser<T> writeParser;
 
     public ExcelWriterProcessor(WorkbookConfig<T> workbookConfig) {
         this.workbookConfig = workbookConfig;
@@ -31,6 +32,8 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
     }
 
     private synchronized void useNextSheet() {
+        CellStyle cellStyle = workbookConfig.getCellStyle();
+        writeParser.setCellStyle(cellStyle);
         Sheet sheet = this.workbookConfig.getNextSheet();
         currentSheet.set(sheet);
         currentRowNum.set(workbookConfig.getTitleRowNum() + 1);

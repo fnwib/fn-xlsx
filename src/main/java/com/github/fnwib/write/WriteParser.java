@@ -33,16 +33,15 @@ public class WriteParser<T> {
 
     private final Map<Method, Title> RULES = new HashMap<>();
 
-    private CellStyle defaultCellStyle;
+    private CellStyle cellStyle;
 
     public WriteParser(Class<T> entityClass, Map<Property, Title> rules) {
         this.entityClass = entityClass;
         initRules(rules);
     }
 
-    public WriteParser defaultCellStyle(CellStyle defaultCellStyle) {
-        this.defaultCellStyle = defaultCellStyle;
-        return this;
+    public void setCellStyle(CellStyle defaultCellStyle) {
+        this.cellStyle = defaultCellStyle;
     }
 
     private void initRules(Map<Property, Title> rules) {
@@ -65,7 +64,7 @@ public class WriteParser<T> {
         Stream<CellText> stream = getCellTextStream(element);
         stream.forEach(cellText -> {
             Cell cell = row.createCell(cellText.getCellNum());
-            cell.setCellStyle(defaultCellStyle);
+            cell.setCellStyle(cellStyle);
             cell.setCellValue(cellText.getText());
         });
     }
@@ -115,7 +114,7 @@ public class WriteParser<T> {
             for (CellText cellText : cellTexts) {
                 Row row = sheet.getRow(cellText.getRowNum());
                 Cell cell = row.createCell(cellText.getCellNum());
-                cell.setCellStyle(defaultCellStyle);
+                cell.setCellStyle(cellStyle);
                 cell.setCellValue(cellText.getText());
             }
         }
