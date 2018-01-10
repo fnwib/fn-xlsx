@@ -20,8 +20,6 @@ public class ExcelWriterImplBaseTest {
 
     File tempTemplateFile;
 
-    File exportFile;
-
     File exportFolder;
 
     @Before
@@ -30,14 +28,12 @@ public class ExcelWriterImplBaseTest {
         String dir = classLoader.getResource("test-file").getFile();
         System.out.println(dir);
         tempTemplateFile = new File(dir + File.separator + "write-template.xlsx");
-        exportFile = new File(dir + File.separator + "export.xlsx");
         exportFolder = new File(dir + File.separator + UUIDUtils.getHalfId());
         FileUtils.forceMkdir(exportFolder);
     }
 
     @After
     public void deleteData() throws IOException {
-        exportFile.delete();
         FileUtils.forceDelete(exportFolder);
     }
 
