@@ -80,10 +80,8 @@ public class WorkbookConfig<T> {
     }
 
     private XSSFWorkbook buildWorkbook() {
-        File template = templateSetting.getTemplate();
         try {
-            File newTemplate = resultFileSetting.copyFile(template);
-            XSSFWorkbook workbook = new XSSFWorkbook(FileUtils.openInputStream(newTemplate));
+            XSSFWorkbook workbook = new XSSFWorkbook(FileUtils.openInputStream(templateFile));
             if (templateSetting.updateTitle()) {
                 XSSFSheet sheet = workbook.getSheetAt(0);
                 XSSFRow row = sheet.getRow(this.findTitle(sheet));
