@@ -5,6 +5,7 @@ import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.parse.Parser;
 import com.github.fnwib.write.WriteParser;
+import com.google.common.collect.Queues;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -20,7 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
+import java.util.Queue;
 
 @Slf4j
 @Getter
@@ -32,7 +33,7 @@ public class WorkbookConfig<T> {
     private final ExportType           exportType;
     private final File                 templateFile;
     private final XSSFWorkbook         templateWorkbook;
-    private final Stack<SXSSFWorkbook> writeWorkbooks;
+    private final Queue<SXSSFWorkbook> writeWorkbooks;
 
     private Integer titleRowNum;
 
@@ -46,7 +47,7 @@ public class WorkbookConfig<T> {
         this.templateSetting = templateSetting;
         this.templateFile = resultFileSetting.copyFile(templateSetting.getTemplate());
         this.templateWorkbook = buildWorkbook(this.templateFile);
-        this.writeWorkbooks = new Stack<>();
+        this.writeWorkbooks = Queues.newArrayDeque();
     }
 
     public CellStyle getCellStyle() {
@@ -124,7 +125,7 @@ public class WorkbookConfig<T> {
         if (StringUtils.isNotBlank(sheetName)) {
             templateWorkbook.setSheetName(0, sheetName);
         }
-        writeWorkbooks.push(new SXSSFWorkbook(templateWorkbook));
+        writeWorkbooks.add(new SXSSFWorkbook(templateWorkbook));
     }
 
     public synchronized Sheet getNextSheet() {
@@ -146,7 +147,7 @@ public class WorkbookConfig<T> {
 
     public void write() {
         try (OutputStream outputStream = new FileOutputStream(resultFileSetting.getNextResultFile())) {
-            writeWorkbooks.peek().write(outputStream);
+            writeWorkbooks.poll().write(outputStream);
         } catch (IOException e) {
             throw new SettingException(e);
         }
@@ -160,9 +161,6 @@ public class WorkbookConfig<T> {
 
     public void close() {
         try {
-            for (SXSSFWorkbook writeWorkbook : writeWorkbooks) {
-                writeWorkbook.close();
-            }
             templateWorkbook.close();
             FileUtils.forceDelete(templateFile);
         } catch (IOException e) {
