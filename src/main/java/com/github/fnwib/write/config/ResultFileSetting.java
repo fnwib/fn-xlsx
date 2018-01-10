@@ -53,9 +53,12 @@ public class ResultFileSetting {
             throw new SettingException(resultFolder.getAbsolutePath() + "不是文件夹");
         }
         if (resultFolder.listFiles().length > 0) {
-            throw new SettingException(resultFolder.getAbsolutePath() + "不是空文件夹");
+            String uuid = UUIDUtils.getHalfId();
+            this.resultFolder = new File(resultFolder.getAbsolutePath() + File.separator + uuid);
+            log.info("[{}]不为空,将在该目录下创建[{}]目录并使用该目录", resultFolder.getAbsolutePath(), uuid);
+        } else {
+            this.resultFolder = resultFolder;
         }
-        this.resultFolder = resultFolder;
         this.baseName = FilenameUtils.getBaseName(filename);
         this.extension = "." + FilenameUtils.getExtension(filename);
 

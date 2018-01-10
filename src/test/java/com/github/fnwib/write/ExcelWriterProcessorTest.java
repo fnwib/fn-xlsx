@@ -35,7 +35,6 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
-
         ResultFileSetting resultFileSetting = new ResultFileSetting(40, "aaaa2zs2.xlsx", exportFolder);
         TemplateSetting templateSetting = TemplateSetting.builder().template(tempTemplateFile)
                 .addLastTitles(Lists.newArrayList("AAA"))
