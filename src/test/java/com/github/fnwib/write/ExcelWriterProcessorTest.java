@@ -46,7 +46,6 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         List<WriteModel> source = getDataList(6);
         writerProcessor.write(source);
         writerProcessor.write2File();
-
         List<WriteModel> target = new ArrayList<>();
         for (File file2 : writerProcessor.getFiles()) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);

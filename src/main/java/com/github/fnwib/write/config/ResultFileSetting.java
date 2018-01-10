@@ -3,6 +3,7 @@ package com.github.fnwib.write.config;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.UUIDUtils;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -12,6 +13,7 @@ import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
+@Slf4j
 public class ResultFileSetting {
 
     private static final int STEP = 500000;
@@ -68,10 +70,15 @@ public class ResultFileSetting {
         return new File(filename);
     }
 
-    public File copyFile(File source) throws IOException {
+    public File copyFile(File source) {
         String template = resultFolder.getAbsolutePath() + File.separator + templateFileName.getFilename(baseName, extension);
         File target = new File(template);
-        FileUtils.copyFile(source, target);
+        try {
+            FileUtils.copyFile(source, target);
+        } catch (IOException e) {
+            log.error("复制文件错误 source[{}],target [{}]", source.getAbsolutePath(), target.getAbsolutePath());
+            throw new SettingException("复制文件错误");
+        }
         return target;
     }
 

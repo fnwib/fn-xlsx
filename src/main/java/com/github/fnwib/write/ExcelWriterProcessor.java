@@ -2,8 +2,6 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.write.config.WorkbookConfig;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -17,8 +15,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * @param <T>
  */
 public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriter.class);
 
     private final WorkbookConfig<T> workbookConfig;
 
@@ -72,6 +68,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
     @Override
     public File write2File() {
+        workbookConfig.write();
         workbookConfig.close();
         return workbookConfig.getResultFileSetting().getResultFolder();
     }

@@ -40,4 +40,8 @@ public class TemplateSetting {
         }
     }
 
+    public boolean updateTitle() {
+        return addLastTitles != null && !addLastTitles.isEmpty();
+    }
+
 }
