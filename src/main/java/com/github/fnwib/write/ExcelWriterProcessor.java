@@ -68,7 +68,6 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
     @Override
     public File write2File() {
-        workbookConfig.write();
         workbookConfig.close();
         return workbookConfig.getResultFileSetting().getResultFolder();
     }

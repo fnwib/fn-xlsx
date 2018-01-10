@@ -147,7 +147,7 @@ public class WorkbookConfig<T> {
     }
 
 
-    public void write() {
+    private void write() {
         try (OutputStream outputStream = new FileOutputStream(resultFileSetting.getNextResultFile())) {
             writeWorkbooks.poll().write(outputStream);
         } catch (IOException e) {
@@ -163,6 +163,10 @@ public class WorkbookConfig<T> {
 
     public void close() {
         try {
+            for (SXSSFWorkbook writeWorkbook : writeWorkbooks) {
+                this.write();
+                writeWorkbook.close();
+            }
             templateWorkbook.close();
             FileUtils.forceDelete(templateFile);
         } catch (IOException e) {
