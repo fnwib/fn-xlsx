@@ -28,8 +28,12 @@ public class ExcelWriterImplBaseTest {
         String dir = classLoader.getResource("test-file").getFile();
         System.out.println(dir);
         tempTemplateFile = new File(dir + File.separator + "write-template.xlsx");
-        exportFolder = new File(dir + File.separator + UUIDUtils.getHalfId());
+
+        String path = dir + File.separator + UUIDUtils.getHalfId();
+        exportFolder = new File(path);
         FileUtils.forceMkdir(exportFolder);
+        String filenameText = path + File.separator + UUIDUtils.getHalfId() + ".text";
+        new File(filenameText).createNewFile();
     }
 
     @After

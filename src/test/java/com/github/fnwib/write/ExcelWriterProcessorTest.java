@@ -100,7 +100,8 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         List<WriteModel> source = getDataList(6);
 
         writerProcessor.writeMergedRegion(source.subList(0, 1), Arrays.asList(0, 1, 2));
-        writerProcessor.writeMergedRegion(source.subList(1, source.size()), Arrays.asList(0, 1, 2));
+        writerProcessor.writeMergedRegion(source.subList(1, 3), Arrays.asList(0, 1, 2));
+        writerProcessor.writeMergedRegion(source.subList(3, source.size()), Arrays.asList(0, 1, 2));
         writerProcessor.write2File();
         List<WriteModel> target = new ArrayList<>();
         List<File> files = writerProcessor.getFiles();
@@ -138,10 +139,4 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
     }
 
-    public static void main(String[] args) {
-        String separator = File.separator;
-        System.out.println(separator);
-        String pathSeparator = File.pathSeparator;
-        System.out.println(pathSeparator);
-    }
 }

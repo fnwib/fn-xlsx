@@ -38,7 +38,7 @@ public class ResultFileSetting {
      * @param filename       结果文件的名称
      * @param resultFolder   结果文件存放的文件夹
      */
-    public ResultFileSetting(int maxRowCanWrite, String filename, File resultFolder) {
+    public ResultFileSetting(int maxRowCanWrite, final String filename, final File resultFolder) {
         if (maxRowCanWrite <= 0) {
             throw new SettingException("Sheet可写入最大行不能小于等于0");
         }
@@ -64,7 +64,7 @@ public class ResultFileSetting {
 
     }
 
-    public ResultFileSetting(String filename, File resultFolder) {
+    public ResultFileSetting(final String filename, final File resultFolder) {
         this(STEP, filename, resultFolder);
     }
 

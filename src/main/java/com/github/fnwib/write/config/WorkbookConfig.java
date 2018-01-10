@@ -10,15 +10,15 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
@@ -27,13 +27,12 @@ import java.util.Queue;
 @Getter
 public class WorkbookConfig<T> {
 
-    private final Parser<T>            parser;
-    private final ResultFileSetting    resultFileSetting;
-    private final TemplateSetting      templateSetting;
-    private final ExportType           exportType;
-    private final File                 templateFile;
-    private final XSSFWorkbook         templateWorkbook;
-    private final Queue<SXSSFWorkbook> writeWorkbooks;
+    private final Parser<T>           parser;
+    private final ResultFileSetting   resultFileSetting;
+    private final TemplateSetting     templateSetting;
+    private final ExportType          exportType;
+    private final Queue<WorkbookWrap> workbookWraps;
+
 
     private Integer titleRowNum;
 
@@ -45,32 +44,13 @@ public class WorkbookConfig<T> {
         this.exportType = exportType;
         this.resultFileSetting = resultFileSetting;
         this.templateSetting = templateSetting;
-        this.templateFile = resultFileSetting.copyFile(templateSetting.getTemplate());
-        this.templateWorkbook = buildWorkbook(this.templateFile);
-        this.writeWorkbooks = Queues.newArrayDeque();
+        this.workbookWraps = Queues.newArrayDeque();
     }
-
-    public CellStyle getCellStyle() {
-        CellStyle cellStyle = templateWorkbook.createCellStyle();
-        cellStyle.setBorderTop(BorderStyle.THIN);
-        cellStyle.setBorderLeft(BorderStyle.THIN);
-        cellStyle.setBorderRight(BorderStyle.THIN);
-        cellStyle.setBorderBottom(BorderStyle.THIN);
-        cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("text"));
-        Font font2 = templateWorkbook.createFont();
-        font2.setFontName("Arial");
-        font2.setFontHeightInPoints((short) 10);
-        cellStyle.setFont(font2);
-        return cellStyle;
-    }
-
 
     public WriteParser<T> getWriteParser() {
         WriteParser<T> writeParser = parser.createWriteParser();
         if (templateSetting.isUseDefaultCellStyle()) {
-            CellStyle cellStyle = getCellStyle();
+            CellStyle cellStyle = workbookWraps.peek().getCellStyle();
             writeParser.defaultCellStyle(cellStyle);
         }
         return writeParser;
@@ -80,8 +60,9 @@ public class WorkbookConfig<T> {
         return titleRowNum;
     }
 
-    private XSSFWorkbook buildWorkbook(File template) {
+    private void pushNewWorkbookWrap() {
         try {
+            File template = resultFileSetting.copyFile(templateSetting.getTemplate());
             XSSFWorkbook workbook = new XSSFWorkbook(FileUtils.openInputStream(template));
             if (templateSetting.updateTitle()) {
                 XSSFSheet sheet = workbook.getSheetAt(0);
@@ -94,8 +75,12 @@ public class WorkbookConfig<T> {
                     cell.setCellValue(title);
                 }
             }
+            String sheetName = templateSetting.getSheetName(exportType);
+            if (StringUtils.isNotBlank(sheetName)) {
+                workbook.setSheetName(0, sheetName);
+            }
             this.findTitle(workbook.getSheetAt(0));
-            return workbook;
+            workbookWraps.add(new WorkbookWrap(template, workbook));
         } catch (IOException e) {
             throw new SettingException(e);
         }
@@ -115,26 +100,13 @@ public class WorkbookConfig<T> {
         throw new ExcelException("模版错误");
     }
 
-    /**
-     * 第一个Sheet会根据配置初始化
-     *
-     * @return
-     */
-    private void pushDuplicateWorkBook() {
-        String sheetName = templateSetting.getSheetName(exportType);
-        if (StringUtils.isNotBlank(sheetName)) {
-            templateWorkbook.setSheetName(0, sheetName);
-        }
-        writeWorkbooks.add(new SXSSFWorkbook(templateWorkbook));
-    }
-
     public synchronized Sheet getNextSheet() {
         if (exportType == ExportType.SingleSheet) {
-            if (!writeWorkbooks.isEmpty()) {
+            if (!workbookWraps.isEmpty()) {
                 write();
             }
-            pushDuplicateWorkBook();
-            SXSSFWorkbook workbook = writeWorkbooks.peek();
+            pushNewWorkbookWrap();
+            SXSSFWorkbook workbook = workbookWraps.peek().getWriteWorkbooks();
             SXSSFSheet sheet = workbook.getSheetAt(0);
             return sheet;
         } else if (exportType == ExportType.MultiSheet) {
@@ -146,11 +118,7 @@ public class WorkbookConfig<T> {
 
 
     public void write() {
-        try (OutputStream outputStream = new FileOutputStream(resultFileSetting.getNextResultFile())) {
-            writeWorkbooks.poll().write(outputStream);
-        } catch (IOException e) {
-            throw new SettingException(e);
-        }
+        workbookWraps.poll().writeTo(resultFileSetting.getNextResultFile());
     }
 
     public List<File> getResultFiles() {
@@ -159,12 +127,4 @@ public class WorkbookConfig<T> {
         return Arrays.asList(files);
     }
 
-    public void close() {
-        try {
-            templateWorkbook.close();
-            FileUtils.forceDelete(templateFile);
-        } catch (IOException e) {
-            log.error("closed ", e);
-        }
-    }
 }
