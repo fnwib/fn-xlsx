@@ -1,6 +1,7 @@
 package com.github.fnwib.write.config;
 
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.parse.Parser;
 import com.github.fnwib.write.WriteParser;
@@ -9,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 
@@ -16,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -126,7 +129,7 @@ public class WorkbookConfig<T> {
      *
      * @return
      */
-    public synchronized SXSSFWorkbook getDuplicateWorkBook() {
+    private SXSSFWorkbook getDuplicateWorkBook() {
         if (templateWorkBook != null) {
             currentWriteWorkBook = new SXSSFWorkbook(templateWorkBook);
         } else {
@@ -140,8 +143,21 @@ public class WorkbookConfig<T> {
         return currentWriteWorkBook;
     }
 
+    public synchronized Sheet getNextSheet() {
+        this.close();
+        if (exportType == ExportType.SingleSheet) {
+            SXSSFWorkbook duplicateWorkBook = getDuplicateWorkBook();
+            SXSSFSheet sheet = duplicateWorkBook.getSheetAt(0);
+            return sheet;
+        } else if (exportType == ExportType.MultiSheet) {
+            throw new NotSupportedException("暂时不支持导出类型, " + exportType.name());
+        } else {
+            throw new NotSupportedException("不支持导出类型, " + exportType.name());
+        }
+    }
 
-    public synchronized void close() {
+
+    public void close() {
         if (currentWriteWorkBook == null) {
             return;
         }
@@ -150,6 +166,12 @@ public class WorkbookConfig<T> {
         } catch (IOException e) {
             throw new SettingException(e);
         }
+    }
+
+    public List<File> getResultFiles() {
+        File resultFolder = resultFileSetting.getResultFolder();
+        File[] files = resultFolder.listFiles();
+        return Arrays.asList(files);
     }
 
 }

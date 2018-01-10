@@ -31,4 +31,6 @@ public interface ExcelWriter<T> {
      */
     File write2File() throws IOException;
 
+    List<File> getFiles();
+
 }

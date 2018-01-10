@@ -45,10 +45,10 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
         List<WriteModel> source = getDataList(6);
         writerProcessor.write(source);
-        File file1 = writerProcessor.write2File();
+        writerProcessor.write2File();
 
         List<WriteModel> target = new ArrayList<>();
-        for (File file2 : file1.listFiles()) {
+        for (File file2 : writerProcessor.getFiles()) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(parser, workbook, 0);
             target.addAll(excelReader.getData());
@@ -103,9 +103,9 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
         writerProcessor.writeMergedRegion(source.subList(0, 1), Arrays.asList(0, 1, 2));
         writerProcessor.writeMergedRegion(source.subList(1, source.size()), Arrays.asList(0, 1, 2));
-        File file = writerProcessor.write2File();
+        writerProcessor.write2File();
         List<WriteModel> target = new ArrayList<>();
-        for (File file1 : file.listFiles()) {
+        for (File file1 : writerProcessor.getFiles()) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file1);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(parser, workbook, 0);
             target.addAll(excelReader.getData());

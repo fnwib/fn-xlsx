@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -118,6 +119,12 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
     @Override
     public void close() throws Exception {
         workbook.close();
+
+    }
+
+    @Override
+    public List<File> getFiles() {
+        return Arrays.asList(exportFile);
     }
 }
 

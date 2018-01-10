@@ -1,11 +1,7 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.write.config.ExportType;
 import com.github.fnwib.write.config.WorkbookConfig;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Excel生成工具
  * <p>
+ *
  * @param <T>
  */
 public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
@@ -38,18 +35,9 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
     }
 
     private synchronized void useNextSheet() {
-        workbookConfig.close();
-        ExportType exportType = this.workbookConfig.getExportType();
-        if (exportType == ExportType.SingleSheet) {
-            SXSSFWorkbook duplicateWorkBook = workbookConfig.getDuplicateWorkBook();
-            SXSSFSheet sheet = duplicateWorkBook.getSheetAt(0);
-            currentSheet.set(sheet);
-            currentRowNum.set(workbookConfig.getTitleRowNum() + 1);
-        } else if (exportType == ExportType.MultiSheet) {
-            throw new NotSupportedException("暂时不支持导出类型, " + exportType.name());
-        } else {
-            throw new NotSupportedException("不支持导出类型, " + exportType.name());
-        }
+        Sheet sheet = this.workbookConfig.getNextSheet();
+        currentSheet.set(sheet);
+        currentRowNum.set(workbookConfig.getTitleRowNum() + 1);
     }
 
     @Override
@@ -88,5 +76,9 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         return workbookConfig.getResultFileSetting().getResultFolder();
     }
 
+    @Override
+    public List<File> getFiles() {
+        return workbookConfig.getResultFiles();
+    }
 }
 
