@@ -73,7 +73,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
             if (matched) {
                 currentRowNum.set(row.getRowNum() + 1);
                 writeParser = parser.createWriteParser();
-                writeParser.defaultCellStyle(cellStyle);
+                writeParser.setCellStyle(cellStyle);
                 flag = true;
                 break;
             }

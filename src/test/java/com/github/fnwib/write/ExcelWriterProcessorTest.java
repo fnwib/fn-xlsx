@@ -27,17 +27,22 @@ import java.util.Map;
 
 public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
-    @Test
-    public void write() {
-        ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
+    private static final ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
+
+    static {
         converterRegistry.addConverter(String.class, new StringExcelConverter());
         converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter());
         converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
         converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
+    }
+
+    @Test
+    public void write() {
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
-        ResultFileSetting resultFileSetting = new ResultFileSetting(40, "aaaa2zs2.xlsx", exportFolder);
+        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2.xlsx", exportFolder);
         TemplateSetting templateSetting = TemplateSetting.builder().template(tempTemplateFile)
                 .addLastTitles(Lists.newArrayList("AAA"))
+                .useDefaultCellStyle(true)
                 .build();
         WorkbookConfig writeConfig = new WorkbookConfig(parser, ExportType.SingleSheet, resultFileSetting, templateSetting);
         ExcelWriterProcessor<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
@@ -82,12 +87,6 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
     @Test
     public void writeMergedRegion() {
-
-        ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
-        converterRegistry.addConverter(String.class, new StringExcelConverter());
-        converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter());
-        converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
-        converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
 
         ResultFileSetting resultFileSetting = new ResultFileSetting(2, "aaaa2zs2.xlsx", exportFolder);

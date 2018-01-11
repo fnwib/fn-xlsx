@@ -7,6 +7,7 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.reflect.Property;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -25,19 +26,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class WriteParser<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WriteParser.class);
 
-    private Class<T> entityClass;
+    private final Class<T> entityClass;
 
     private final Map<Method, Title> RULES = new HashMap<>();
+
+    private Sheet sheet;
 
     private CellStyle cellStyle;
 
     public WriteParser(Class<T> entityClass, Map<Property, Title> rules) {
         this.entityClass = entityClass;
         initRules(rules);
+    }
+
+    public void setSheet(Sheet sheet) {
+        this.sheet = sheet;
     }
 
     public void setCellStyle(CellStyle defaultCellStyle) {
@@ -50,10 +58,14 @@ public class WriteParser<T> {
             if (propertyDescriptor.getReadMethod() == null) {
                 throw new PropertyException(propertyDescriptor.getName() + "没有标准的getter");
             } else {
-                LOGGER.debug("property is '{}' , setter is '{}'", property.getName(), propertyDescriptor.getReadMethod().getName());
+                log.debug("property is '{}' , setter is '{}'", property.getName(), propertyDescriptor.getReadMethod().getName());
                 RULES.put(propertyDescriptor.getReadMethod(), title);
             }
         });
+    }
+
+    public void convert(int rowNum, T element) {
+        convert(this.sheet, rowNum, element);
     }
 
     public void convert(Sheet sheet, int rowNum, T element) {
@@ -81,13 +93,16 @@ public class WriteParser<T> {
                     builder.add(cellTexts);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
-                LOGGER.error("error", e);
+                log.error("error", e);
                 throw new PropertyException(e);
             }
         });
         return builder.build().flatMap(List::stream).sorted(Comparator.comparing(CellText::getCellNum));
     }
 
+    public void convert(int rowNum, List<T> elements, List<Integer> mergedRangeIndexes) {
+        convert(this.sheet, rowNum, elements, mergedRangeIndexes);
+    }
 
     public void convert(Sheet sheet, int rowNum, List<T> elements, List<Integer> mergedRangeIndexes) {
         CellTextMatrix cellTextMatrix = new CellTextMatrix(elements.size());

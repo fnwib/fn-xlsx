@@ -1,13 +1,18 @@
 package com.github.fnwib.write;
 
+import com.github.fnwib.exception.NotSupportedException;
+import com.github.fnwib.write.config.ExportType;
 import com.github.fnwib.write.config.WorkbookConfig;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Sheet;
+import com.github.fnwib.write.config.WorkbookWrap;
+import com.github.fnwib.write.config.WorkbookWrapFactory;
+import com.google.common.collect.Queues;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.File;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Excel生成工具
@@ -17,26 +22,39 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
-    private final WorkbookConfig<T> workbookConfig;
-
-    private final AtomicReference<Sheet> currentSheet = new AtomicReference<>();
-
+    private final WorkbookConfig<T>      workbookConfig;
+    private final WorkbookWrapFactory<T> workbookWrapFactory;
+    private final Queue<WorkbookWrap>    workbookWraps;
+    private final ExportType             exportType;
     private final AtomicInteger currentRowNum = new AtomicInteger();
-
-    private final WriteParser<T> writeParser;
+    private WriteParser<T> writeParser;
 
     public ExcelWriterProcessor(WorkbookConfig<T> workbookConfig) {
+        this.workbookWrapFactory = new WorkbookWrapFactory<>(workbookConfig);
         this.workbookConfig = workbookConfig;
+        this.exportType = workbookConfig.getExportType();
+        this.workbookWraps = Queues.newArrayDeque();
         useNextSheet();
-        this.writeParser = workbookConfig.getWriteParser();
     }
 
     private synchronized void useNextSheet() {
-        CellStyle cellStyle = workbookConfig.getCellStyle();
-        writeParser.setCellStyle(cellStyle);
-        Sheet sheet = this.workbookConfig.getNextSheet();
-        currentSheet.set(sheet);
-        currentRowNum.set(workbookConfig.getTitleRowNum() + 1);
+        if (exportType == ExportType.SingleSheet) {
+            if (!workbookWraps.isEmpty()) {
+                workbookWraps.poll().write();
+            }
+            workbookWraps.add(workbookWrapFactory.createWorkbookWrap());
+            WorkbookWrap workbookWrap = workbookWraps.peek();
+            SXSSFWorkbook workbook = workbookWrap.getWriteWorkbooks();
+            SXSSFSheet sheet = workbook.getSheetAt(0);
+            WriteParser<T> writeParser = workbookWrap.getWriteParser();
+            writeParser.setSheet(sheet);
+            this.writeParser = writeParser;
+            currentRowNum.set(workbookWrapFactory.getTitleRowNum() + 1);
+        } else if (exportType == ExportType.MultiSheet) {
+            throw new NotSupportedException("暂时不支持导出类型, " + exportType.name());
+        } else {
+            throw new NotSupportedException("不支持导出类型, " + exportType.name());
+        }
     }
 
     @Override
@@ -44,7 +62,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         if (!workbookConfig.getResultFileSetting().valid(currentRowNum)) {
             useNextSheet();
         }
-        writeParser.convert(currentSheet.get(), currentRowNum.getAndAdd(1), element);
+        writeParser.convert(currentRowNum.getAndAdd(1), element);
     }
 
     @Override
@@ -65,13 +83,13 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
             if (!workbookConfig.getResultFileSetting().valid(currentRowNum)) {
                 useNextSheet();
             }
-            writeParser.convert(currentSheet.get(), currentRowNum.getAndAdd(elements.size()), elements, mergedRangeIndexes);
+            writeParser.convert(currentRowNum.getAndAdd(elements.size()), elements, mergedRangeIndexes);
         }
     }
 
     @Override
     public File write2File() {
-        workbookConfig.write();
+        workbookWraps.poll().write();
         return workbookConfig.getResultFileSetting().getResultFolder();
     }
 
