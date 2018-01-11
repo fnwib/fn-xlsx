@@ -6,8 +6,6 @@ import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.config.WorkbookWrap;
 import com.github.fnwib.write.config.WorkbookWrapFactory;
 import com.google.common.collect.Queues;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.File;
 import java.util.List;
@@ -44,11 +42,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
             }
             workbookWraps.add(workbookWrapFactory.createWorkbookWrap());
             WorkbookWrap workbookWrap = workbookWraps.peek();
-            SXSSFWorkbook workbook = workbookWrap.getWriteWorkbooks();
-            SXSSFSheet sheet = workbook.getSheetAt(0);
-            WriteParser<T> writeParser = workbookWrap.getWriteParser();
-            writeParser.setSheet(sheet);
-            this.writeParser = writeParser;
+            this.writeParser = workbookWrap.getWriteParser();
             currentRowNum.set(workbookWrapFactory.getTitleRowNum() + 1);
         } else if (exportType == ExportType.MultiSheet) {
             throw new NotSupportedException("暂时不支持导出类型, " + exportType.name());

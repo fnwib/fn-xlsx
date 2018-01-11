@@ -1,6 +1,7 @@
 package com.github.fnwib.write.config;
 
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.parse.Parser;
 import com.github.fnwib.write.WriteParser;
@@ -20,6 +21,8 @@ import java.io.OutputStream;
 @Slf4j
 @Getter
 public class WorkbookWrap<T> {
+
+    private static final int defaultSheetIndex = 0;
     private final Parser<T>         parser;
     private final File              templateFile;
     private final XSSFWorkbook      templateWorkbook;
@@ -27,6 +30,10 @@ public class WorkbookWrap<T> {
     private final ResultFileSetting resultFileSetting;
     private final TemplateSetting   templateSetting;
     private final ExportType        exportType;
+
+    private final int titleRowNum;
+
+    private boolean written;
 
     public WorkbookWrap(Parser<T> parser,
                         ExportType exportType,
@@ -38,46 +45,61 @@ public class WorkbookWrap<T> {
         this.resultFileSetting = resultFileSetting;
         this.templateSetting = templateSetting;
         this.templateFile = resultFileSetting.copyFile(templateSetting.getTemplate());
-        this.templateWorkbook = buildWorkbook(templateFile, titleRowNum);
+        this.titleRowNum = titleRowNum;
+        this.templateWorkbook = buildWorkbook();
         this.writeWorkbooks = new SXSSFWorkbook(templateWorkbook);
-
-
+        this.written = false;
     }
 
     public WriteParser<T> getWriteParser() {
+        if (written) {
+            throw new ExcelException("excel已经写入文件");
+        }
         WriteParser<T> writeParser = parser.createWriteParser();
         if (templateSetting.isUseDefaultCellStyle()) {
             writeParser.setCellStyle(getCellStyle());
         }
+        writeParser.setSheet(getNextSheet());
         return writeParser;
     }
 
-    private XSSFWorkbook buildWorkbook(File file, Integer titleRowNum) {
+    private Sheet getNextSheet() {
+        if (exportType == ExportType.SingleSheet) {
+            written = true;
+            return writeWorkbooks.getSheetAt(defaultSheetIndex);
+        } else {
+            throw new NotSupportedException("不支持导出类型, " + exportType.name());
+        }
+    }
+
+    private XSSFWorkbook buildWorkbook() {
         try {
-            XSSFWorkbook workbook = new XSSFWorkbook(FileUtils.openInputStream(file));
-            if (templateSetting.updateTitle()) {
-                XSSFSheet sheet = workbook.getSheetAt(0);
-                XSSFRow row = sheet.getRow(titleRowNum);
-                int cellNum = row.getLastCellNum();
-                XSSFCellStyle cellStyle = row.getCell(cellNum - 1).getCellStyle();
-                for (String title : templateSetting.getAddLastTitles()) {
-                    XSSFCell cell = row.createCell(cellNum++);
-                    cell.setCellStyle(cellStyle);
-                    cell.setCellValue(title);
-                }
-                parser.match(row);
-            }
-            String sheetName = templateSetting.getSheetName(exportType);
-            if (StringUtils.isNotBlank(sheetName)) {
-                templateWorkbook.setSheetName(0, sheetName);
+            XSSFWorkbook workbook = new XSSFWorkbook(FileUtils.openInputStream(templateFile));
+            buildSheet(workbook, defaultSheetIndex);
+            if (StringUtils.isNotBlank(templateSetting.getSheetName())) {
+                workbook.setSheetName(defaultSheetIndex, templateSetting.getSheetName());
             }
             return workbook;
         } catch (IOException e) {
             log.error("build workbook error", e);
             throw new ExcelException(e);
-        } finally {
-
         }
+    }
+
+    private Sheet buildSheet(XSSFWorkbook workbook, int sheetIndex) {
+        XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
+        if (templateSetting.updateTitle()) {
+            XSSFRow row = sheet.getRow(titleRowNum);
+            int cellNum = row.getLastCellNum();
+            XSSFCellStyle cellStyle = row.getCell(cellNum - 1).getCellStyle();
+            for (String title : templateSetting.getAddLastTitles()) {
+                XSSFCell cell = row.createCell(cellNum++);
+                cell.setCellStyle(cellStyle);
+                cell.setCellValue(title);
+            }
+            parser.match(row);
+        }
+        return sheet;
     }
 
     private CellStyle getCellStyle() {
