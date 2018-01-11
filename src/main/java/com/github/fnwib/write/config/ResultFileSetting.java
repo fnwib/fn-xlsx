@@ -22,7 +22,7 @@ public class ResultFileSetting {
 
     private final AtomicInteger fileSeq = new AtomicInteger(1);
 
-    private final FileNameProducer exportFileName = (baseName, extension) -> baseName + TWO_DIGITS.format(fileSeq.getAndAdd(1)) + extension;
+    private final FileNameProducer exportFileName = (baseName, extension) -> baseName + "-" + TWO_DIGITS.format(fileSeq.getAndAdd(1)) + extension;
 
     private final FileNameProducer templateFileName = (baseName, extension) -> baseName + UUIDUtils.getHalfId() + extension;
 
