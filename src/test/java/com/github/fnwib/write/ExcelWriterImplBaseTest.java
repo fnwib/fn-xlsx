@@ -77,6 +77,7 @@ public class ExcelWriterImplBaseTest {
             WriteModel model = WriteModel.builder().string("A").intNum(1000000000)
                     .longNum(1111111111111111111L)
                     .aaa("AAAA")
+                    .sequence(i)
                     .localDate(LocalDate.now()).mapString(mapString).mapNumber(mapNumber).build();
             result.add(model);
         }

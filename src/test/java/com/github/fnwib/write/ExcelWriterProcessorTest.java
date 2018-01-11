@@ -20,10 +20,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
@@ -41,7 +38,8 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
         ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2.xlsx", exportFolder);
         TemplateSetting templateSetting = TemplateSetting.builder().template(tempTemplateFile)
-                .addLastTitles(Lists.newArrayList("AAA"))
+                .addLastTitles(Lists.newArrayList("AAA", "序号"))
+                .cellText(new CellText(0, 0, "标题"))
                 .useDefaultCellStyle(true)
                 .build();
         WorkbookConfig writeConfig = new WorkbookConfig(parser, ExportType.SingleSheet, resultFileSetting, templateSetting);
@@ -55,7 +53,10 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(parser, workbook, 0);
             target.addAll(excelReader.getData());
+            String preTitle = excelReader.getPreTitle(0, 0);
+            Assert.assertEquals("0,0 标题不一致", "标题", preTitle);
         }
+        Collections.sort(target, Comparator.comparing(WriteModel::getSequence));
         Assert.assertSame("集合长度不一致", source.size(), target.size());
         for (int i = 0; i < source.size(); i++) {
             WriteModel sourceModel = source.get(i);
@@ -91,7 +92,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
         ResultFileSetting resultFileSetting = new ResultFileSetting(2, "aaaa2zs2.xlsx", exportFolder);
         TemplateSetting templateSetting = TemplateSetting.builder().template(tempTemplateFile)
-                .addLastTitles(Lists.newArrayList("AAA"))
+                .addLastTitles(Lists.newArrayList("AAA", "序号"))
                 .build();
         WorkbookConfig writeConfig = new WorkbookConfig(parser, ExportType.SingleSheet, resultFileSetting, templateSetting);
         ExcelWriterProcessor<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
@@ -109,6 +110,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(parser, workbook, 0);
             target.addAll(excelReader.getData());
         }
+        Collections.sort(target, Comparator.comparing(WriteModel::getSequence));
         Assert.assertSame("集合长度不一致", source.size(), target.size());
         for (int i = 0; i < source.size(); i++) {
             WriteModel sourceModel = source.get(i);

@@ -4,6 +4,7 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.parse.Parser;
+import com.github.fnwib.write.CellText;
 import com.github.fnwib.write.WriteParser;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 @Slf4j
 @Getter
@@ -88,7 +90,16 @@ public class WorkbookWrap<T> {
 
     private Sheet buildSheet(XSSFWorkbook workbook, int sheetIndex) {
         XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
-        if (templateSetting.updateTitle()) {
+        if (templateSetting.changed()) {
+            List<CellText> cellTexts = templateSetting.getCellTexts();
+            for (CellText cellText : cellTexts) {
+                if (cellText.getRowNum() >= titleRowNum) {
+                    throw new SettingException("只能修改title上方的数据, " + cellText);
+                }
+                Row row = getRow(sheet, cellText.getRowNum());
+                Cell cell = getCell(row, cellText.getCellNum());
+                cell.setCellValue(cellText.getText());
+            }
             XSSFRow row = sheet.getRow(titleRowNum);
             int cellNum = row.getLastCellNum();
             XSSFCellStyle cellStyle = row.getCell(cellNum - 1).getCellStyle();
@@ -100,6 +111,16 @@ public class WorkbookWrap<T> {
             parser.match(row);
         }
         return sheet;
+    }
+
+    private Row getRow(Sheet sheet, int rowNum) {
+        Row row = sheet.getRow(rowNum);
+        return row == null ? sheet.createRow(rowNum) : row;
+    }
+
+    private Cell getCell(Row row, int cellNum) {
+        Cell cell = row.getCell(cellNum);
+        return cell == null ? row.createCell(cellNum) : cell;
     }
 
     private CellStyle getCellStyle() {

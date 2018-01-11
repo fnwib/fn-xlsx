@@ -1,8 +1,10 @@
 package com.github.fnwib.write.config;
 
 import com.github.fnwib.exception.SettingException;
+import com.github.fnwib.write.CellText;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 
 import java.io.File;
 import java.util.List;
@@ -10,13 +12,17 @@ import java.util.List;
 @Builder
 public class TemplateSetting {
 
-    private File         template;
+    private File           template;
     @Getter
-    private String       sheetName;
+    private String         sheetName;
     @Getter
-    private boolean      useDefaultCellStyle;
+    private boolean        useDefaultCellStyle;
     @Getter
-    private List<String> addLastTitles;
+    @Singular
+    private List<String>   addLastTitles;
+    @Getter
+    @Singular
+    private List<CellText> cellTexts;
 
     public File getTemplate() {
         if (template == null) {
@@ -28,8 +34,8 @@ public class TemplateSetting {
         return template;
     }
 
-    public boolean updateTitle() {
-        return addLastTitles != null && !addLastTitles.isEmpty();
+    public boolean changed() {
+        return !addLastTitles.isEmpty() || !cellTexts.isEmpty();
     }
 
 }

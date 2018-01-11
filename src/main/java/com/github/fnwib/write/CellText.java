@@ -12,13 +12,20 @@ public class CellText {
     private int    cellNum;
     private String text;
 
+    public CellText(int cellNum, String text) {
+        this.cellNum = cellNum;
+        this.text = text;
+    }
+
+    public CellText(int rowNum, int cellNum, String text) {
+        this.rowNum = rowNum;
+        this.cellNum = cellNum;
+        this.text = text;
+    }
+
     public CellText setRowNum(int rowNum) {
         this.rowNum = rowNum;
         return this;
     }
 
-    public CellText(int cellNum, String text) {
-        this.cellNum = cellNum;
-        this.text = text;
-    }
 }

@@ -16,6 +16,8 @@ import java.util.Map;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class WriteModel {
+    @CellType(title = "序号")
+    private Integer                sequence;
     @CellType(title = "字符串")
     private String                 string;
     @CellType(title = "数字Int")
@@ -31,7 +33,6 @@ public class WriteModel {
 
     @CellType(title = "MAP [A-Z] null")
     private Map<TitleDesc, String> mapNull;
-
 
     @CellType(title = "AAA")
     private String aaa;
