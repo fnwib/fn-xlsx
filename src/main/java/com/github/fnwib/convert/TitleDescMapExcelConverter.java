@@ -30,6 +30,11 @@ public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc,
     }
 
     @Override
+    public Map<TitleDesc, String> getDefaultValue() {
+        return null;
+    }
+
+    @Override
     public Map<TitleDesc, String> convert(Title title, Row row) {
         Map<TitleDesc, String> hashMap = new HashMap<>();
         for (TitleDesc titleDesc : title.getList()) {

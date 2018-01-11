@@ -51,18 +51,23 @@ public class ReadParser<T> {
             T t = constructor.newInstance();
             RULES.forEach((method, title) -> {
                 try {
-                    CellType cellType = title.getCellType();
-                    if (cellType.type() == Operation.LINE_NUM) {
-                        Object value = row.getRowNum() + 1;
+                    if (title.isEmpty()) {
+                        ExcelConverter<?> converter = title.getConverter();
+                        method.invoke(t, converter.getDefaultValue());
+                    } else {
+                        CellType cellType = title.getCellType();
+                        if (cellType.type() == Operation.LINE_NUM) {
+                            Object value = row.getRowNum() + 1;
+                            method.invoke(t, value);
+                            return;
+                        }
+                        ExcelConverter<?> converter = title.getConverter();
+                        Object value = converter.convert(title, row);
+                        if (cellType.type() == Operation.REORDER) {
+                            value = ValueUtil.sortAndTrim(value.toString(), "/");
+                        }
                         method.invoke(t, value);
-                        return;
                     }
-                    ExcelConverter<?> converter = title.getConverter();
-                    Object value = converter.convert(title, row);
-                    if (cellType.type() == Operation.REORDER) {
-                        value = ValueUtil.sortAndTrim(value.toString(), "/");
-                    }
-                    method.invoke(t, value);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException(e);
                 }

@@ -38,6 +38,11 @@ public class NumberExcelConverterFactory implements ExcelConverterFactory<Number
         }
 
         @Override
+        public T getDefaultValue() {
+            return null;
+        }
+
+        @Override
         public T convert(Title title, Row row) throws ExcelException {
             List<TitleDesc> list = title.getList();
             if (list.size() != 1) {

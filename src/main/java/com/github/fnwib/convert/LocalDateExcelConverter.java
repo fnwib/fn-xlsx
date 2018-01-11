@@ -32,6 +32,11 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
     private static final Pattern SHORT_DATE_PATTERN_NONE = Pattern.compile("^\\d{4}\\d{2}\\d{2}$");
 
     @Override
+    public LocalDate getDefaultValue() {
+        return null;
+    }
+
+    @Override
     public LocalDate convert(Title title, Row row) throws ExcelException {
         List<TitleDesc> list = title.getList();
         if (list.size() != 1) {

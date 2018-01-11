@@ -68,4 +68,7 @@ public class Model {
     @CellType(title = "Map \\d+ \\(Chinese Name\\)")
     private Map<Integer, String> intKeyMap3;
 
+    @CellType(title = "Excel no match")
+    private Map<Integer, String> noMatchMap;
+
 }

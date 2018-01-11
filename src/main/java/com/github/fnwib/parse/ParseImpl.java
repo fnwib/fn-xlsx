@@ -67,27 +67,30 @@ public class ParseImpl<T> implements Parser<T> {
         for (Property property : properties) {
             Field field = property.getField();
             CellType type = field.getAnnotation(CellType.class);
-            Title title;
             if (type.type() == Operation.LINE_NUM) {
-                title = new Title(field.getName(), type);
+                map.put(property, new Title(field.getName(), type));
             } else if (conversionService.canConvert(field.getType())) {
                 List<TitleDesc> list = this.getRule(row, type);
+                Title title;
                 if (list.isEmpty()) {
-                    continue;
-                }
-                title = new Title(field.getName(), type, list);
-                if (!title.isSerial()) {
-                    throw new NotSupportedException(title.getFieldName() + " matched index is not continuous");
+                    title = new Title();
+                } else {
+                    title = new Title(field.getName(), type, list);
+                    if (!title.isSerial()) {
+                        throw new NotSupportedException(title.getFieldName() + " matched index is not continuous");
+                    }
                 }
                 ExcelConverter<?> convert = conversionService.findConvert(field.getType());
                 title.setConverter(convert);
-                LOGGER.debug("-->field name is '{}', field title is '{}', excel title is '{}' ", field.getName(), title, list);
+                map.put(property, title);
+                LOGGER.debug("-->field name is '{}',  excel title is '{}' ", field.getName(), list);
             } else {
                 throw new NotSupportedException("not support convert " + field.getType() + ",Please support this type by yourself");
             }
-            map.put(property, title);
+
         }
-        if ((double) map.size() / properties.size() < RATIO) {
+        int hit = Maps.filterValues(map, v -> !v.isEmpty()).size();
+        if ((double) hit / properties.size() < RATIO) {
             return;
         }
         map.forEach((property, title) -> PROPERTY_MAP.put(property, title));
@@ -126,7 +129,7 @@ public class ParseImpl<T> implements Parser<T> {
         if (PROPERTY_MAP.isEmpty()) {
             throw new ExcelException("没有找到Excel表头与" + clazz.getName() + "的映射关系");
         }
-        return new WriteParser<>(clazz, PROPERTY_MAP);
+        return new WriteParser<>(clazz, Maps.filterValues(PROPERTY_MAP, v -> !v.isEmpty()));
     }
 
 }

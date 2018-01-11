@@ -8,6 +8,12 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.List;
 
 public interface ExcelConverter<T> {
+
+    /**
+     * 默认值
+     */
+    T getDefaultValue();
+
     /**
      * 读
      *

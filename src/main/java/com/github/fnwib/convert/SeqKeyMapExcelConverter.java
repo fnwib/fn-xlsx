@@ -6,6 +6,7 @@ import com.github.fnwib.parse.Title;
 import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.CellText;
+import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -27,6 +28,11 @@ public class SeqKeyMapExcelConverter implements ExcelConverter<Map<Integer, Stri
     public SeqKeyMapExcelConverter(boolean toSingleByte, boolean filterInsideSpace) {
         this.toSingleByte = toSingleByte;
         this.filterInsideSpace = filterInsideSpace;
+    }
+
+    @Override
+    public Map<Integer, String> getDefaultValue() {
+        return Maps.newHashMap();
     }
 
     @Override

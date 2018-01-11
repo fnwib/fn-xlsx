@@ -29,6 +29,11 @@ public class StringExcelConverter implements ExcelConverter<String> {
     }
 
     @Override
+    public String getDefaultValue() {
+        return null;
+    }
+
+    @Override
     public String convert(Title title, Row row) {
         List<TitleDesc> list = title.getList();
         if (list.size() != 1) {

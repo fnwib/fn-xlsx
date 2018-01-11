@@ -75,6 +75,7 @@ public class ReadParseImplTest {
                     Assert.assertSame("'Map [A-Z]' support", 3, model.getStringKeyMap().size());
                     Assert.assertSame("'Map 1 (Chinese Name)' support", 2, model.getIntKeyMap2().size());
                     Assert.assertSame("'Map \\d+ (Chinese Name)' support", 4, model.getIntKeyMap3().size());
+                    Assert.assertNotNull("map no match ", model.getNoMatchMap());
 
                 }
             }

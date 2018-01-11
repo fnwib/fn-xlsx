@@ -4,6 +4,7 @@ import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.convert.ExcelConverter;
 import com.github.fnwib.util.MiddleDifference;
 import com.google.common.base.Joiner;
+import lombok.ToString;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import java.util.OptionalInt;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@ToString
 public final class Title {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Title.class);
@@ -23,14 +25,24 @@ public final class Title {
     private final CellType        cellType;
     private final List<TitleDesc> list;
     private final int             min;
+    private final boolean         empty;
 
     private ExcelConverter<?> converter;
+
+    Title() {
+        this.fieldName = null;
+        this.cellType = null;
+        this.list = null;
+        this.min = 0;
+        this.empty = true;
+    }
 
     Title(String fieldName, CellType cellType) {
         this.fieldName = fieldName;
         this.cellType = cellType;
         this.list = new ArrayList<>(0);
         this.min = 0;
+        this.empty = false;
     }
 
     public Title(String fieldName, CellType cellType, List<TitleDesc> list) {
@@ -43,6 +55,11 @@ public final class Title {
         } else {
             this.min = 0;
         }
+        this.empty = false;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 
     public ExcelConverter<?> getConverter() {
