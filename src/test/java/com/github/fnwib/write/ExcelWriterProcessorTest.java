@@ -19,6 +19,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -34,21 +35,19 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
     }
 
     @Test
-    public void write() {
+    public void write() throws IOException {
         Parser<WriteModel> parser = new ParseImpl<>(WriteModel.class, converterRegistry, 0.6);
-        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2.xlsx", exportFolder);
+        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
         TemplateSetting templateSetting = TemplateSetting.builder().template(tempTemplateFile)
                 .addLastTitles(Lists.newArrayList("AAA", "序号"))
                 .cellText(new CellText(0, 0, "标题"))
                 .useDefaultCellStyle(true)
                 .build();
-        WorkbookConfig writeConfig = new WorkbookConfig(parser, ExportType.SingleSheet, resultFileSetting, templateSetting);
-        ExcelWriterProcessor<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
-
         List<WriteModel> source = getDataList(6);
-        writerProcessor.write(source);
-        writerProcessor.write2File();
         List<WriteModel> target = new ArrayList<>();
+        WorkbookConfig writeConfig = new WorkbookConfig(parser, ExportType.SingleSheet, resultFileSetting, templateSetting);
+        ExcelWriter<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
+        writerProcessor.write(source);
         for (File file2 : writerProcessor.getFiles()) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(parser, workbook, 0);
@@ -102,7 +101,6 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         writerProcessor.writeMergedRegion(source.subList(0, 1), Arrays.asList(0, 1, 2));
         writerProcessor.writeMergedRegion(source.subList(1, 3), Arrays.asList(0, 1, 2));
         writerProcessor.writeMergedRegion(source.subList(3, source.size()), Arrays.asList(0, 1, 2));
-        writerProcessor.write2File();
         List<WriteModel> target = new ArrayList<>();
         List<File> files = writerProcessor.getFiles();
         for (File file1 : files) {

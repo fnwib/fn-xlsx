@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class ResultFileSetting {
 
+    private static final String EXTENSION = ".xlsx";
+
     private static final int STEP = 500000;
 
     private static final DecimalFormat TWO_DIGITS = new DecimalFormat("00");
@@ -24,14 +26,12 @@ public class ResultFileSetting {
 
     private final FileNameProducer exportFileName = (baseName, extension) -> baseName + "-" + TWO_DIGITS.format(fileSeq.getAndAdd(1)) + extension;
 
-    private final FileNameProducer templateFileName = (baseName, extension) -> baseName + UUIDUtils.getHalfId() + extension;
-
     private final File resultFolder;
 
     private final int maxRowsCanWrite;
 
     private final String baseName;
-    private final String extension;
+
 
     /**
      * @param maxRowCanWrite sheet可写入最大行
@@ -60,7 +60,7 @@ public class ResultFileSetting {
             this.resultFolder = resultFolder;
         }
         this.baseName = FilenameUtils.getBaseName(filename);
-        this.extension = "." + FilenameUtils.getExtension(filename);
+//        this.extension = "." + FilenameUtils.getExtension(filename);
 
     }
 
@@ -69,12 +69,12 @@ public class ResultFileSetting {
     }
 
     public File getNextResultFile() {
-        String filename = exportFileName.getFilename(resultFolder.getAbsolutePath() + File.separator + baseName, extension);
+        String filename = exportFileName.getFilename(resultFolder.getAbsolutePath() + File.separator + baseName, EXTENSION);
         return new File(filename);
     }
 
     public File copyFile(File source) {
-        String template = resultFolder.getAbsolutePath() + File.separator + templateFileName.getFilename(baseName, extension);
+        String template = resultFolder.getAbsolutePath() + File.separator + UUIDUtils.getId() + EXTENSION;
         File target = new File(template);
         try {
             FileUtils.copyFile(source, target);

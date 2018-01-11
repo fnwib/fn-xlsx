@@ -24,13 +24,16 @@ public interface ExcelWriter<T> {
     void writeMergedRegion(List<T> list, List<Integer> cellIndexes);
 
     /**
-     * 写出到文件
+     * 1.写出excel
+     * 2.清理临时文件
      *
-     * @return
      * @throws IOException
      */
-    File write2File() throws IOException;
+    void flush() throws IOException;
 
+    /**
+     * @return
+     */
     List<File> getFiles();
 
 }

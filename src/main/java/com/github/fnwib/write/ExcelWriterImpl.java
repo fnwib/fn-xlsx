@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @param <T>
  */
-public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
+public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriter.class);
 
@@ -45,6 +45,8 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
 
     private WriteParser<T> writeParser;
 
+    private boolean closed = false;
+
     public ExcelWriterImpl(Workbook workbook,
                            CellStyle cellStyle,
                            File exportFile,
@@ -55,6 +57,12 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
         this.cellStyle = cellStyle;
         currentSheet.set(workbook.getSheetAt(0));
         initTitleRow();
+    }
+
+    private void checkState() {
+        if (closed) {
+            throw new ExcelException("ExcelWriter已经关闭");
+        }
     }
 
 
@@ -85,6 +93,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
 
     @Override
     public void write(T element) {
+        checkState();
         writeParser.convert(currentSheet.get(), currentRowNum.getAndAdd(1), element);
     }
 
@@ -97,6 +106,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
 
     @Override
     public void writeMergedRegion(List<T> elements, List<Integer> mergedRangeIndexes) {
+        checkState();
         if (elements.isEmpty()) {
             return;
         }
@@ -108,22 +118,21 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T>, AutoCloseable {
     }
 
     @Override
-    public File write2File() throws IOException {
+    public void flush() {
+        if (closed) return;
         try (OutputStream outputStream = new FileOutputStream(exportFile)) {
             workbook.write(outputStream);
             workbook.close();
+        } catch (IOException e) {
+            throw new ExcelException(e);
         }
-        return exportFile;
-    }
-
-    @Override
-    public void close() throws Exception {
-        workbook.close();
-
     }
 
     @Override
     public List<File> getFiles() {
+        if (!closed) {
+            flush();
+        }
         return Arrays.asList(exportFile);
     }
 }

@@ -1,5 +1,6 @@
 package com.github.fnwib.write;
 
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.write.config.ExportType;
 import com.github.fnwib.write.config.WorkbookConfig;
@@ -26,6 +27,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
     private final ExportType             exportType;
     private final AtomicInteger currentRowNum = new AtomicInteger();
     private WriteParser<T> writeParser;
+    private boolean closed = false;
 
     public ExcelWriterProcessor(WorkbookConfig<T> workbookConfig) {
         this.workbookWrapFactory = new WorkbookWrapFactory<>(workbookConfig);
@@ -51,8 +53,15 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         }
     }
 
+    private void checkState() {
+        if (closed) {
+            throw new ExcelException("ExcelWriter已经关闭");
+        }
+    }
+
     @Override
     public void write(T element) {
+        checkState();
         if (!workbookConfig.getResultFileSetting().valid(currentRowNum)) {
             useNextSheet();
         }
@@ -68,6 +77,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
     @Override
     public void writeMergedRegion(List<T> elements, List<Integer> mergedRangeIndexes) {
+        checkState();
         if (elements.isEmpty()) {
             return;
         }
@@ -82,13 +92,20 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
     }
 
     @Override
-    public File write2File() {
+    public void flush() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         workbookWraps.poll().write();
-        return workbookConfig.getResultFileSetting().getResultFolder();
+
     }
 
     @Override
     public List<File> getFiles() {
+        if (!closed) {
+            flush();
+        }
         return workbookConfig.getResultFiles();
     }
 }
