@@ -12,7 +12,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class Model {
-    @CellType(type = Operation.LINE_NUM)
+    @CellType(operation = Operation.LINE_NUM)
     private Integer lineNum;
 
     @CellType(title = "Text One")
@@ -20,7 +20,7 @@ public class Model {
     @CellType(title = "Text Two")
     private String text2;
 
-    @CellType(title = "Text Reorder", type = Operation.REORDER)
+    @CellType(title = "Text Reorder", operation = Operation.REORDER)
     private String text3;
 
     @CellType(title = "Number")

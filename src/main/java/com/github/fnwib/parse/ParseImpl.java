@@ -67,7 +67,7 @@ public class ParseImpl<T> implements Parser<T> {
         for (Property property : properties) {
             Field field = property.getField();
             CellType type = field.getAnnotation(CellType.class);
-            if (type.type() == Operation.LINE_NUM) {
+            if (type.operation() == Operation.LINE_NUM) {
                 map.put(property, new Title(field.getName(), type));
             } else if (conversionService.canConvert(field.getType())) {
                 List<TitleDesc> list = this.getRule(row, type);

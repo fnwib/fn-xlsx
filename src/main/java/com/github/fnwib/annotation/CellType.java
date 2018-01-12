@@ -27,7 +27,7 @@ public @interface CellType {
      *
      * @return
      */
-    Operation type() default Operation.DEFAULT;
+    Operation operation() default Operation.DEFAULT;
 
     /**
      * 要排除的Excel列title

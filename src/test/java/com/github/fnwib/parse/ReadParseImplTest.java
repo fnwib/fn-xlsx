@@ -1,5 +1,8 @@
 package com.github.fnwib.parse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.convert.*;
 import com.github.fnwib.read.ReadParser;
 import com.monitorjbl.xlsx.StreamingReader;
@@ -14,6 +17,7 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ReadParseImplTest {
@@ -83,4 +87,13 @@ public class ReadParseImplTest {
 
     }
 
+
+    @Test
+    public void tearDown() throws Exception {
+        MapType mapType = TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class);
+        Map<String, String> result = new ObjectMapper().readValue(
+                "{\"a\":\"b\"}", TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class));
+        System.out.println(result);
+    }
 }
+
