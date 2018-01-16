@@ -28,10 +28,10 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
     private static final ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
 
     static {
-        converterRegistry.addConverter(String.class, new StringExcelConverter());
-        converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter());
-        converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
-        converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
+        converterRegistry.addConverter(new StringExcelConverter());
+        converterRegistry.addConverter(new LocalDateExcelConverter());
+        converterRegistry.addConverter(new TitleDescMapExcelConverter());
+        converterRegistry.addConverterFactory(new NumberExcelConverterFactory());
     }
 
     @Test

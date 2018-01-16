@@ -1,8 +1,5 @@
 package com.github.fnwib.parse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.MapType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.convert.*;
 import com.github.fnwib.read.ReadParser;
 import com.monitorjbl.xlsx.StreamingReader;
@@ -17,8 +14,6 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ReadParseImplTest {
 
@@ -33,10 +28,11 @@ public class ReadParseImplTest {
     @Test
     public void convert() {
         ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
-        converterRegistry.addConverter(String.class, new StringExcelConverter());
-        converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter());
-        converterRegistry.addConverter(Map.class, new SeqKeyMapExcelConverter());
-        converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
+        converterRegistry.addConverter(new SeqKeyMapExcelConverter());
+        converterRegistry.addConverter(new TitleKeyMapExcelConverter());
+        converterRegistry.addConverter(new StringExcelConverter());
+        converterRegistry.addConverter(new LocalDateExcelConverter());
+        converterRegistry.addConverterFactory(new NumberExcelConverterFactory());
         Parser<Model> parser = new ParseImpl<>(Model.class, converterRegistry, 0.6);
 
 
@@ -87,13 +83,5 @@ public class ReadParseImplTest {
 
     }
 
-
-    @Test
-    public void tearDown() throws Exception {
-        MapType mapType = TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class);
-        Map<String, String> result = new ObjectMapper().readValue(
-                "{\"a\":\"b\"}", TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class));
-        System.out.println(result);
-    }
 }
 

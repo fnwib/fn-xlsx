@@ -1,5 +1,6 @@
 package com.github.fnwib.convert;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.parse.Title;
@@ -18,8 +19,8 @@ import java.util.Locale;
 public class NumberExcelConverterFactory implements ExcelConverterFactory<Number> {
 
     @Override
-    public <T extends Number> ExcelConverter<T> getConverter(Class<T> targetType) {
-        return new NumberExcelConverterFactory.NumberConverter(targetType);
+    public <T extends Number> ExcelConverter<T> getConverter(JavaType targetType) {
+        return new NumberExcelConverterFactory.NumberConverter(targetType.getRawClass());
     }
 
     private static class NumberConverter<T extends Number> implements ExcelConverter<T> {

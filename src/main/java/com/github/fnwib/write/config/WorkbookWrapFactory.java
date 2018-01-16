@@ -13,7 +13,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.IOException;
 
 @Slf4j
-
 public class WorkbookWrapFactory<T> {
 
     private final Parser<T>         parser;

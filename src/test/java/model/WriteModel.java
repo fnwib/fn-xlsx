@@ -35,7 +35,7 @@ public class WriteModel {
     private Map<TitleDesc, String> mapNull;
 
     @CellType(title = "Excel no match")
-    private Map<Integer, String> noMatchMap;
+    private Map<TitleDesc, String> noMatchMap;
 
     @CellType(title = "AAA")
     private String aaa;

@@ -1,8 +1,10 @@
 package com.github.fnwib.convert;
 
+import com.fasterxml.jackson.databind.JavaType;
+
 public interface ExcelConversionService {
 
-    boolean canConvert(Class<?> type);
+    boolean canConvert(JavaType type);
 
-    ExcelConverter<?> findConvert(Class<?> type);
+    ExcelConverter<?> findConvert(JavaType type);
 }

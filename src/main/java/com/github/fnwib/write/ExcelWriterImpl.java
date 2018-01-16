@@ -29,8 +29,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriter.class);
-
     private CellStyle cellStyle;
 
     private final File exportFile;

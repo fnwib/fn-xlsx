@@ -37,11 +37,11 @@ public class WorkbookWrap<T> {
 
     private boolean written;
 
-    public WorkbookWrap(Parser<T> parser,
-                        ExportType exportType,
-                        ResultFileSetting resultFileSetting,
-                        TemplateSetting templateSetting,
-                        int titleRowNum) {
+    WorkbookWrap(Parser<T> parser,
+                 ExportType exportType,
+                 ResultFileSetting resultFileSetting,
+                 TemplateSetting templateSetting,
+                 int titleRowNum) {
         this.parser = parser;
         this.exportType = exportType;
         this.resultFileSetting = resultFileSetting;
@@ -53,6 +53,7 @@ public class WorkbookWrap<T> {
         this.written = false;
     }
 
+    @SuppressWarnings("unchecked")
     public WriteParser<T> getWriteParser() {
         if (written) {
             throw new ExcelException("excel已经写入文件");
@@ -88,7 +89,7 @@ public class WorkbookWrap<T> {
         }
     }
 
-    private Sheet buildSheet(XSSFWorkbook workbook, int sheetIndex) {
+    private void buildSheet(XSSFWorkbook workbook, int sheetIndex) {
         XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
         if (templateSetting.changed()) {
             List<CellText> cellTexts = templateSetting.getCellTexts();
@@ -110,7 +111,6 @@ public class WorkbookWrap<T> {
             }
             parser.match(row);
         }
-        return sheet;
     }
 
     private Row getRow(Sheet sheet, int rowNum) {

@@ -1,6 +1,10 @@
 package com.github.fnwib.reflect;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeBindings;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.exception.PropertyException;
+import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.Assert;
 
 import java.beans.IntrospectionException;
@@ -8,17 +12,32 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public enum BeanHelper {
+public enum BeanResolver {
 
     INSTANCE;
 
-    private final Map<Class<?>, List<Property>> types = new ConcurrentHashMap();
+    public static final TypeFactory typeFactory = TypeFactory.defaultInstance();
+
+    private final Map<Class<?>, List<Property>> types = new ConcurrentHashMap<>();
+
+    public static JavaType getInterfaceGenericType(Class<?> clazz) {
+        Type type = clazz.getGenericInterfaces()[0];
+        TypeBindings bindings = typeFactory.constructType(type).getBindings();
+        JavaType boundType = bindings.getBoundType(0);
+        if (boundType != null) {
+            return typeFactory.constructType(boundType);
+        } else {
+            throw new SettingException();
+        }
+    }
+
 
     private List<Property> resolve(final Class<?> clazz) {
         Assert.isTrue(clazz != null, "参数不能为null");
@@ -30,7 +49,9 @@ public enum BeanHelper {
             for (PropertyDescriptor descriptor : propertyDescriptors) {
                 for (Field field : fields) {
                     if (field.getName().equalsIgnoreCase(descriptor.getName())) {
-                        Property property = new Property(field, descriptor);
+                        Type genericType = field.getGenericType();
+                        JavaType javaType = typeFactory.constructType(genericType);
+                        Property property = new Property(field, javaType, descriptor);
                         properties.add(property);
                     }
                 }

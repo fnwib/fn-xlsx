@@ -3,6 +3,7 @@ package com.github.fnwib.write;
 import com.github.fnwib.convert.*;
 import com.github.fnwib.parse.ParseImpl;
 import com.github.fnwib.parse.Parser;
+import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.write.config.ExportType;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
@@ -86,14 +87,15 @@ public class ExcelWriterBuilder {
         }
 
         public ExcelWriter<T> build() {
+
             ResultFileSetting resultFileSetting = new ResultFileSetting(filename, resultFolder);
             TemplateSetting templateSetting = TemplateSetting.builder().template(template)
                     .useDefaultCellStyle(true).addLastTitles(addLastTitles).sheetName(sheetName).build();
             ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
-            converterRegistry.addConverter(String.class, new StringExcelConverter());
-            converterRegistry.addConverter(LocalDate.class, new LocalDateExcelConverter());
-            converterRegistry.addConverter(Map.class, new TitleDescMapExcelConverter());
-            converterRegistry.addConverterFactory(Number.class, new NumberExcelConverterFactory());
+            converterRegistry.addConverter(new StringExcelConverter());
+            converterRegistry.addConverter(new LocalDateExcelConverter());
+            converterRegistry.addConverter( new TitleDescMapExcelConverter());
+            converterRegistry.addConverterFactory(new NumberExcelConverterFactory());
             Parser<T> parser = new ParseImpl<>(entityClass, converterRegistry, 0.6);
 
             WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(parser, exportType, resultFileSetting, templateSetting);

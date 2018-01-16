@@ -1,27 +1,31 @@
 package com.github.fnwib.convert;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.fnwib.reflect.BeanResolver;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ExcelGenericConversionService implements ExcelConversionService, ExcelConverterRegistry {
 
-    private final Map<Class<?>, ExcelConverter> CONVERTERS_MAP = new ConcurrentHashMap<>();
+    private final Map<JavaType, ExcelConverter> CONVERTERS_MAP = new ConcurrentHashMap<>();
 
-    private final Map<Class<?>, ExcelConverterFactory> CONVERTERS_FACTORY_MAP = new ConcurrentHashMap<>();
+    private final Map<JavaType, ExcelConverterFactory> CONVERTERS_FACTORY_MAP = new ConcurrentHashMap<>();
 
     @Override
-    public boolean canConvert(Class<?> type) {
+    public boolean canConvert(JavaType type) {
         return findConvert(type) != null;
     }
 
     @Override
-    public ExcelConverter<?> findConvert(Class<?> type) {
+    public ExcelConverter<?> findConvert(JavaType type) {
         if (CONVERTERS_MAP.containsKey(type)) {
             return CONVERTERS_MAP.get(type);
         } else {
-            for (Map.Entry<Class<?>, ExcelConverterFactory> entry : CONVERTERS_FACTORY_MAP.entrySet()) {
-                Class<?> key = entry.getKey();
-                if (key.isAssignableFrom(type)) {
+            for (Map.Entry<JavaType, ExcelConverterFactory> entry : CONVERTERS_FACTORY_MAP.entrySet()) {
+                JavaType key = entry.getKey();
+                if (type.isTypeOrSubTypeOf(key.getRawClass())) {
                     ExcelConverter converter = entry.getValue().getConverter(type);
                     CONVERTERS_MAP.put(type, converter);
                     return entry.getValue().getConverter(type);
@@ -33,18 +37,15 @@ public class ExcelGenericConversionService implements ExcelConversionService, Ex
     }
 
     @Override
-    public void addConverter(Class<?> type, ExcelConverter<?> converter) {
-        CONVERTERS_MAP.put(type, converter);
+    public void addConverter(ExcelConverter<?> converter) {
+        JavaType genericType = BeanResolver.getInterfaceGenericType(converter.getClass());
+        CONVERTERS_MAP.put(genericType, converter);
     }
 
     @Override
-    public void addConverterFactory(Class<?> type, ExcelConverterFactory<?> factory) {
-        CONVERTERS_FACTORY_MAP.put(type, factory);
-    }
-
-    @Override
-    public void removeConvertible(Class<?> type) {
-        CONVERTERS_MAP.remove(type);
+    public void addConverterFactory(ExcelConverterFactory<?> factory) {
+        JavaType genericType = BeanResolver.getInterfaceGenericType(factory.getClass());
+        CONVERTERS_FACTORY_MAP.put(genericType, factory);
     }
 
 

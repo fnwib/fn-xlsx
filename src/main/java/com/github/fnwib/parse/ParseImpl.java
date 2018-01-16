@@ -8,7 +8,7 @@ import com.github.fnwib.convert.ExcelGenericConversionService;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.read.ReadParser;
-import com.github.fnwib.reflect.BeanHelper;
+import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.WriteParser;
@@ -63,13 +63,13 @@ public class ParseImpl<T> implements Parser<T> {
         if (row == null)
             return;
         Map<Property, Title> map = new HashMap<>();
-        List<Property> properties = BeanHelper.INSTANCE.getPropertiesWithAnnotation(clazz, CellType.class);
+        List<Property> properties = BeanResolver.INSTANCE.getPropertiesWithAnnotation(clazz, CellType.class);
         for (Property property : properties) {
             Field field = property.getField();
             CellType type = field.getAnnotation(CellType.class);
             if (type.operation() == Operation.LINE_NUM) {
                 map.put(property, new Title(field.getName(), type));
-            } else if (conversionService.canConvert(field.getType())) {
+            } else if (conversionService.canConvert(property.getJavaType())) {
                 List<TitleDesc> list = this.getRule(row, type);
                 Title title;
                 if (list.isEmpty()) {
@@ -80,12 +80,12 @@ public class ParseImpl<T> implements Parser<T> {
                         throw new NotSupportedException(title.getFieldName() + " matched index is not continuous");
                     }
                 }
-                ExcelConverter<?> convert = conversionService.findConvert(field.getType());
+                ExcelConverter<?> convert = conversionService.findConvert(property.getJavaType());
                 title.setConverter(convert);
                 map.put(property, title);
                 LOGGER.debug("-->field name is '{}',  excel title is '{}' ", field.getName(), list);
             } else {
-                throw new NotSupportedException("not support convert " + field.getType() + ",Please support this type by yourself");
+                throw new NotSupportedException("not support convert " + property.getJavaType() + ",Please support this type by yourself");
             }
 
         }
@@ -123,13 +123,12 @@ public class ParseImpl<T> implements Parser<T> {
         return new ReadParser<>(clazz, PROPERTY_MAP);
     }
 
-
     @Override
     public WriteParser<T> createWriteParser() {
         if (PROPERTY_MAP.isEmpty()) {
             throw new ExcelException("没有找到Excel表头与" + clazz.getName() + "的映射关系");
         }
-        return new WriteParser<>(clazz, Maps.filterValues(PROPERTY_MAP, v -> !v.isEmpty()));
+        return new WriteParser<>(Maps.filterValues(PROPERTY_MAP, v -> !v.isEmpty()));
     }
 
 }

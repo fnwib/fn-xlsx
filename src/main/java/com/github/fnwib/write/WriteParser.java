@@ -13,8 +13,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,18 +27,13 @@ import java.util.stream.Stream;
 @Slf4j
 public class WriteParser<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WriteParser.class);
-
-    private final Class<T> entityClass;
-
     private final Map<Method, Title> RULES = new HashMap<>();
 
     private Sheet sheet;
 
     private CellStyle cellStyle;
 
-    public WriteParser(Class<T> entityClass, Map<Property, Title> rules) {
-        this.entityClass = entityClass;
+    public WriteParser(Map<Property, Title> rules) {
         initRules(rules);
     }
 
