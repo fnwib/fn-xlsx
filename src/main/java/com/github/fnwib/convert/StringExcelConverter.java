@@ -23,9 +23,8 @@ public class StringExcelConverter implements ExcelConverter<String> {
 
     private final List<ValueHandler<String>> valueHandlers;
 
-    @Deprecated
     public StringExcelConverter() {
-        this.toSingleByte = true;
+        this.toSingleByte = false;
         this.filterInsideSpace = false;
         this.valueHandlers = Collections.emptyList();
     }

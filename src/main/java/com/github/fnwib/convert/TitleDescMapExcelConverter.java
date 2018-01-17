@@ -21,9 +21,8 @@ public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc,
 
     private final List<ValueHandler<String>> valueHandlers;
 
-    @Deprecated
     public TitleDescMapExcelConverter() {
-        this.toSingleByte = true;
+        this.toSingleByte = false;
         this.filterInsideSpace = false;
         this.valueHandlers = Collections.emptyList();
     }

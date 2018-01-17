@@ -26,9 +26,8 @@ public class TitleKeyMapExcelConverter implements ExcelConverter<Map<String, Str
 
     private final List<ValueHandler<String>> valueHandlers;
 
-    @Deprecated
     public TitleKeyMapExcelConverter() {
-        this.toSingleByte = true;
+        this.toSingleByte = false;
         this.filterInsideSpace = false;
         this.valueHandlers = Collections.emptyList();
     }

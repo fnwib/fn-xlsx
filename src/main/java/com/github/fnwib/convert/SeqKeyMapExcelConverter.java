@@ -25,9 +25,8 @@ public class SeqKeyMapExcelConverter implements ExcelConverter<Map<Integer, Stri
 
     private final List<ValueHandler<String>> valueHandlers;
 
-    @Deprecated
     public SeqKeyMapExcelConverter() {
-        this.toSingleByte = true;
+        this.toSingleByte = false;
         this.filterInsideSpace = false;
         this.valueHandlers = Collections.emptyList();
     }
