@@ -8,4 +8,13 @@ public interface ExcelConverterRegistry {
 
     void addConverterFactory(ExcelConverterFactory<?> factory);
 
+    @Deprecated
+    void addConverter(Class<?> type, ExcelConverter<?> converter);
+
+    @Deprecated
+    void addConverterFactory(Class<?> type, ExcelConverterFactory<?> factory);
+
+    @Deprecated
+    void removeConvertible(Class<?> type);
+
 }

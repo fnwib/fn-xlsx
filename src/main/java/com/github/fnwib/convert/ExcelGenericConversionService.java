@@ -48,6 +48,20 @@ public class ExcelGenericConversionService implements ExcelConversionService, Ex
         CONVERTERS_FACTORY_MAP.put(genericType, factory);
     }
 
+    @Override
+    public void addConverter(Class<?> type, ExcelConverter<?> converter) {
+        addConverter(converter);
+    }
 
+    @Override
+    public void addConverterFactory(Class<?> type, ExcelConverterFactory<?> factory) {
+        addConverterFactory(factory);
+    }
+
+    @Override
+    public void removeConvertible(Class<?> type) {
+        JavaType javaType = BeanResolver.typeFactory.constructType(type);
+        CONVERTERS_MAP.remove(javaType);
+    }
 }
 
