@@ -1,7 +1,10 @@
 package com.github.fnwib.parse;
 
 import com.github.fnwib.convert.*;
+import com.github.fnwib.handler.ValueHandler;
 import com.github.fnwib.read.ReadParser;
+import com.github.fnwib.util.BCConvert;
+import com.github.fnwib.util.ValueUtil;
 import com.monitorjbl.xlsx.StreamingReader;
 import model.Model;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,6 +17,8 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 public class ReadParseImplTest {
 
@@ -27,10 +32,15 @@ public class ReadParseImplTest {
 
     @Test
     public void convert() {
+        ValueHandler<String> valueHandler = s -> BCConvert.toSingleByte(s);
+        ValueHandler<String> valueHandler2 = s -> s.trim();
+        ValueHandler<String> valueHandler3 = s -> s.toLowerCase();
+        List<ValueHandler<String>> valueHandlers = Arrays.asList(valueHandler, valueHandler2, valueHandler3);
+
         ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
-        converterRegistry.addConverter(new SeqKeyMapExcelConverter());
-        converterRegistry.addConverter(new TitleKeyMapExcelConverter());
-        converterRegistry.addConverter(new StringExcelConverter());
+        converterRegistry.addConverter(new SeqKeyMapExcelConverter(valueHandlers));
+        converterRegistry.addConverter(new TitleKeyMapExcelConverter(valueHandlers));
+        converterRegistry.addConverter(new StringExcelConverter(valueHandlers));
         converterRegistry.addConverter(new LocalDateExcelConverter());
         converterRegistry.addConverterFactory(new NumberExcelConverterFactory());
         Parser<Model> parser = new ParseImpl<>(Model.class, converterRegistry, 0.6);
@@ -49,10 +59,7 @@ public class ReadParseImplTest {
                     ReadParser<Model> readParser = parser.createReadParser();
                     Model model = readParser.convert(row);
                     Assert.assertSame("lineNum integer support", 2, model.getLineNum());
-                    Assert.assertEquals("Text One toSingleByte support", "Text", model.getText1());
-                    Assert.assertEquals("Text Two string support", "Text", model.getText2());
-                    Assert.assertEquals("Text Reorder string support", "1/Ac/Tex/Text/重排", model.getText3());
-
+                    checkValueHandler(model,valueHandlers);
                     Assert.assertSame("Number int support", 10, model.getIntNum());
                     Assert.assertSame("Number long support", 10L, model.getLongNum());
                     Assert.assertTrue("Number float support", 10f - model.getFloatNum() < 0.01f);
@@ -76,11 +83,20 @@ public class ReadParseImplTest {
                     Assert.assertSame("'Map 1 (Chinese Name)' support", 2, model.getIntKeyMap2().size());
                     Assert.assertSame("'Map \\d+ (Chinese Name)' support", 4, model.getIntKeyMap3().size());
                     Assert.assertNotNull("map no match ", model.getNoMatchMap());
-
                 }
             }
         }
 
+    }
+
+
+    public void checkValueHandler(Model model, List<ValueHandler<String>> valueHandlers) {
+
+        String test1 = ValueUtil.getStringValue("Text", valueHandlers);
+        String test2 = ValueUtil.getStringValue("1/Ac/Tex/Text/重排", valueHandlers);
+        Assert.assertEquals("Text One toSingleByte support", test1, model.getText1());
+        Assert.assertEquals("Text Two string support", test1, model.getText2());
+        Assert.assertEquals("Text Reorder string support", test2, model.getText3());
     }
 
 }

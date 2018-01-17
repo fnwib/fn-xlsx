@@ -1,10 +1,12 @@
 package com.github.fnwib.util;
 
+import com.github.fnwib.handler.ValueHandler;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.text.Collator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
@@ -50,6 +52,7 @@ public class ValueUtil {
      * @param value
      * @return
      */
+    @Deprecated
     public static String filterInsideSpace(String value) {
         if (StringUtils.isBlank(value)) {
             return "";
@@ -82,6 +85,7 @@ public class ValueUtil {
 
     }
 
+    @Deprecated
     public static String getValue(Cell cell, boolean toSingleByte, boolean filterInsideSpace) {
         if (cell == null) {
             return "";
@@ -97,6 +101,25 @@ public class ValueUtil {
             value = ValueUtil.filterInsideSpace(value);
         }
         return value.trim();
+    }
+
+    public static String getCellValue(Cell cell, List<ValueHandler<String>> valueHandlers) {
+        if (cell == null) {
+            return "";
+        }
+        final String value = cell.getStringCellValue();
+        return getStringValue(value, valueHandlers);
+    }
+
+    public static String getStringValue(final String value, List<ValueHandler<String>> valueHandlers) {
+        if (StringUtils.isBlank(value)) {
+            return "";
+        }
+        String temp = value;
+        for (ValueHandler<String> valueHandler : valueHandlers) {
+            temp = valueHandler.convert(temp);
+        }
+        return temp;
     }
 
 }
