@@ -1,6 +1,5 @@
 package com.github.fnwib.util;
 
-@Deprecated
 public class BCConvert {
 
     /**

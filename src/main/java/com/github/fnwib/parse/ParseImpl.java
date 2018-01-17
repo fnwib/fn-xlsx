@@ -1,12 +1,15 @@
 package com.github.fnwib.parse;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.convert.ExcelConversionService;
 import com.github.fnwib.convert.ExcelConverter;
 import com.github.fnwib.convert.ExcelGenericConversionService;
+import com.github.fnwib.convert.StringExcelConverter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
+import com.github.fnwib.handler.ValueHandler;
 import com.github.fnwib.read.ReadParser;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
@@ -97,13 +100,15 @@ public class ParseImpl<T> implements Parser<T> {
     }
 
     private List<TitleDesc> getRule(Row row, CellType type) {
-
+        JavaType javaType = BeanResolver.typeFactory.constructType(String.class);
+        StringExcelConverter convert = (StringExcelConverter) conversionService.findConvert(javaType);
+        List<ValueHandler<String>> valueHandlers = convert.getValueHandlers();
         String title = type.title();
         String exclude = type.exclude();
         List<TitleDesc> list = new ArrayList<>();
         Pattern titlePattern = Pattern.compile(title);
         for (Cell cell : row) {
-            String value = ValueUtil.getValue(cell, true, false);
+            String value = ValueUtil.getCellValue(cell, valueHandlers);
             Matcher titleMatcher = titlePattern.matcher(value);
             if (titleMatcher.matches()) {
                 if (StringUtils.isNotBlank(exclude) && Pattern.matches(exclude, value)) {

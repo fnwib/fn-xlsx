@@ -2,10 +2,12 @@ package com.github.fnwib.convert;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
+import com.github.fnwib.handler.ValueHandler;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.CellText;
+import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -15,6 +17,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -30,6 +33,21 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
     private static final Pattern SHORT_DATE_PATTERN_DOUBLE_SLASH = Pattern.compile("^\\d{4}\\\\\\d{2}\\\\\\d{2}$");
 
     private static final Pattern SHORT_DATE_PATTERN_NONE = Pattern.compile("^\\d{4}\\d{2}\\d{2}$");
+
+    private final List<ValueHandler<String>> valueHandlers;
+
+    public LocalDateExcelConverter() {
+        this.valueHandlers = Collections.emptyList();
+    }
+
+    public LocalDateExcelConverter(List<ValueHandler<String>> valueHandlers) {
+        this.valueHandlers = valueHandlers;
+    }
+
+    public LocalDateExcelConverter(ValueHandler<String>... valueHandlers) {
+        this.valueHandlers = Lists.newArrayList(valueHandlers);
+    }
+
 
     @Override
     public LocalDate getDefaultValue() {
@@ -56,7 +74,7 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
                 Instant instant = date.toInstant();
                 return instant.atZone(ZoneId.systemDefault()).toLocalDate();
             case STRING:
-                String value = ValueUtil.getValue(cell, false, false);
+                String value = ValueUtil.getCellValue(cell, valueHandlers);
                 try {
                     if (dateTimeFormatter == null) {
                         DateTimeFormatter formatter = getDateTimeFormatter(value);

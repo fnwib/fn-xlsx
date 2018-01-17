@@ -14,35 +14,23 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.*;
 
 public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc, String>> {
-    @Deprecated
-    private final boolean toSingleByte;
-    @Deprecated
-    private final boolean filterInsideSpace;
 
     private final List<ValueHandler<String>> valueHandlers;
 
     public TitleDescMapExcelConverter() {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
         this.valueHandlers = Collections.emptyList();
     }
 
     @Deprecated
     public TitleDescMapExcelConverter(boolean toSingleByte, boolean filterInsideSpace) {
-        this.toSingleByte = toSingleByte;
-        this.filterInsideSpace = filterInsideSpace;
         this.valueHandlers = Collections.emptyList();
     }
 
     public TitleDescMapExcelConverter(List<ValueHandler<String>> valueHandlers) {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
         this.valueHandlers = valueHandlers;
     }
 
     public TitleDescMapExcelConverter(ValueHandler<String>... valueHandlers) {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
         this.valueHandlers = Lists.newArrayList(valueHandlers);
     }
 
@@ -57,12 +45,7 @@ public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc,
         Map<TitleDesc, String> hashMap = new HashMap<>();
         for (TitleDesc titleDesc : title.getList()) {
             Cell cell = row.getCell(titleDesc.getIndex());
-            String value;
-            if (valueHandlers.isEmpty()) {
-                value = ValueUtil.getValue(cell, toSingleByte, filterInsideSpace);
-            } else {
-                value = ValueUtil.getCellValue(cell, valueHandlers);
-            }
+            String value = ValueUtil.getCellValue(cell, valueHandlers);
             hashMap.put(titleDesc, value);
         }
         return hashMap;

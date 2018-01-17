@@ -34,8 +34,7 @@ public class ReadParseImplTest {
     public void convert() {
         ValueHandler<String> valueHandler = s -> BCConvert.toSingleByte(s);
         ValueHandler<String> valueHandler2 = s -> s.trim();
-        ValueHandler<String> valueHandler3 = s -> s.toLowerCase();
-        List<ValueHandler<String>> valueHandlers = Arrays.asList(valueHandler, valueHandler2, valueHandler3);
+        List<ValueHandler<String>> valueHandlers = Arrays.asList(valueHandler, valueHandler2);
 
         ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
         converterRegistry.addConverter(new SeqKeyMapExcelConverter(valueHandlers));

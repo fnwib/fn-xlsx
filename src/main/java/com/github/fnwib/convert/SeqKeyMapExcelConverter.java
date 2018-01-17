@@ -18,35 +18,18 @@ import java.util.List;
 import java.util.Map;
 
 public class SeqKeyMapExcelConverter implements ExcelConverter<Map<Integer, String>> {
-    @Deprecated
-    private final boolean toSingleByte;
-    @Deprecated
-    private final boolean filterInsideSpace;
 
     private final List<ValueHandler<String>> valueHandlers;
 
     public SeqKeyMapExcelConverter() {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
-        this.valueHandlers = Collections.emptyList();
-    }
-
-    @Deprecated
-    public SeqKeyMapExcelConverter(boolean toSingleByte, boolean filterInsideSpace) {
-        this.toSingleByte = toSingleByte;
-        this.filterInsideSpace = filterInsideSpace;
         this.valueHandlers = Collections.emptyList();
     }
 
     public SeqKeyMapExcelConverter(List<ValueHandler<String>> valueHandlers) {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
         this.valueHandlers = valueHandlers;
     }
 
     public SeqKeyMapExcelConverter(ValueHandler<String>... valueHandlers) {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
         this.valueHandlers = Lists.newArrayList(valueHandlers);
     }
 
@@ -61,12 +44,7 @@ public class SeqKeyMapExcelConverter implements ExcelConverter<Map<Integer, Stri
         Map<Integer, String> hashMap = new HashMap<>();
         for (TitleDesc titleDesc : title.getList()) {
             Cell cell = row.getCell(titleDesc.getIndex());
-            String value;
-            if (valueHandlers.isEmpty()) {
-                value = ValueUtil.getValue(cell, toSingleByte, filterInsideSpace);
-            } else {
-                value = ValueUtil.getCellValue(cell, valueHandlers);
-            }
+            String value = ValueUtil.getCellValue(cell, valueHandlers);
             hashMap.put(titleDesc.getIndex() - title.getMinIndex(), value);
         }
         return hashMap;

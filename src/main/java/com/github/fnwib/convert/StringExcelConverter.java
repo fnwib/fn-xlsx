@@ -16,40 +16,23 @@ import java.util.List;
 
 public class StringExcelConverter implements ExcelConverter<String> {
 
-    @Deprecated
-    private final boolean toSingleByte;
-    @Deprecated
-    private final boolean filterInsideSpace;
-
     private final List<ValueHandler<String>> valueHandlers;
 
     public StringExcelConverter() {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
-        this.valueHandlers = Collections.emptyList();
-    }
-
-    @Deprecated
-    public StringExcelConverter(boolean toSingleByte, boolean filterInsideSpace) {
-        this.toSingleByte = toSingleByte;
-        this.filterInsideSpace = filterInsideSpace;
         this.valueHandlers = Collections.emptyList();
     }
 
     public StringExcelConverter(List<ValueHandler<String>> valueHandlers) {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
         this.valueHandlers = valueHandlers;
     }
 
     public StringExcelConverter(ValueHandler<String>... valueHandlers) {
-        this.toSingleByte = false;
-        this.filterInsideSpace = false;
         this.valueHandlers = Lists.newArrayList(valueHandlers);
     }
 
-
-
+    public List<ValueHandler<String>> getValueHandlers() {
+        return valueHandlers;
+    }
 
     @Override
     public String getDefaultValue() {
@@ -64,11 +47,7 @@ public class StringExcelConverter implements ExcelConverter<String> {
         }
         TitleDesc titleDesc = list.get(0);
         Cell cell = row.getCell(titleDesc.getIndex());
-        if (valueHandlers.isEmpty()) {
-            return ValueUtil.getValue(cell, toSingleByte, filterInsideSpace);
-        } else {
-            return ValueUtil.getCellValue(cell, valueHandlers);
-        }
+        return ValueUtil.getCellValue(cell, valueHandlers);
     }
 
     @Override
