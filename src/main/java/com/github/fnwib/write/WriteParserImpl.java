@@ -64,8 +64,7 @@ public class WriteParserImpl<T> implements WriteParser<T> {
         convert(this.sheet, rowNum, element);
     }
 
-    @Override
-    public void convert(Sheet sheet, int rowNum, T element) {
+    private void convert(Sheet sheet, int rowNum, T element) {
         Row row = sheet.createRow(rowNum);
         if (element == null) {
             return;
@@ -102,8 +101,7 @@ public class WriteParserImpl<T> implements WriteParser<T> {
         convert(this.sheet, rowNum, elements, mergedRangeIndexes);
     }
 
-    @Override
-    public void convert(Sheet sheet, int rowNum, List<T> elements, List<Integer> mergedRangeIndexes) {
+    private void convert(Sheet sheet, int rowNum, List<T> elements, List<Integer> mergedRangeIndexes) {
         CellTextMatrix cellTextMatrix = new CellTextMatrix(elements.size());
         int tempRowNum = rowNum;
         for (T element : elements) {

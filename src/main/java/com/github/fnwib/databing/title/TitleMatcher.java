@@ -1,6 +1,7 @@
 package com.github.fnwib.databing.title;
 
 import com.github.fnwib.annotation.AutoMapping;
+import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.ValueUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +41,15 @@ public final class TitleMatcher {
             }
             Matcher titleMatcher = titlePattern.matcher(root.get().trim());
             if (titleMatcher.matches()) {
-                if (StringUtils.isNotBlank(exclude) && Pattern.matches(exclude, title.getText())) {
+                if (StringUtils.isNotBlank(exclude) && Pattern.matches(exclude,root.get().trim())) {
                     continue;
-                } else {
-                    log.debug("-->matched -> rownum is [{}],text is [{}] ,middle [{}] ", title.getRowNum(), title.getText(), root.get());
-                    result.add(title);
                 }
+                if (title.isBind()) {
+                    throw new SettingException("配置错误 ->" + title + "已经被使用");
+                }
+                log.debug("-->matched -> rownum is [{}],text is [{}] ,middle [{}] ", title.getRowNum(), title.getText(), root.get());
+                title.bind();
+                result.add(title);
             }
         }
         return result;

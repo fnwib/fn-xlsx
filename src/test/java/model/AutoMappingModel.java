@@ -2,7 +2,6 @@ package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.fnwib.annotation.AutoMapping;
-import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.Operation;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,13 +29,13 @@ public class AutoMappingModel {
 
     @AutoMapping(title = "integer")
     private Integer    intNum;
-    @AutoMapping(title = "integer")
+    @AutoMapping(title = "long")
     private Long       longNum;
-    @AutoMapping(title = "Number")
+    @AutoMapping(title = "float")
     private Float      floatNum;
-    @AutoMapping(title = "Number")
+    @AutoMapping(title = "double")
     private Double     doubleNum;
-    @AutoMapping(title = "Number")
+    @AutoMapping(title = "bigDecimal")
     private BigDecimal bigDecimal;
 
     @AutoMapping(title = "Number Null")
@@ -56,7 +55,7 @@ public class AutoMappingModel {
     @AutoMapping(prefix = "Map", title = "1", suffix = "(Chinese Name)")
     private Map<Integer, String> intKeyMap2;
 
-    @AutoMapping(prefix = "Map", title = "\\d+", suffix = "(Chinese Name)")
+    @AutoMapping(prefix = "Map", title = "\\d+", suffix = "(Chinese Name)",exclude = "1")
     private Map<Integer, String> intKeyMap3;
 
     @AutoMapping(title = "Excel no match")

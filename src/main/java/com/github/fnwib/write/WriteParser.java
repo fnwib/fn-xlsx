@@ -13,10 +13,6 @@ public interface WriteParser<T> {
 
     void convert(int rowNum, T element);
 
-    void convert(Sheet sheet, int rowNum, T element);
-
     void convert(int rowNum, List<T> elements, List<Integer> mergedRangeIndexes);
-
-    void convert(Sheet sheet, int rowNum, List<T> elements, List<Integer> mergedRangeIndexes);
 
 }

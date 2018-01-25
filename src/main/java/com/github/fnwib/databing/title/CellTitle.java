@@ -8,24 +8,23 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class CellTitle {
-    private int    rowNum;
-    private int    cellNum;
-    private String text;
-
-    public CellTitle(int cellNum, String text) {
-        this.cellNum = cellNum;
-        this.text = text;
-    }
+    private final int     rowNum;
+    private final int     cellNum;
+    private final String  text;
+    private       boolean bind;
 
     public CellTitle(int rowNum, int cellNum, String text) {
         this.rowNum = rowNum;
         this.cellNum = cellNum;
         this.text = text;
+        this.bind = false;
     }
 
-    public CellTitle setRowNum(int rowNum) {
-        this.rowNum = rowNum;
-        return this;
+    public boolean isBind() {
+        return bind;
     }
 
+    public void bind() {
+        this.bind = true;
+    }
 }
