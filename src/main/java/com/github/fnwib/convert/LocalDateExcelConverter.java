@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
-
+@Deprecated
 public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
 
     private DateTimeFormatter dateTimeFormatter;

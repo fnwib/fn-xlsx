@@ -1,6 +1,6 @@
 package com.github.fnwib.convert;
 
-
+@Deprecated
 public interface ExcelConverterRegistry {
 
 

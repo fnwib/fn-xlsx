@@ -31,6 +31,8 @@ public @interface AutoMapping {
     /**
      * 要排除的Excel列title
      * 支持正则表达式
+     * <p>
+     * title的子集
      *
      * @return
      */
@@ -55,7 +57,6 @@ public @interface AutoMapping {
      * @return
      */
     Operation operation() default Operation.DEFAULT;
-
 
     /**
      * 值处理器

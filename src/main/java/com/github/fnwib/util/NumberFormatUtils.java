@@ -15,6 +15,7 @@ import java.util.Set;
  * @author Rob Harrop
  * @since 1.1.2
  */
+@Deprecated
 public abstract class NumberFormatUtils {
 
 	private static final BigInteger LONG_MIN = BigInteger.valueOf(Long.MIN_VALUE);

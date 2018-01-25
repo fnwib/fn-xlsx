@@ -1,5 +1,6 @@
 package com.github.fnwib.util;
 
+@Deprecated
 public abstract class Assert {
 
 

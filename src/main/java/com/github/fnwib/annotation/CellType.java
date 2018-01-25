@@ -1,7 +1,7 @@
 package com.github.fnwib.annotation;
 
 import java.lang.annotation.*;
-
+@Deprecated
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})

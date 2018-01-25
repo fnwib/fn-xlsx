@@ -13,7 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
+@Deprecated
 public class StringExcelConverter implements ExcelConverter<String> {
 
     private final List<ValueHandler<String>> valueHandlers;

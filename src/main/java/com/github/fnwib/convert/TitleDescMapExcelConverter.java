@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
-
+@Deprecated
 public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc, String>> {
 
     private final List<ValueHandler<String>> valueHandlers;

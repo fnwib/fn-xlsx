@@ -6,7 +6,7 @@ import com.github.fnwib.reflect.BeanResolver;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
+@Deprecated
 public class ExcelGenericConversionService implements ExcelConversionService, ExcelConverterRegistry {
 
     private final Map<JavaType, ExcelConverter> CONVERTERS_MAP = new ConcurrentHashMap<>();

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+@Deprecated
 public class ParseImpl<T> implements Parser<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ParseImpl.class);

@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Deprecated
 public class SeqKeyMapExcelConverter implements ExcelConverter<Map<Integer, String>> {
 
     private final List<ValueHandler<String>> valueHandlers;

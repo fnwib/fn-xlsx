@@ -6,7 +6,7 @@ import com.github.fnwib.write.CellText;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
-
+@Deprecated
 public interface ExcelConverter<T> {
 
     /**

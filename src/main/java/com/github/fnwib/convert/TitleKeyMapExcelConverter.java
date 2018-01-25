@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class TitleKeyMapExcelConverter implements ExcelConverter<Map<String, String>> {
 
     private final List<ValueHandler<String>> valueHandlers;

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
+@Deprecated
 @ToString
 public final class Title {
 

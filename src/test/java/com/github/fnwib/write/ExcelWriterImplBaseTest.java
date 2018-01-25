@@ -44,22 +44,6 @@ public class ExcelWriterImplBaseTest {
         FileUtils.forceDelete(exportFolder);
     }
 
-    static CellStyle createCellStyle(Workbook workbook) {
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setBorderTop(BorderStyle.THIN);
-        cellStyle.setBorderLeft(BorderStyle.THIN);
-        cellStyle.setBorderRight(BorderStyle.THIN);
-        cellStyle.setBorderBottom(BorderStyle.THIN);
-        cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("text"));
-        Font font2 = workbook.createFont();
-        font2.setFontName("Arial");
-        font2.setFontHeightInPoints((short) 10);
-        cellStyle.setFont(font2);
-        return cellStyle;
-    }
-
     List<WriteModel> getDataList(int length) {
         List<WriteModel> result = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {

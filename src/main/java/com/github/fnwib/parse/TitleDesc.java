@@ -3,7 +3,7 @@ package com.github.fnwib.parse;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
+@Deprecated
 @Getter
 @ToString
 @EqualsAndHashCode

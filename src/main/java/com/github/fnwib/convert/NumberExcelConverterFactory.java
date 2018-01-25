@@ -15,7 +15,7 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
+@Deprecated
 public class NumberExcelConverterFactory implements ExcelConverterFactory<Number> {
 
     @Override

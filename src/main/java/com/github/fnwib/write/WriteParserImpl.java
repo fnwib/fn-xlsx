@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Deprecated
 @Slf4j
 public class WriteParserImpl<T> implements WriteParser<T> {
 

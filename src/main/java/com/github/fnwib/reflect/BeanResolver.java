@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.util.Assert;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -40,7 +39,9 @@ public enum BeanResolver {
 
 
     private synchronized List<Property> resolve(final Class<?> clazz) {
-        Assert.isTrue(clazz != null, "参数不能为null");
+        if (clazz ==null){
+            throw new IllegalArgumentException("参数不能为null");
+        }
         try {
             Field[] fields = clazz.getDeclaredFields();
             PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz)
@@ -63,7 +64,9 @@ public enum BeanResolver {
     }
 
     public synchronized List<Property> getProperties(final Class<?> clazz) {
-        Assert.isTrue(clazz != null, "参数不能为null");
+        if (clazz ==null){
+            throw new IllegalArgumentException("参数不能为null");
+        }
         if (types.containsKey(clazz)) {
             return types.get(clazz);
         } else {
@@ -75,7 +78,9 @@ public enum BeanResolver {
 
 
     public List<Property> getPropertiesWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotationCls) {
-        Assert.isTrue(clazz != null && annotationCls != null, "参数不能为null");
+        if (clazz ==null || annotationCls == null){
+            throw new IllegalArgumentException("参数不能为null");
+        }
         List<Property> properties = getProperties(clazz);
         return properties.stream()
                 .filter(property -> property.getField().getAnnotation(annotationCls) != null).collect(Collectors.toList());
