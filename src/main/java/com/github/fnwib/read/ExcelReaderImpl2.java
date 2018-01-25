@@ -1,39 +1,36 @@
 package com.github.fnwib.read;
 
+import com.github.fnwib.databing.RowParser;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.parse.Parser;
-import com.github.fnwib.parse.Title;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class ExcelReaderImpl<T> implements ExcelReader<T> {
+public class ExcelReaderImpl2<T> implements ExcelReader<T> {
 
     private int TITLE = -1;
 
     //记录TITLE前的数据
     private final Map<Integer, Row> PRE_DATA = new HashMap<>();
 
-    private final Parser<T> parser;
+    private final RowParser<T> parser;
 
     private final Workbook workbook;
 
     private final int sheetNum;
 
-    public ExcelReaderImpl(Parser<T> parser, Workbook workbook, int sheetNum) {
+    public ExcelReaderImpl2(RowParser<T> parser, Workbook workbook, int sheetNum) {
         this.parser = parser;
         this.workbook = workbook;
         this.sheetNum = sheetNum;
@@ -70,6 +67,9 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             if (num != -1 && row.getRowNum() > num) {
                 break;
             }
+            if (this.isEmpty(row)){
+                continue;
+            }
             boolean match = parser.match(row);
             if (match) {
                 TITLE = row.getRowNum();
@@ -88,12 +88,11 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             throw new ExcelException("模版错误");
         }
         List<T> list = new ArrayList<>(sheet.getLastRowNum());
-        ReadParser<T> readParser = parser.createReadParser();
         for (Row row : sheet) {
             if (row.getRowNum() <= TITLE || this.isEmpty(row)) {
                 continue;
             }
-            T t = readParser.convert(row);
+            T t = parser.convert(row);
             if (t != null) {
                 list.add(t);
             }

@@ -1,12 +1,10 @@
-package com.github.fnwib.handler;
+package com.github.fnwib.databing.valuehandler;
 
 /**
  * 处理读取的cell字符串
- *
- * @param <T>
  */
 @FunctionalInterface
 public interface ValueHandler<T> {
 
-    T convert(T param);
+    T convert(T value);
 }

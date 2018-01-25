@@ -1,18 +1,16 @@
 package com.github.fnwib.util;
 
-import com.github.fnwib.handler.ValueHandler;
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.text.Collator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
+@Slf4j
 public class ValueUtil {
 
     private static final Collator COLLATOR = Collator.getInstance(Locale.CHINA);
@@ -41,7 +39,11 @@ public class ValueUtil {
         }
     }
 
-    public static String getCellValue(Cell cell, List<ValueHandler<String>> valueHandlers) {
+    public static String getCellValue(Cell cell, ValueHandler<String>... valueHandlers) {
+        return getCellValue(cell, Lists.newArrayList(valueHandlers));
+    }
+
+    public static String getCellValue(Cell cell, Collection<ValueHandler<String>> valueHandlers) {
         if (cell == null) {
             return "";
         }
@@ -49,7 +51,7 @@ public class ValueUtil {
         return getStringValue(value, valueHandlers);
     }
 
-    public static String getStringValue(final String value, List<ValueHandler<String>> valueHandlers) {
+    public static String getStringValue(final String value, Collection<ValueHandler<String>> valueHandlers) {
         if (StringUtils.isBlank(value)) {
             return "";
         }
@@ -58,6 +60,33 @@ public class ValueUtil {
             temp = valueHandler.convert(temp);
         }
         return temp;
+    }
+
+    public static Optional<String> substringBetween(final String text, final String prefix, final String suffix) {
+        if (text == null || prefix == null || suffix == null) {
+            return Optional.empty();
+        }
+        if (text.startsWith(prefix) && text.endsWith(suffix)) {
+            final String root;
+            if (prefix.equals("") && suffix.equals("")) {
+                root = text;
+            } else if (prefix.equals("") && !suffix.equals("")) {
+                root = text.substring(0, text.length() - suffix.length());
+            } else if (!prefix.equals("") && suffix.equals("")) {
+                root = text.substring(prefix.length());
+            } else {
+                root = StringUtils.substringBetween(text, prefix, suffix);
+            }
+            return Optional.of(root);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static void main(String[] args) {
+        Optional<String> number = substringBetween("Number", "", "");
+        String s = number.orElse("numm   aasdas");
+        System.out.println(s);
     }
 
 }

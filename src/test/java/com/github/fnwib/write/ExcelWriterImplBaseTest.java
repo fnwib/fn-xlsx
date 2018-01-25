@@ -33,7 +33,10 @@ public class ExcelWriterImplBaseTest {
         exportFolder = new File(path);
         FileUtils.forceMkdir(exportFolder);
         String filenameText = path + File.separator + UUIDUtils.getHalfId() + ".text";
-        new File(filenameText).createNewFile();
+        boolean newFile = new File(filenameText).createNewFile();
+        if (!newFile){
+            throw new IOException("can not create new file" +filenameText);
+        }
     }
 
     @After

@@ -13,9 +13,6 @@ public interface Parser<T> {
      */
     boolean match(Row row);
 
-    /**
-     * @return
-     */
     ReadParser<T> createReadParser();
 
     WriteParser<T> createWriteParser();

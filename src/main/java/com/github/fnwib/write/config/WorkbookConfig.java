@@ -1,11 +1,13 @@
 package com.github.fnwib.write.config;
 
 import com.github.fnwib.parse.Parser;
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +33,8 @@ public class WorkbookConfig<T> {
     public List<File> getResultFiles() {
         File resultFolder = resultFileSetting.getResultFolder();
         File[] files = resultFolder.listFiles();
-        return Arrays.asList(files);
+        if (files ==null) return Collections.emptyList();
+        return Lists.newArrayList(files);
     }
 
 }

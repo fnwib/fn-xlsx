@@ -9,12 +9,14 @@ import com.github.fnwib.convert.ExcelGenericConversionService;
 import com.github.fnwib.convert.StringExcelConverter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.handler.ValueHandler;
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.read.ReadParser;
+import com.github.fnwib.read.ReadParserImpl;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.WriteParser;
+import com.github.fnwib.write.WriteParserImpl;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -125,7 +127,7 @@ public class ParseImpl<T> implements Parser<T> {
         if (PROPERTY_MAP.isEmpty()) {
             throw new ExcelException("没有找到Excel表头与" + clazz.getName() + "的映射关系");
         }
-        return new ReadParser<>(clazz, PROPERTY_MAP);
+        return new ReadParserImpl<>(clazz, PROPERTY_MAP);
     }
 
     @Override
@@ -133,7 +135,7 @@ public class ParseImpl<T> implements Parser<T> {
         if (PROPERTY_MAP.isEmpty()) {
             throw new ExcelException("没有找到Excel表头与" + clazz.getName() + "的映射关系");
         }
-        return new WriteParser<>(Maps.filterValues(PROPERTY_MAP, v -> !v.isEmpty()));
+        return new WriteParserImpl<>(Maps.filterValues(PROPERTY_MAP, v -> !v.isEmpty()));
     }
 
 }

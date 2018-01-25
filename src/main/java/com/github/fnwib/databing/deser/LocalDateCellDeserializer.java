@@ -1,28 +1,19 @@
-package com.github.fnwib.convert;
+package com.github.fnwib.databing.deser;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.parse.Title;
-import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
-import com.github.fnwib.write.CellText;
-import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
-public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
+public class LocalDateCellDeserializer implements CellDeserializer<LocalDate> {
 
     private DateTimeFormatter dateTimeFormatter;
 
@@ -34,38 +25,12 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
 
     private static final Pattern SHORT_DATE_PATTERN_NONE = Pattern.compile("^\\d{4}\\d{2}\\d{2}$");
 
-    private final List<ValueHandler<String>> valueHandlers;
-
-    public LocalDateExcelConverter() {
-        this.valueHandlers = Collections.emptyList();
-    }
-
-    public LocalDateExcelConverter(List<ValueHandler<String>> valueHandlers) {
-        this.valueHandlers = valueHandlers;
-    }
-
-    public LocalDateExcelConverter(ValueHandler<String>... valueHandlers) {
-        this.valueHandlers = Lists.newArrayList(valueHandlers);
-    }
-
 
     @Override
-    public LocalDate getDefaultValue() {
-        return null;
-    }
-
-    @Override
-    public LocalDate convert(Title title, Row row) throws ExcelException {
-        List<TitleDesc> list = title.getList();
-        if (list.size() != 1) {
-            return null;
-        }
-        TitleDesc titleDesc = list.get(0);
-        Cell cell = row.getCell(titleDesc.getIndex());
+    public LocalDate deserialize(Cell cell) {
         if (cell == null) {
             return null;
         }
-
         switch (cell.getCellTypeEnum()) {
             case BLANK:
                 return null;
@@ -74,12 +39,12 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
                 Instant instant = date.toInstant();
                 return instant.atZone(ZoneId.systemDefault()).toLocalDate();
             case STRING:
-                String value = ValueUtil.getCellValue(cell, valueHandlers);
+                String value = ValueUtil.getCellValue(cell);
                 try {
                     if (dateTimeFormatter == null) {
                         DateTimeFormatter formatter = getDateTimeFormatter(value);
                         if (formatter == null) {
-                            throw new ExcelException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] 不支持文本转日期");
+                            throw new ExcelException(" [" + cell.getStringCellValue() + "] 不支持文本转日期");
                         }
                         this.dateTimeFormatter = formatter;
                     }
@@ -87,22 +52,21 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
                 } catch (DateTimeParseException e) {
                     DateTimeFormatter formatter = getDateTimeFormatter(value);
                     if (formatter == null) {
-                        throw new ExcelException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] 不支持文本转日期");
+                        throw new ExcelException(" [" + cell.getStringCellValue() + "] 不支持文本转日期");
                     }
                     this.dateTimeFormatter = formatter;
                     return LocalDate.parse(value, formatter);
                 }
             case BOOLEAN:
             case FORMULA:
-                throw new NotSupportedException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] not support boolean|formula");
+                throw new NotSupportedException(" [" + cell.getStringCellValue() + "] not support boolean|formula");
             case _NONE:
             case ERROR:
             default:
-                throw new NotSupportedException(title.getExcelTitles() + " [" + cell.getStringCellValue() + "] unknown type");
+                throw new NotSupportedException(" [" + cell.getStringCellValue() + "] unknown type");
 
         }
     }
-
 
     public DateTimeFormatter getDateTimeFormatter(String value) {
         if (SHORT_DATE_PATTERN_LINE.matcher(value).matches()) {
@@ -116,13 +80,6 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
         } else {
             return null;
         }
-    }
-
-    @Override
-    public List<CellText> writeValue(Object obj, Title title) throws ExcelException {
-        LocalDate localDate = (LocalDate) obj;
-        TitleDesc desc = title.getList().get(0);
-        return Arrays.asList(new CellText(desc.getIndex(), obj == null ? null : localDate.toString()));
     }
 
 }

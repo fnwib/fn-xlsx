@@ -37,8 +37,6 @@ public class ExcelWriterBuilder {
 
         private String sheetName;
 
-        private CellStyle cellStyle;
-
         private List<String> addLastTitles = new ArrayList<>();
 
         public Builder entityClass(Class<T> entityClass) {
@@ -68,11 +66,6 @@ public class ExcelWriterBuilder {
 
         public Builder sheetName(String sheetName) {
             this.sheetName = sheetName;
-            return this;
-        }
-
-        public Builder cellStyle(CellStyle cellStyle) {
-            this.cellStyle = cellStyle;
             return this;
         }
 

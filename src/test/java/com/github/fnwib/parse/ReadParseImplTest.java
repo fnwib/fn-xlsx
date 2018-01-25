@@ -1,10 +1,14 @@
 package com.github.fnwib.parse;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.convert.*;
-import com.github.fnwib.handler.ValueHandler;
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.read.ReadParser;
+import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.util.BCConvert;
 import com.github.fnwib.util.ValueUtil;
+import com.google.common.collect.Lists;
 import com.monitorjbl.xlsx.StreamingReader;
 import model.Model;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,8 +21,10 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ReadParseImplTest {
 
@@ -58,7 +64,7 @@ public class ReadParseImplTest {
                     ReadParser<Model> readParser = parser.createReadParser();
                     Model model = readParser.convert(row);
                     Assert.assertSame("lineNum integer support", 2, model.getLineNum());
-                    checkValueHandler(model,valueHandlers);
+                    checkValueHandler(model, valueHandlers);
                     Assert.assertSame("Number int support", 10, model.getIntNum());
                     Assert.assertSame("Number long support", 10L, model.getLongNum());
                     Assert.assertTrue("Number float support", 10f - model.getFloatNum() < 0.01f);
@@ -88,9 +94,7 @@ public class ReadParseImplTest {
 
     }
 
-
     public void checkValueHandler(Model model, List<ValueHandler<String>> valueHandlers) {
-
         String test1 = ValueUtil.getStringValue("Text", valueHandlers);
         String test2 = ValueUtil.getStringValue("1/Ac/Tex/Text/重排", valueHandlers);
         Assert.assertEquals("Text One toSingleByte support", test1, model.getText1());
@@ -98,5 +102,40 @@ public class ReadParseImplTest {
         Assert.assertEquals("Text Reorder string support", test2, model.getText3());
     }
 
+    @Test
+    public void test3() {
+        TypeFactory typeFactory = BeanResolver.typeFactory;
+        ArrayList<JavaType> javaTypes = Lists.newArrayList();
+        javaTypes.add(typeFactory.constructType(Number.class));
+        javaTypes.add(typeFactory.constructType(int.class));
+        javaTypes.add(typeFactory.constructType(String.class));
+        javaTypes.add(typeFactory.constructType(Integer.class));
+        javaTypes.add(typeFactory.constructType(LocalDate.class));
+        javaTypes.add(typeFactory.constructMapType(Map.class, String.class, String.class));
+        javaTypes.add(typeFactory.constructCollectionType(List.class, Number.class));
+
+        for (JavaType type : javaTypes) {
+            print(type);
+            System.out.println();
+            System.out.println();
+        }
+    }
+
+    private void print(JavaType javaType) {
+        System.out.println("--> javaType " + javaType);
+        System.out.println("isPrimitive() " + javaType.isPrimitive());
+        System.out.println("isCollectionLikeType() " + javaType.isCollectionLikeType());
+        System.out.println("isInterface() " + javaType.isInterface());
+        System.out.println("isReferenceType() " + javaType.isReferenceType());
+        System.out.println("isJavaLangObject() " + javaType.isJavaLangObject());
+        System.out.println("isArrayType() " + javaType.isArrayType());
+        System.out.println("isContainerType() " + javaType.isContainerType());
+        System.out.println("isEnumType() " + javaType.isEnumType());
+        System.out.println("isAbstract() " + javaType.isAbstract());
+        System.out.println("isConcrete() " + javaType.isConcrete());
+        System.out.println("isFinal() " + javaType.isFinal());
+        System.out.println("isMapLikeType() " + javaType.isMapLikeType());
+        System.out.println("isThrowable() " + javaType.isThrowable());
+    }
 }
 

@@ -39,7 +39,7 @@ public enum BeanResolver {
     }
 
 
-    private List<Property> resolve(final Class<?> clazz) {
+    private synchronized List<Property> resolve(final Class<?> clazz) {
         Assert.isTrue(clazz != null, "参数不能为null");
         try {
             Field[] fields = clazz.getDeclaredFields();
@@ -62,7 +62,7 @@ public enum BeanResolver {
         }
     }
 
-    public List<Property> getProperties(final Class<?> clazz) {
+    public synchronized List<Property> getProperties(final Class<?> clazz) {
         Assert.isTrue(clazz != null, "参数不能为null");
         if (types.containsKey(clazz)) {
             return types.get(clazz);

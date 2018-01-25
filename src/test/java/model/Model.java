@@ -1,9 +1,12 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,10 +14,11 @@ import java.util.Map;
 
 @Getter
 @Setter
+@ToString
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Model {
     @CellType(operation = Operation.LINE_NUM)
     private Integer lineNum;
-
     @CellType(title = "Text One")
     private String text1;
     @CellType(title = "Text Two")
