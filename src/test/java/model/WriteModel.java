@@ -3,6 +3,7 @@ package model;
 
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
+import com.github.fnwib.databing.title.CellTitle;
 import com.github.fnwib.parse.TitleDesc;
 import lombok.*;
 
@@ -32,25 +33,25 @@ public class WriteModel {
     @AutoMapping("日期")
     @CellType(title = "日期")
     private LocalDate              localDate;
-//    @AutoMapping("MAP \\d+")
+    //    @AutoMapping("MAP \\d+")
     @CellType(title = "MAP \\d+")
-    private Map<TitleDesc, String> mapNumber;
-//    @AutoMapping("MAP [A-Z]")
+    private Map<Integer, String> mapNumber;
+    //    @AutoMapping("MAP [A-Z]")
     @CellType(title = "MAP [A-Z]")
-    private Map<TitleDesc, String> mapString;
+    private Map<Integer, String> mapString;
 
     @AutoMapping("MAP [A-Z] null")
     @CellType(title = "MAP [A-Z] null")
-    private Map<TitleDesc, String> mapNull;
+    private Map<Integer, String> mapNull;
 
     @AutoMapping("Excel no match")
     @CellType(title = "Excel no match")
-    private Map<TitleDesc, String> noMatchMap;
+    private Map<Integer, String> noMatchMap;
 
     @AutoMapping("AAA")
     @CellType(title = "AAA")
     private String aaa;
 
-    @AutoMapping("value")
+    @AutoMapping("enumType")
     private EnumType enumType;
 }

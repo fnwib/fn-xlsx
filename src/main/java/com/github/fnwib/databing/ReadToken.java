@@ -23,26 +23,27 @@ public class ReadToken {
 
     private final String                     name;
     private final JavaType                   javaType;
-    private final AutoMapping                autoMapping;
+    private final Operation                  operation;
     private final List<CellTitle>            titles;
     private final List<ValueHandler<String>> valueHandlers;
     private final CellDeserializer<?>        cellDeserializer;
 
-    public ReadToken(Property property) {
+    public ReadToken(Property property, Operation operation) {
         this.name = property.getName();
         this.javaType = property.getJavaType();
-        this.autoMapping = property.getAnnotation(AutoMapping.class);
+        this.operation = operation;
         this.titles = Collections.emptyList();
         this.valueHandlers = Collections.emptyList();
         this.cellDeserializer = null;
     }
 
     public ReadToken(Property property,
+                     Operation operation,
                      List<CellTitle> titles,
                      List<ValueHandler<String>> valueHandlers) {
         this.name = property.getName();
         this.javaType = property.getJavaType();
-        this.autoMapping = property.getAnnotation(AutoMapping.class);
+        this.operation = operation;
         this.titles = titles;
         this.valueHandlers = valueHandlers;
         JavaType contentType;
@@ -60,7 +61,7 @@ public class ReadToken {
     }
 
     public Object getMapValue(Row row) {
-        if (autoMapping.operation() == Operation.LINE_NUM) {
+        if (operation == Operation.LINE_NUM) {
             return row.getRowNum();
         } else {
             if (javaType.isCollectionLikeType()) {

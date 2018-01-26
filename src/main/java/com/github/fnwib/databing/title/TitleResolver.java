@@ -1,5 +1,6 @@
 package com.github.fnwib.databing.title;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
@@ -65,10 +66,11 @@ public class TitleResolver {
             if (cellType == null && mapping == null) {
                 continue;
             } else {
+                checkSupport(property.getJavaType());
                 if (mapping != null) {
                     final PropertyToken token;
                     if (mapping.operation() == Operation.LINE_NUM) {
-                        token = new PropertyToken(property);
+                        token = new PropertyToken(property, mapping.operation());
                     } else if (mapping.operation() == Operation.REORDER) {
                         throw new SettingException("不支持类型,请使用注解的ValueHandler自行实现值处理");
                     } else {
@@ -84,19 +86,19 @@ public class TitleResolver {
                             boolean validate = titleValidator.validate(match);
                             if (!validate) throw new SettingException("");
                         }
-                        token = new PropertyToken(property, match, valueHandlers);
+                        token = new PropertyToken(property, mapping.operation(), match, valueHandlers);
                     }
                     titleTokens.add(token);
                 } else {
                     final PropertyToken token;
                     if (cellType.operation() == Operation.LINE_NUM) {
-                        token = new PropertyToken(property);
+                        token = new PropertyToken(property, cellType.operation());
                     } else if (cellType.operation() == Operation.REORDER) {
                         throw new SettingException("不支持类型,请使用@AutoMapping 的handler自行实现值处理");
                     } else {
                         TitleMatcher titleMatcher = new TitleMatcher(cellType);
                         List<CellTitle> match = titleMatcher.match(cellTitles);
-                        token = new PropertyToken(property, match, Collections.emptyList());
+                        token = new PropertyToken(property, cellType.operation(), match, Collections.emptyList());
                     }
                     titleTokens.add(token);
                 }
@@ -158,6 +160,15 @@ public class TitleResolver {
             }
         }
         return validateList;
+    }
+
+
+    private void checkSupport(JavaType javaType) {
+        if (javaType.isMapLikeType()) {
+            if (javaType.getKeyType().getRawClass() != java.lang.Integer.class) {
+                throw new SettingException("Map类型的key只支持java.lang.Integer,值是cell的序号");
+            }
+        }
     }
 
 

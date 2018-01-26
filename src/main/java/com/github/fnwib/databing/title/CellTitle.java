@@ -49,4 +49,5 @@ public class CellTitle {
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
+
 }

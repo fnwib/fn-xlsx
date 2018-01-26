@@ -102,40 +102,5 @@ public class ReadParseImplTest {
         Assert.assertEquals("Text Reorder string support", test2, model.getText3());
     }
 
-    @Test
-    public void test3() {
-        TypeFactory typeFactory = BeanResolver.typeFactory;
-        ArrayList<JavaType> javaTypes = Lists.newArrayList();
-        javaTypes.add(typeFactory.constructType(Number.class));
-        javaTypes.add(typeFactory.constructType(int.class));
-        javaTypes.add(typeFactory.constructType(String.class));
-        javaTypes.add(typeFactory.constructType(Integer.class));
-        javaTypes.add(typeFactory.constructType(LocalDate.class));
-        javaTypes.add(typeFactory.constructMapType(Map.class, String.class, String.class));
-        javaTypes.add(typeFactory.constructCollectionType(List.class, Number.class));
-
-        for (JavaType type : javaTypes) {
-            print(type);
-            System.out.println();
-            System.out.println();
-        }
-    }
-
-    private void print(JavaType javaType) {
-        System.out.println("--> javaType " + javaType);
-        System.out.println("isPrimitive() " + javaType.isPrimitive());
-        System.out.println("isCollectionLikeType() " + javaType.isCollectionLikeType());
-        System.out.println("isInterface() " + javaType.isInterface());
-        System.out.println("isReferenceType() " + javaType.isReferenceType());
-        System.out.println("isJavaLangObject() " + javaType.isJavaLangObject());
-        System.out.println("isArrayType() " + javaType.isArrayType());
-        System.out.println("isContainerType() " + javaType.isContainerType());
-        System.out.println("isEnumType() " + javaType.isEnumType());
-        System.out.println("isAbstract() " + javaType.isAbstract());
-        System.out.println("isConcrete() " + javaType.isConcrete());
-        System.out.println("isFinal() " + javaType.isFinal());
-        System.out.println("isMapLikeType() " + javaType.isMapLikeType());
-        System.out.println("isThrowable() " + javaType.isThrowable());
-    }
 }
 

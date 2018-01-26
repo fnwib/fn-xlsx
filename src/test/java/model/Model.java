@@ -64,7 +64,7 @@ public class Model {
     private Map<Integer, String> intKeyMap;
 
     @CellType(title = "Map [A-Z]")
-    private Map<String, String> stringKeyMap;
+    private Map<Integer, String> stringKeyMap;
 
     @CellType(title = "Map 1 \\(Chinese Name\\)")
     private Map<Integer, String> intKeyMap2;

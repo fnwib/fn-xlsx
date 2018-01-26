@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.ser.Serializer;
 import com.github.fnwib.databing.title.CellTitle;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
@@ -84,30 +83,11 @@ public class WriteToken {
 
     public List<CellText> map(Object value) {
         List<CellText> arrayList = Lists.newArrayList();
-        JavaType keyType = javaType.getKeyType();
-        if (keyType.equals(SupportType.Integer.getType())) {
-            Map<Integer, Object> objects = (Map<Integer, Object>) value;
-            objects.forEach((k, v) -> {
-                CellText cellText = new CellText(k, valueToString(v));
-                arrayList.add(cellText);
-            });
-        } else if (keyType.equals(SupportType.CellTitle.getType())) {
-            Map<CellTitle, Object> objects = (Map<CellTitle, Object>) value;
-            objects.forEach((k, v) -> {
-                Integer cellNum = k.getCellNum();
-                CellText cellText = new CellText(cellNum, valueToString(v));
-                arrayList.add(cellText);
-            });
-        } else if (keyType.equals(SupportType.TitleDesc.getType())) {
-            Map<TitleDesc, Object> objects = (Map<TitleDesc, Object>) value;
-            objects.forEach((k, v) -> {
-                Integer cellNum = k.getIndex();
-                CellText cellText = new CellText(cellNum, valueToString(v));
-                arrayList.add(cellText);
-            });
-        } else {
-            throw new SettingException("not support map key is " + javaType);
-        }
+        Map<Integer, Object> objects = (Map<Integer, Object>) value;
+        objects.forEach((k, v) -> {
+            CellText cellText = new CellText(k, valueToString(v));
+            arrayList.add(cellText);
+        });
         return arrayList;
     }
 

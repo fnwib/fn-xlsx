@@ -1,14 +1,8 @@
 package com.github.fnwib.write.config;
 
-import com.github.fnwib.annotation.AutoMapping;
-import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.databing.ExcelLineReader;
-import com.github.fnwib.databing.ExcelLineWriter;
 import com.github.fnwib.databing.LineReader;
-import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.parse.Parser;
-import com.github.fnwib.reflect.BeanResolver;
-import com.github.fnwib.reflect.Property;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +20,21 @@ public class WorkbookConfig<T> {
     private final ResultFileSetting resultFileSetting;
     private final TemplateSetting   templateSetting;
 
+    @Deprecated
     public WorkbookConfig(Parser<T> parser,
                           ExportType exportType,
                           ResultFileSetting resultFileSetting,
                           TemplateSetting templateSetting) {
         this.entityClass = parser.getClazz();
+        this.lineReader = new ExcelLineReader<>(entityClass);
+        this.resultFileSetting = resultFileSetting;
+        this.templateSetting = templateSetting;
+    }
+
+    public WorkbookConfig(Class<T> entityClass,
+                          ResultFileSetting resultFileSetting,
+                          TemplateSetting templateSetting) {
+        this.entityClass = entityClass;
         this.lineReader = new ExcelLineReader<>(entityClass);
         this.resultFileSetting = resultFileSetting;
         this.templateSetting = templateSetting;
