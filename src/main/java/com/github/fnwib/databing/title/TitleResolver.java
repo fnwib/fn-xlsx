@@ -1,6 +1,7 @@
 package com.github.fnwib.databing.title;
 
 import com.github.fnwib.annotation.AutoMapping;
+import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.PropertyToken;
@@ -56,24 +57,46 @@ public class TitleResolver {
 
     public Set<PropertyToken> resolve(Class<?> entityClass, Row row) {
         List<CellTitle> cellTitles = getCellTitles(row);
-        List<Property> properties = BeanResolver.INSTANCE.getPropertiesWithAnnotation(entityClass, AutoMapping.class);
+        List<Property> properties = BeanResolver.INSTANCE.getProperties(entityClass);
         Set<PropertyToken> titleTokens = Sets.newHashSet();
         for (Property property : properties) {
+            final CellType cellType = property.getAnnotation(CellType.class);
             final AutoMapping mapping = property.getAnnotation(AutoMapping.class);
-            final PropertyToken token;
-            if (mapping.operation() == Operation.LINE_NUM) {
-                token = new PropertyToken(property);
-            } else {
-                TitleMatcher titleMatcher = new TitleMatcher(mapping);
-                List<CellTitle> match = titleMatcher.match(cellTitles);
+            if (cellType == null && mapping == null) {
+                continue;
+            }else {
+                if (mapping != null) {
+                    final PropertyToken token;
+                    if (mapping.operation() == Operation.LINE_NUM) {
+                        token = new PropertyToken(property);
+                    } else {
+                        TitleMatcher titleMatcher = new TitleMatcher(mapping);
+                        List<CellTitle> match = titleMatcher.match(cellTitles);
 
-                List<ValueHandler<String>> contentValueHandlers = Context.INSTANCE.findContentValueHandlers();
-                for (ValueHandler<String> handler : convert(mapping.handlers())) {
-                    contentValueHandlers.add(handler);
+                        List<ValueHandler<String>> contentValueHandlers = Context.INSTANCE.findContentValueHandlers();
+                        for (ValueHandler<String> handler : convert(mapping.handlers())) {
+                            contentValueHandlers.add(handler);
+                        }
+                        token = new PropertyToken(property, match, contentValueHandlers);
+                    }
+                    titleTokens.add(token);
+                }else {
+                    final PropertyToken token;
+                    if (cellType.operation() == Operation.LINE_NUM) {
+                        token = new PropertyToken(property);
+                    } else {
+                        TitleMatcher titleMatcher = new TitleMatcher(cellType);
+                        List<CellTitle> match = titleMatcher.match(cellTitles);
+
+                        List<ValueHandler<String>> contentValueHandlers = Context.INSTANCE.findContentValueHandlers();
+                        for (ValueHandler<String> handler : convert(cellType.handlers())) {
+                            contentValueHandlers.add(handler);
+                        }
+                        token = new PropertyToken(property, match, contentValueHandlers);
+                    }
+                    titleTokens.add(token);
                 }
-                token = new PropertyToken(property, match, contentValueHandlers);
             }
-            titleTokens.add(token);
         }
         int hit = Sets.filter(titleTokens, p -> !p.isMatchEmpty()).size();
         if (hit == 0) {

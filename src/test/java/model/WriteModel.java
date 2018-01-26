@@ -17,37 +17,40 @@ import java.util.Map;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class WriteModel {
-    @AutoMapping(title = "序号")
+    @AutoMapping("序号")
     @CellType(title = "序号")
     private Integer                sequence;
-    @AutoMapping(title = "字符串")
+    @AutoMapping("字符串")
     @CellType(title = "字符串")
     private String                 string;
-    @AutoMapping(title = "数字Int")
+    @AutoMapping("数字Int")
     @CellType(title = "数字Int")
     private Integer                intNum;
-    @AutoMapping(title = "数字Long")
+    @AutoMapping("数字Long")
     @CellType(title = "数字Long")
     private Long                   longNum;
-    @AutoMapping(title = "日期")
+    @AutoMapping("日期")
     @CellType(title = "日期")
     private LocalDate              localDate;
-    @AutoMapping(title = "MAP \\d+")
+    @AutoMapping("MAP \\d+")
     @CellType(title = "MAP \\d+")
     private Map<TitleDesc, String> mapNumber;
-    @AutoMapping(title = "MAP [A-Z]")
+//    @AutoMapping("MAP [A-Z]")
     @CellType(title = "MAP [A-Z]")
     private Map<TitleDesc, String> mapString;
 
-    @AutoMapping(title = "MAP [A-Z] null")
+    @AutoMapping("MAP [A-Z] null")
     @CellType(title = "MAP [A-Z] null")
     private Map<TitleDesc, String> mapNull;
 
-    @AutoMapping(title = "Excel no match")
+    @AutoMapping("Excel no match")
     @CellType(title = "Excel no match")
     private Map<TitleDesc, String> noMatchMap;
 
-    @AutoMapping(title = "AAA")
+    @AutoMapping("AAA")
     @CellType(title = "AAA")
     private String aaa;
+
+    @AutoMapping("value")
+    private EnumType enumType;
 }

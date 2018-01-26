@@ -19,46 +19,46 @@ import java.util.Map;
 public class AutoMappingModel {
     @AutoMapping(operation = Operation.LINE_NUM)
     private Integer lineNum;
-    @AutoMapping(title = "Text One", handlers = {ToUpperHandler.class})
+    @AutoMapping(value = "Text One", handlers = {ToUpperHandler.class})
     private String  text1;
-    @AutoMapping(title = "Text Two")
+    @AutoMapping("Text Two")
     private String  text2;
 
-    @AutoMapping(title = "Text Reorder", handlers = {RecordHandler.class})
+    @AutoMapping(value = "Text Reorder", handlers = {RecordHandler.class})
     private String text3;
 
-    @AutoMapping(title = "integer")
+    @AutoMapping("integer")
     private Integer    intNum;
-    @AutoMapping(title = "long")
+    @AutoMapping("long")
     private Long       longNum;
-    @AutoMapping(title = "float")
+    @AutoMapping("float")
     private Float      floatNum;
-    @AutoMapping(title = "double")
+    @AutoMapping("double")
     private Double     doubleNum;
-    @AutoMapping(title = "bigDecimal")
+    @AutoMapping("bigDecimal")
     private BigDecimal bigDecimal;
 
-    @AutoMapping(title = "Number Null")
+    @AutoMapping("Number Null")
     private Integer intNumNull;
 
-    @AutoMapping(title = "LocalDate null")
+    @AutoMapping("LocalDate null")
     private LocalDate       localDate;
-    @AutoMapping(prefix = "LocalDate", title = "\\d+")
+    @AutoMapping(prefix = "LocalDate", value = "\\d+")
     private List<LocalDate> localDateList;
 
-    @AutoMapping(prefix = "Map", title = "\\d+")
+    @AutoMapping(prefix = "Map", value = "\\d+")
     private Map<Integer, String> intKeyMap;
 
-    @AutoMapping(prefix = "Map", title = "[A-Z]")
+    @AutoMapping(prefix = "Map", value = "[A-Z]")
     private Map<String, String> stringKeyMap;
 
-    @AutoMapping(prefix = "Map", title = "1", suffix = "(Chinese Name)")
+    @AutoMapping(prefix = "Map", value = "1", suffix = "(Chinese Name)")
     private Map<Integer, String> intKeyMap2;
 
-    @AutoMapping(prefix = "Map", title = "\\d+", suffix = "(Chinese Name)",exclude = "1")
+    @AutoMapping(prefix = "Map", value = "\\d+", suffix = "(Chinese Name)", exclude = "1")
     private Map<Integer, String> intKeyMap3;
 
-    @AutoMapping(title = "Excel no match")
+    @AutoMapping("Excel no match")
     private Map<Integer, String> noMatchMap;
 
 }

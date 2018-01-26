@@ -1,11 +1,22 @@
 package com.github.fnwib.annotation;
 
+import com.github.fnwib.databing.valuehandler.ValueHandler;
+
 import java.lang.annotation.*;
+
 @Deprecated
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface CellType {
+    /**
+     * title 前缀
+     * 完整匹配-不支持正则
+     *
+     * @return
+     */
+    String prefix() default "";
+
     /**
      * Excel的列title 名称
      * 支持正则表达式
@@ -16,6 +27,24 @@ public @interface CellType {
      * <p>
      */
     String title() default "";
+
+    /**
+     * 要排除的Excel列title
+     * 支持正则表达式
+     * <p>
+     * title的子集
+     *
+     * @return
+     */
+    String exclude() default "";
+
+    /**
+     * title 后缀
+     * 完整匹配-不支持正则
+     *
+     * @return
+     */
+    String suffix() default "";
 
     /**
      * 对Excel列的操作类型
@@ -30,12 +59,11 @@ public @interface CellType {
     Operation operation() default Operation.DEFAULT;
 
     /**
-     * 要排除的Excel列title
-     * 支持正则表达式
+     * 值处理器
      *
      * @return
      */
-    String exclude() default "";
+    Class<? extends ValueHandler<String>>[] handlers() default {};
 
 
 }

@@ -1,6 +1,7 @@
 package com.github.fnwib.databing.title;
 
 import com.github.fnwib.annotation.AutoMapping;
+import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.ValueUtil;
 import com.google.common.collect.Lists;
@@ -22,6 +23,14 @@ public final class TitleMatcher {
 
     public TitleMatcher(AutoMapping mapping) {
         this.prefix = mapping.prefix();
+        this.titlePattern = Pattern.compile(mapping.value().trim());
+        this.suffix = mapping.suffix();
+        this.exclude = mapping.exclude();
+    }
+
+    @Deprecated
+    public TitleMatcher(CellType mapping) {
+        this.prefix = mapping.prefix();
         this.titlePattern = Pattern.compile(mapping.title().trim());
         this.suffix = mapping.suffix();
         this.exclude = mapping.exclude();
@@ -41,7 +50,7 @@ public final class TitleMatcher {
             }
             Matcher titleMatcher = titlePattern.matcher(root.get().trim());
             if (titleMatcher.matches()) {
-                if (StringUtils.isNotBlank(exclude) && Pattern.matches(exclude,root.get().trim())) {
+                if (StringUtils.isNotBlank(exclude) && Pattern.matches(exclude, root.get().trim())) {
                     continue;
                 }
                 if (title.isBind()) {

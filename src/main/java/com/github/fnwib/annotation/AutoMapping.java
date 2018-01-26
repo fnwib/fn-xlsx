@@ -26,7 +26,7 @@ public @interface AutoMapping {
      * "aaa" "bbb"  -> "aaa|bbb"
      * <p>
      */
-    String title() default "";
+    String value() default "";
 
     /**
      * 要排除的Excel列title

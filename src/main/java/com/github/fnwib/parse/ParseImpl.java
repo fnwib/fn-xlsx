@@ -7,6 +7,7 @@ import com.github.fnwib.convert.ExcelConversionService;
 import com.github.fnwib.convert.ExcelConverter;
 import com.github.fnwib.convert.ExcelGenericConversionService;
 import com.github.fnwib.convert.StringExcelConverter;
+import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
