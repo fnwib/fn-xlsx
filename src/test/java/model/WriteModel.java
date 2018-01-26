@@ -32,7 +32,7 @@ public class WriteModel {
     @AutoMapping("日期")
     @CellType(title = "日期")
     private LocalDate              localDate;
-    @AutoMapping("MAP \\d+")
+//    @AutoMapping("MAP \\d+")
     @CellType(title = "MAP \\d+")
     private Map<TitleDesc, String> mapNumber;
 //    @AutoMapping("MAP [A-Z]")

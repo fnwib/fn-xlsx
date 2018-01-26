@@ -10,7 +10,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import java.text.Collator;
 import java.util.*;
 
-@Slf4j
 public class ValueUtil {
 
     private static final Collator COLLATOR = Collator.getInstance(Locale.CHINA);
@@ -23,6 +22,7 @@ public class ValueUtil {
      * @param symbols
      * @return
      */
+    @Deprecated
     public static String sortAndTrim(String s, String symbols) {
         if (s == null) {
             return null;
@@ -81,12 +81,6 @@ public class ValueUtil {
         } else {
             return Optional.empty();
         }
-    }
-
-    public static void main(String[] args) {
-        Optional<String> number = substringBetween("Number", "", "");
-        String s = number.orElse("numm   aasdas");
-        System.out.println(s);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.github.fnwib.annotation;
 
+import com.github.fnwib.databing.title.TitleValidator;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 
 import java.lang.annotation.*;
@@ -64,5 +65,14 @@ public @interface AutoMapping {
      * @return
      */
     Class<? extends ValueHandler<String>>[] handlers() default {};
+
+    /**
+     * 如果当前字段映射了多列
+     * <p>
+     * 可以通过这项配置校验列的顺序
+     *
+     * @return
+     */
+    Class<? extends TitleValidator>[] validate() default {};
 
 }

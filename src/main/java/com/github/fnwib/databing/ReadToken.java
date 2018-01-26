@@ -5,6 +5,7 @@ import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.deser.CellDeserializer;
 import com.github.fnwib.databing.title.CellTitle;
+import com.github.fnwib.databing.title.TitleValidator;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
@@ -83,17 +84,6 @@ public class ReadToken {
                 }
             }
         }
-    }
-
-    private List<Cell> getCell(Row row) {
-        if (titles.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<Cell> cells = new ArrayList<>(titles.size());
-        for (CellTitle title : titles) {
-            cells.add(row.getCell(title.getCellNum()));
-        }
-        return cells;
     }
 
     private Collection<String> toCollection(Row row) {

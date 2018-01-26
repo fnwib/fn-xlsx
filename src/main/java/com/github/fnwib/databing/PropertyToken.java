@@ -1,6 +1,7 @@
 package com.github.fnwib.databing;
 
 import com.github.fnwib.databing.title.CellTitle;
+import com.github.fnwib.databing.title.TitleValidator;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.reflect.Property;
 import lombok.extern.slf4j.Slf4j;

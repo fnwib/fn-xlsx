@@ -64,35 +64,39 @@ public class TitleResolver {
             final AutoMapping mapping = property.getAnnotation(AutoMapping.class);
             if (cellType == null && mapping == null) {
                 continue;
-            }else {
+            } else {
                 if (mapping != null) {
                     final PropertyToken token;
                     if (mapping.operation() == Operation.LINE_NUM) {
                         token = new PropertyToken(property);
+                    } else if (mapping.operation() == Operation.REORDER) {
+                        throw new SettingException("不支持类型,请使用注解的ValueHandler自行实现值处理");
                     } else {
                         TitleMatcher titleMatcher = new TitleMatcher(mapping);
                         List<CellTitle> match = titleMatcher.match(cellTitles);
 
-                        List<ValueHandler<String>> contentValueHandlers = Context.INSTANCE.findContentValueHandlers();
-                        for (ValueHandler<String> handler : convert(mapping.handlers())) {
-                            contentValueHandlers.add(handler);
+                        List<ValueHandler<String>> valueHandlers = Context.INSTANCE.findContentValueHandlers();
+                        for (ValueHandler<String> handler : convertValueHandler(mapping.handlers())) {
+                            valueHandlers.add(handler);
                         }
-                        token = new PropertyToken(property, match, contentValueHandlers);
+                        List<TitleValidator> titleValidators = convertTitleValidate(mapping.validate());
+                        for (TitleValidator titleValidator : titleValidators) {
+                            boolean validate = titleValidator.validate(match);
+                            if (!validate) throw new SettingException("");
+                        }
+                        token = new PropertyToken(property, match, valueHandlers);
                     }
                     titleTokens.add(token);
-                }else {
+                } else {
                     final PropertyToken token;
                     if (cellType.operation() == Operation.LINE_NUM) {
                         token = new PropertyToken(property);
+                    } else if (cellType.operation() == Operation.REORDER) {
+                        throw new SettingException("不支持类型,请使用@AutoMapping 的handler自行实现值处理");
                     } else {
                         TitleMatcher titleMatcher = new TitleMatcher(cellType);
                         List<CellTitle> match = titleMatcher.match(cellTitles);
-
-                        List<ValueHandler<String>> contentValueHandlers = Context.INSTANCE.findContentValueHandlers();
-                        for (ValueHandler<String> handler : convert(cellType.handlers())) {
-                            contentValueHandlers.add(handler);
-                        }
-                        token = new PropertyToken(property, match, contentValueHandlers);
+                        token = new PropertyToken(property, match, Collections.emptyList());
                     }
                     titleTokens.add(token);
                 }
@@ -116,7 +120,8 @@ public class TitleResolver {
         return titles;
     }
 
-    private List<ValueHandler<String>> convert(Class<? extends ValueHandler<String>>[] handlers) {
+    private List<ValueHandler<String>> convertValueHandler(Class<? extends ValueHandler<String>>[] handlers) {
+        if (handlers.length == 0) return Collections.emptyList();
         List<ValueHandler<String>> handlerList = Lists.newArrayListWithCapacity(handlers.length);
         for (Class<? extends ValueHandler<String>> handler : handlers) {
             Constructor<?>[] constructors = handler.getConstructors();
@@ -133,6 +138,26 @@ public class TitleResolver {
             }
         }
         return handlerList;
+    }
+
+    private List<TitleValidator> convertTitleValidate(Class<? extends TitleValidator>[] validates) {
+        if (validates.length == 0) return Collections.emptyList();
+        List<TitleValidator> validateList = Lists.newArrayListWithCapacity(validates.length);
+        for (Class<? extends TitleValidator> validatorClass : validates) {
+            Constructor<?>[] constructors = validatorClass.getConstructors();
+            if (constructors.length == 1) {
+                Constructor<?> constructor = constructors[0];
+                try {
+                    TitleValidator titleValidator = (TitleValidator) constructor.newInstance();
+                    validateList.add(titleValidator);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    throw new SettingException(validatorClass.getName() + " no found non args constructor");
+                }
+            } else {
+                throw new SettingException(validatorClass.getName() + " not support multi args constructor");
+            }
+        }
+        return validateList;
     }
 
 

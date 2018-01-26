@@ -30,9 +30,9 @@ public final class TitleMatcher {
 
     @Deprecated
     public TitleMatcher(CellType mapping) {
-        this.prefix = mapping.prefix();
+        this.prefix = "";
         this.titlePattern = Pattern.compile(mapping.title().trim());
-        this.suffix = mapping.suffix();
+        this.suffix = "";
         this.exclude = mapping.exclude();
     }
 
@@ -58,6 +58,9 @@ public final class TitleMatcher {
                 }
                 log.debug("-->matched -> rownum is [{}],text is [{}] ,middle [{}] ", title.getRowNum(), title.getText(), root.get());
                 title.bind();
+                title.setPrefix(prefix);
+                title.setSuffix(suffix);
+                title.setValue(root.get());
                 result.add(title);
             }
         }
