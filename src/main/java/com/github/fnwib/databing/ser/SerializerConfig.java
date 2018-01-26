@@ -6,17 +6,18 @@ import com.github.fnwib.reflect.BeanResolver;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class SerializerConfig {
 
-    private Map<JavaType, Serializer<?>> serializers = Maps.newConcurrentMap();
+    private Map<JavaType, Serializer> serializers = Maps.newConcurrentMap();
 
-    public void register(Serializer<?> serializer) {
+    public void register(Serializer serializer) {
         JavaType genericType = BeanResolver.getInterfaceGenericType(serializer.getClass());
         this.serializers.put(genericType, serializer);
     }
 
-    public Serializer<?> findSerializer(JavaType javaType) {
+    public Serializer findSerializer(JavaType javaType) {
         return serializers.get(javaType);
     }
 }

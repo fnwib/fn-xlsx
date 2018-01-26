@@ -1,12 +1,16 @@
 package com.github.fnwib.write.config;
 
+import com.github.fnwib.databing.ExcelLineReader;
+import com.github.fnwib.databing.ExcelLineWriter;
+import com.github.fnwib.databing.LineReader;
+import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.parse.Parser;
+import com.github.fnwib.reflect.BeanResolver;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,17 +18,17 @@ import java.util.List;
 @Getter
 public class WorkbookConfig<T> {
 
-    private final Parser<T>           parser;
-    private final ResultFileSetting   resultFileSetting;
-    private final TemplateSetting     templateSetting;
-    private final ExportType          exportType;
+    private final Class<T>          entityClass;
+    private final LineReader<T>     lineReader;
+    private final ResultFileSetting resultFileSetting;
+    private final TemplateSetting   templateSetting;
 
     public WorkbookConfig(Parser<T> parser,
                           ExportType exportType,
                           ResultFileSetting resultFileSetting,
                           TemplateSetting templateSetting) {
-        this.parser = parser;
-        this.exportType = exportType;
+        this.entityClass = parser.getClazz();
+        this.lineReader = new ExcelLineReader<>(entityClass);
         this.resultFileSetting = resultFileSetting;
         this.templateSetting = templateSetting;
     }
@@ -33,8 +37,13 @@ public class WorkbookConfig<T> {
     public List<File> getResultFiles() {
         File resultFolder = resultFileSetting.getResultFolder();
         File[] files = resultFolder.listFiles();
-        if (files ==null) return Collections.emptyList();
+        if (files == null) return Collections.emptyList();
         return Lists.newArrayList(files);
+    }
+
+
+    public LineReader<T> getLineReader() {
+        return lineReader;
     }
 
 }

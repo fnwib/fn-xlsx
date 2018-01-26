@@ -11,6 +11,7 @@ import com.github.fnwib.databing.valuehandler.ValueHandlerConfig;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public enum Context {
@@ -36,7 +37,7 @@ public enum Context {
     }
 
 
-    public void register(Serializer<?> serializer) {
+    public void register(Serializer serializer) {
         this.serializerConfig.register(serializer);
     }
 
@@ -44,7 +45,7 @@ public enum Context {
      * @param javaType
      * @return
      */
-    public Serializer<?> findSerializer(JavaType javaType) {
+    public Serializer findSerializer(JavaType javaType) {
         return serializerConfig.findSerializer(javaType);
     }
 

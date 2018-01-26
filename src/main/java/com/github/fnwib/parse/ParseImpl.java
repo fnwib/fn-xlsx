@@ -51,6 +51,10 @@ public class ParseImpl<T> implements Parser<T> {
         this.RATIO = ratio;
         this.conversionService = converterRegistry;
     }
+    @Override
+    public Class<T> getClazz() {
+        return clazz;
+    }
 
     @Override
     public boolean match(Row row) {

@@ -1,11 +1,9 @@
 package com.github.fnwib.write.config;
 
+import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.parse.Parser;
 import com.github.fnwib.write.CellText;
-import com.github.fnwib.write.WriteParser;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -25,27 +23,24 @@ import java.util.List;
 public class WorkbookWrap<T> {
 
     private static final int defaultSheetIndex = 0;
-    private final Parser<T>         parser;
+
+    private final LineWriter<T>     lineWriter;
     private final File              templateFile;
     private final XSSFWorkbook      templateWorkbook;
     private final SXSSFWorkbook     writeWorkbooks;
     private final ResultFileSetting resultFileSetting;
     private final TemplateSetting   templateSetting;
-    private final ExportType        exportType;
+    private final WorkbookConfig<T> workbookConfig;
 
     private final int titleRowNum;
 
     private boolean written;
 
-    WorkbookWrap(Parser<T> parser,
-                 ExportType exportType,
-                 ResultFileSetting resultFileSetting,
-                 TemplateSetting templateSetting,
-                 int titleRowNum) {
-        this.parser = parser;
-        this.exportType = exportType;
-        this.resultFileSetting = resultFileSetting;
-        this.templateSetting = templateSetting;
+    WorkbookWrap(WorkbookConfig<T> workbookConfig, int titleRowNum) {
+        this.workbookConfig = workbookConfig;
+        this.lineWriter = workbookConfig.getLineReader().getLineWriter();
+        this.resultFileSetting = workbookConfig.getResultFileSetting();
+        this.templateSetting = workbookConfig.getTemplateSetting();
         this.templateFile = resultFileSetting.copyFile(templateSetting.getTemplate());
         this.titleRowNum = titleRowNum;
         this.templateWorkbook = buildWorkbook();
@@ -53,25 +48,20 @@ public class WorkbookWrap<T> {
         this.written = false;
     }
 
-    public WriteParser<T> getWriteParser() {
+    public LineWriter<T> getWriteParser() {
         if (written) {
             throw new ExcelException("excel已经写入文件");
         }
-        WriteParser<T> writeParser = parser.createWriteParser();
         if (templateSetting.isUseDefaultCellStyle()) {
-            writeParser.setCellStyle(getCellStyle());
+            lineWriter.setCellStyle(getCellStyle());
         }
-        writeParser.setSheet(getNextSheet());
-        return writeParser;
+        lineWriter.setSheet(getNextSheet());
+        return lineWriter;
     }
 
     private Sheet getNextSheet() {
-        if (exportType == ExportType.SingleSheet) {
-            written = true;
-            return writeWorkbooks.getSheetAt(defaultSheetIndex);
-        } else {
-            throw new NotSupportedException("不支持导出类型, " + exportType.name());
-        }
+        written = true;
+        return writeWorkbooks.getSheetAt(defaultSheetIndex);
     }
 
     private XSSFWorkbook buildWorkbook() {
@@ -108,7 +98,7 @@ public class WorkbookWrap<T> {
                 cell.setCellStyle(cellStyle);
                 cell.setCellValue(title);
             }
-            parser.match(row);
+            workbookConfig.getLineReader().match(row);
         }
     }
 

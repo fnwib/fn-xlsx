@@ -4,16 +4,21 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Getter
 @EqualsAndHashCode
 @ToString
 public class CellTitle {
-    private final int     rowNum;
-    private final int     cellNum;
+    private final Integer rowNum;
+    private final Integer cellNum;
     private final String  text;
     private       boolean bind;
 
-    public CellTitle(int rowNum, int cellNum, String text) {
+    public CellTitle(Integer rowNum, Integer cellNum, String text) {
+        Objects.requireNonNull(rowNum);
+        Objects.requireNonNull(cellNum);
+        Objects.requireNonNull(text);
         this.rowNum = rowNum;
         this.cellNum = cellNum;
         this.text = text;

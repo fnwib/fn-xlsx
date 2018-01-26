@@ -20,7 +20,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 
 public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {

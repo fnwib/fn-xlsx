@@ -1,5 +1,6 @@
 package com.github.fnwib.write;
 
+import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.write.config.ExportType;
@@ -24,33 +25,25 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
     private final WorkbookConfig<T>      workbookConfig;
     private final WorkbookWrapFactory<T> workbookWrapFactory;
     private final Queue<WorkbookWrap>    workbookWraps;
-    private final ExportType             exportType;
     private final AtomicInteger currentRowNum = new AtomicInteger();
-    private WriteParser<T> writeParser;
+    private LineWriter<T> lineWriter;
     private boolean closed = false;
 
     public ExcelWriterProcessor(WorkbookConfig<T> workbookConfig) {
         this.workbookWrapFactory = new WorkbookWrapFactory<>(workbookConfig);
         this.workbookConfig = workbookConfig;
-        this.exportType = workbookConfig.getExportType();
         this.workbookWraps = Queues.newArrayDeque();
         useNextSheet();
     }
 
     private synchronized void useNextSheet() {
-        if (exportType == ExportType.SingleSheet) {
-            if (!workbookWraps.isEmpty()) {
-                workbookWraps.poll().write();
-            }
-            workbookWraps.add(workbookWrapFactory.createWorkbookWrap());
-            WorkbookWrap workbookWrap = workbookWraps.peek();
-            this.writeParser = workbookWrap.getWriteParser();
-            currentRowNum.set(workbookWrapFactory.getTitleRowNum() + 1);
-        } else if (exportType == ExportType.MultiSheet) {
-            throw new NotSupportedException("暂时不支持导出类型, " + exportType.name());
-        } else {
-            throw new NotSupportedException("不支持导出类型, " + exportType.name());
+        if (!workbookWraps.isEmpty()) {
+            workbookWraps.poll().write();
         }
+        workbookWraps.add(workbookWrapFactory.createWorkbookWrap());
+        WorkbookWrap workbookWrap = workbookWraps.peek();
+        this.lineWriter = workbookWrap.getWriteParser();
+        currentRowNum.set(workbookWrapFactory.getTitleRowNum() + 1);
     }
 
     private void checkState() {
@@ -65,7 +58,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         if (!workbookConfig.getResultFileSetting().valid(currentRowNum)) {
             useNextSheet();
         }
-        writeParser.convert(currentRowNum.getAndAdd(1), element);
+        lineWriter.convert(currentRowNum.getAndAdd(1), element);
     }
 
     @Override
@@ -87,7 +80,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
             if (!workbookConfig.getResultFileSetting().valid(currentRowNum)) {
                 useNextSheet();
             }
-            writeParser.convert(currentRowNum.getAndAdd(elements.size()), elements, mergedRangeIndexes);
+            lineWriter.convert(currentRowNum.getAndAdd(elements.size()), elements, mergedRangeIndexes);
         }
     }
 

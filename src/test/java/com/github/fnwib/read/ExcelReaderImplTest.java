@@ -1,10 +1,10 @@
 package com.github.fnwib.read;
 
 import com.github.fnwib.databing.Context;
-import com.github.fnwib.databing.ExcelRowParser;
-import com.github.fnwib.databing.RowParser;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.databing.ExcelLineReader;
+import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.databing.deser.LocalDateCellDeserializer;
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.util.BCConvert;
 import com.monitorjbl.xlsx.StreamingReader;
 import model.AutoMappingModel;
@@ -37,7 +37,7 @@ public class ExcelReaderImplTest {
         Context.INSTANCE.registerContentValueHandlers(valueHandler, valueHandler2);
 //        Context.INSTANCE.registerTitleValueHandlers(valueHandler, valueHandler2);
 
-        RowParser<AutoMappingModel> parser = new ExcelRowParser<>(AutoMappingModel.class);
+        LineReader<AutoMappingModel> parser = new ExcelLineReader<>(AutoMappingModel.class);
         reader = new ExcelReaderImpl2<>(parser, workbook, 0);
     }
 

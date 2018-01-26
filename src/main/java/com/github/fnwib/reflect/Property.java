@@ -8,6 +8,7 @@ import org.apache.poi.ss.formula.functions.T;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 @Getter
 public class Property {
@@ -33,6 +34,10 @@ public class Property {
 
     public <T extends Annotation> T getAnnotation(final Class<T> annotationCls) {
         return field.getAnnotation(annotationCls);
+    }
+
+    public Method getReadMethod() {
+        return propertyDescriptor.getReadMethod();
     }
 
 }

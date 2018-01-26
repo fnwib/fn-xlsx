@@ -2,7 +2,6 @@ package com.github.fnwib.write.config;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.parse.Parser;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -15,29 +14,23 @@ import java.io.IOException;
 @Slf4j
 public class WorkbookWrapFactory<T> {
 
-    private final Parser<T>         parser;
-    private final ResultFileSetting resultFileSetting;
-    private final TemplateSetting   templateSetting;
-    private final ExportType        exportType;
+    private final WorkbookConfig<T> workbookConfig;
     @Getter
     private final Integer           titleRowNum;
 
     public WorkbookWrapFactory(WorkbookConfig<T> workbookConfig) {
-        this.exportType = workbookConfig.getExportType();
-        this.resultFileSetting = workbookConfig.getResultFileSetting();
-        this.templateSetting = workbookConfig.getTemplateSetting();
-        this.parser = workbookConfig.getParser();
+        this.workbookConfig = workbookConfig;
         this.titleRowNum = findTitle();
     }
 
     private int findTitle() {
         try {
-            XSSFWorkbook workbook = new XSSFWorkbook(templateSetting.getTemplate());
+            XSSFWorkbook workbook = new XSSFWorkbook(workbookConfig.getTemplateSetting().getTemplate());
             for (Sheet rows : workbook) {
                 for (Row row : rows) {
-                    boolean matched = parser.match(row);
+                    boolean matched = workbookConfig.getLineReader().match(row);
                     if (matched) {
-                        if (row.getRowNum() >= resultFileSetting.getMaxRowsCanWrite()) {
+                        if (row.getRowNum() >= workbookConfig.getResultFileSetting().getMaxRowsCanWrite()) {
                             throw new SettingException("sheet可写最大行小于title所在行");
                         }
                         return row.getRowNum();
@@ -51,7 +44,7 @@ public class WorkbookWrapFactory<T> {
     }
 
     public WorkbookWrap<T> createWorkbookWrap() {
-        return new WorkbookWrap<>(parser, exportType, resultFileSetting, templateSetting, titleRowNum);
+        return new WorkbookWrap<>(workbookConfig, titleRowNum);
     }
 
 }

@@ -1,11 +1,9 @@
 package com.github.fnwib.databing.ser;
 
-import com.github.fnwib.write.CellText;
-
-import java.util.List;
+import java.util.Optional;
 
 @FunctionalInterface
-public interface Serializer<FT> {
+public interface Serializer {
 
-    CellText serialize(FT value);
+    String serialize(Optional<?> value);
 }

@@ -87,11 +87,11 @@ public class ExcelWriterBuilder {
             ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
             converterRegistry.addConverter(new StringExcelConverter());
             converterRegistry.addConverter(new LocalDateExcelConverter());
-            converterRegistry.addConverter( new TitleDescMapExcelConverter());
+            converterRegistry.addConverter(new TitleDescMapExcelConverter());
             converterRegistry.addConverterFactory(new NumberExcelConverterFactory());
             Parser<T> parser = new ParseImpl<>(entityClass, converterRegistry, 0.6);
 
-            WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(parser, exportType, resultFileSetting, templateSetting);
+            WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(parser,ExportType.SingleSheet, resultFileSetting, templateSetting);
             return new ExcelWriterProcessor<>(workbookConfig);
         }
 

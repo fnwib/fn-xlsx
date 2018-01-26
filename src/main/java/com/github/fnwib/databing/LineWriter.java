@@ -1,12 +1,11 @@
-package com.github.fnwib.write;
+package com.github.fnwib.databing;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.List;
 
-@Deprecated
-public interface WriteParser<T> {
+public interface LineWriter<T> {
 
     void setSheet(Sheet sheet);
 
