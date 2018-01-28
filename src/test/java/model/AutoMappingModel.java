@@ -3,7 +3,7 @@ package model;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
-import com.github.fnwib.databing.title.impl.MultiTitleIntValidator;
+import com.github.fnwib.databing.title.Sequence;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -54,13 +54,17 @@ public class AutoMappingModel {
     @AutoMapping(prefix = "Map", value = "[A-Z]")
     private Map<Integer, String> stringKeyMap;
 
-    @AutoMapping(prefix = "Map", value = "1", suffix = "(Chinese Name)", validate = {MultiTitleIntValidator.class})
+    @AutoMapping(prefix = "Map", value = "1", suffix = "(Chinese Name)")
     private Map<Integer, String> intKeyMap2;
 
-    @AutoMapping(prefix = "Map", value = "\\d+", suffix = "(Chinese Name)", exclude = "1", validate = {MultiTitleIntValidator.class})
+    @AutoMapping(prefix = "Map", value = "\\d+", suffix = "(Chinese Name)", exclude = "1")
     private Map<Integer, String> intKeyMap3;
 
     @AutoMapping("Excel no match")
     private Map<Integer, String> noMatchMap;
+
+    @AutoMapping(prefix = "Map2", value = "[A-Z]")
+    private Map<Sequence, String> sequenceStringMap;
+
 
 }

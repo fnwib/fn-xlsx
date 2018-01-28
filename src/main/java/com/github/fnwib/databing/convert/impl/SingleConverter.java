@@ -26,13 +26,13 @@ public class SingleConverter implements PropertyConverter {
 
     private       Property                   property;
     private       CellTitle                  cellTitle;
-    private       List<ValueHandler<String>> valueHandlers;
+    private       List<ValueHandler> valueHandlers;
     private final CellDeserializer<?>        deserializer;
     private final Serializer                 serializer;
 
     public SingleConverter(Property property,
                            CellTitle cellTitle,
-                           List<ValueHandler<String>> valueHandlers) {
+                           List<ValueHandler> valueHandlers) {
         this.property = property;
         this.cellTitle = cellTitle;
         this.valueHandlers = valueHandlers;
@@ -43,7 +43,7 @@ public class SingleConverter implements PropertyConverter {
     public SingleConverter(Property property,
                            JavaType contentType,
                            CellTitle cellTitle,
-                           List<ValueHandler<String>> valueHandlers) {
+                           List<ValueHandler> valueHandlers) {
         this.property = property;
         this.cellTitle = cellTitle;
         this.valueHandlers = valueHandlers;

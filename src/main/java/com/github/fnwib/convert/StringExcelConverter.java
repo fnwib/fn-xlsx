@@ -1,7 +1,7 @@
 package com.github.fnwib.convert;
 
-import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
@@ -16,21 +16,21 @@ import java.util.List;
 @Deprecated
 public class StringExcelConverter implements ExcelConverter<String> {
 
-    private final List<ValueHandler<String>> valueHandlers;
+    private final List<ValueHandler> valueHandlers;
 
     public StringExcelConverter() {
         this.valueHandlers = Collections.emptyList();
     }
 
-    public StringExcelConverter(List<ValueHandler<String>> valueHandlers) {
+    public StringExcelConverter(List<ValueHandler> valueHandlers) {
         this.valueHandlers = valueHandlers;
     }
 
-    public StringExcelConverter(ValueHandler<String>... valueHandlers) {
+    public StringExcelConverter(ValueHandler... valueHandlers) {
         this.valueHandlers = Lists.newArrayList(valueHandlers);
     }
 
-    public List<ValueHandler<String>> getValueHandlers() {
+    public List<ValueHandler> getValueHandlers() {
         return valueHandlers;
     }
 

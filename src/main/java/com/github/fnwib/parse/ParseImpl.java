@@ -108,7 +108,7 @@ public class ParseImpl<T> implements Parser<T> {
     private List<TitleDesc> getRule(Row row, CellType type) {
         JavaType javaType = BeanResolver.typeFactory.constructType(String.class);
         StringExcelConverter convert = (StringExcelConverter) conversionService.findConvert(javaType);
-        List<ValueHandler<String>> valueHandlers = convert.getValueHandlers();
+        List<ValueHandler> valueHandlers = convert.getValueHandlers();
         String title = type.title();
         String exclude = type.exclude();
         List<TitleDesc> list = new ArrayList<>();

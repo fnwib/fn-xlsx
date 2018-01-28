@@ -22,8 +22,8 @@ public class ExcelReaderImplTest {
 
     ExcelReader<AutoMappingModel> reader;
 
-    ValueHandler<String> valueHandler  = (s) -> BCConvert.toSingleByte(s);
-    ValueHandler<String> valueHandler2 = (s) -> s.trim();
+    ValueHandler valueHandler  = (s) -> BCConvert.toSingleByte(s);
+    ValueHandler valueHandler2 = (s) -> s.trim();
 
     @Before
     public void initDate() {
@@ -61,7 +61,6 @@ public class ExcelReaderImplTest {
             check(datum);
         }
     }
-
 
     private void check(AutoMappingModel model) {
         Assert.assertSame("lineNum integer support", 2, model.getLineNum());

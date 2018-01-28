@@ -32,14 +32,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TitleResolver {
 
-    private final List<ValueHandler<String>> titleValueHandlers = Lists.newArrayList();
+    private final List<ValueHandler> titleValueHandlers = Lists.newArrayList();
 
     /**
      * 注册title处理器
      *
      * @param valueHandlers
      */
-    public void register(List<ValueHandler<String>> valueHandlers) {
+    public void register(List<ValueHandler> valueHandlers) {
         for (ValueHandler valueHandler : valueHandlers) {
             this.titleValueHandlers.add(valueHandler);
         }
@@ -50,8 +50,8 @@ public class TitleResolver {
      *
      * @param valueHandlers
      */
-    public void register(ValueHandler<String>... valueHandlers) {
-        for (ValueHandler<String> valueHandler : valueHandlers) {
+    public void register(ValueHandler... valueHandlers) {
+        for (ValueHandler valueHandler : valueHandlers) {
             this.titleValueHandlers.add(valueHandler);
         }
     }
@@ -70,7 +70,7 @@ public class TitleResolver {
                 continue;
             }
             if (cellType != null) {
-                PropertyConverter converter = getPropertyConverter(property, cellTitles, cellType);
+                PropertyConverter converter = getPropertyConverter(property, cellTitles,cellType, handler);
                 converters.add(converter);
                 continue;
             }
@@ -82,26 +82,33 @@ public class TitleResolver {
         return converters;
     }
 
-    private PropertyConverter getPropertyConverter(Property property, List<CellTitle> cellTitles, CellType cellType) {
+    private PropertyConverter getPropertyConverter(Property property,
+                                                   List<CellTitle> cellTitles,
+                                                   CellType cellType,
+                                                   ReadValueHandler handler) {
+        Objects.requireNonNull(cellType);
         TitleMatcher titleMatcher = new TitleMatcher(cellType);
         List<CellTitle> match = titleMatcher.match(cellTitles);
         if (cellType.operation() == Operation.LINE_NUM) {
             final CellTitle title;
-            if (StringUtils.isBlank(cellType.title())) {
+            if (StringUtils.isAnyBlank(cellType.prefix(), cellType.title(), cellType.suffix())) {
                 title = null;
             } else {
                 title = match.get(0);
             }
             return new LineNumberConverter(property, title);
         } else if (cellType.operation() == Operation.REORDER) {
-            throw new SettingException("不支持类型,请使用@AutoMapping 的handler自行实现值处理");
+            throw new SettingException("不支持类型,请使用@ReadValueHandler 的handler自行实现值处理");
         }
-        return getPropertyConverter(property, match, Collections.emptyList());
+        List<ValueHandler> valueHandlers = getValueHandlers(handler);
+        return getPropertyConverter(property, match, valueHandlers);
     }
 
 
-    private PropertyConverter getPropertyConverter(Property property, List<CellTitle> cellTitles, AutoMapping
-            mapping, ReadValueHandler handler) {
+    private PropertyConverter getPropertyConverter(Property property,
+                                                   List<CellTitle> cellTitles,
+                                                   AutoMapping mapping,
+                                                   ReadValueHandler handler) {
         Objects.requireNonNull(mapping);
         TitleMatcher titleMatcher = new TitleMatcher(mapping);
         List<CellTitle> match = titleMatcher.match(cellTitles);
@@ -114,22 +121,13 @@ public class TitleResolver {
             }
             return new LineNumberConverter(property, title);
         } else if (mapping.operation() == Operation.REORDER) {
-            throw new SettingException("不支持类型,请使用@AutoMapping 的handler自行实现值处理");
+            throw new SettingException("不支持类型,请使用@ReadValueHandler 的handler自行实现值处理");
         }
-
-        if (match.size() > 1) {
-            List<TitleValidator> titleValidators = convertTitleValidate(mapping.validate());
-            List<CellTitle> titles = deepCopy(match);
-            for (TitleValidator titleValidator : titleValidators) {
-                boolean validate = titleValidator.validate(titles);
-                if (!validate) throw new SettingException("Excel Title 顺序错误");
-            }
-        }
-        List<ValueHandler<String>> valueHandlers = getValueHandlers(handler);
+        List<ValueHandler> valueHandlers = getValueHandlers(handler);
         return getPropertyConverter(property, match, valueHandlers);
     }
 
-    private PropertyConverter getPropertyConverter(Property property, List<CellTitle> titles, List<ValueHandler<String>> valueHandlers) {
+    private PropertyConverter getPropertyConverter(Property property, List<CellTitle> titles, List<ValueHandler> valueHandlers) {
         final PropertyConverter converter;
         final JavaType javaType = property.getJavaType();
         if (javaType.isCollectionLikeType()) {
@@ -146,8 +144,11 @@ public class TitleResolver {
                     throw new SettingException("Map类型的key是String(title name)匹配到title存在相同的名称");
                 }
                 converter = new MapStringKeyConverter(property, titles, valueHandlers);
+            } else if (javaType.getKeyType().getRawClass() == Sequence.class) {
+                converter = new MapSequenceKeyConverter(property, titles, valueHandlers);
             } else {
-                throw new SettingException("Map类型的key只支持Integer(cell index)或String(title name)");
+                String format = String.format("Map类型的key只支持 %s(cell index) | %s (cell name ) | %s (cell sequence)", Integer.class, String.class, Sequence.class);
+                throw new SettingException(format);
             }
         } else {
             if (titles.isEmpty()) {
@@ -160,15 +161,15 @@ public class TitleResolver {
     }
 
 
-    private List<ValueHandler<String>> getValueHandlers(ReadValueHandler handler) {
-        List<ValueHandler<String>> valueHandlers = Context.INSTANCE.findContentValueHandlers();
+    private List<ValueHandler> getValueHandlers(ReadValueHandler handler) {
+        List<ValueHandler> valueHandlers = Context.INSTANCE.findContentValueHandlers();
         if (handler != null) {
-            for (Class<? extends ValueHandler<String>> h : handler.value()) {
+            for (Class<? extends ValueHandler> h : handler.value()) {
                 Constructor<?>[] constructors = h.getConstructors();
                 if (constructors.length == 1) {
                     Constructor<?> constructor = constructors[0];
                     try {
-                        ValueHandler<String> valueHandler = (ValueHandler<String>) constructor.newInstance();
+                        ValueHandler valueHandler = (ValueHandler) constructor.newInstance();
                         valueHandlers.add(valueHandler);
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                         throw new SettingException(h.getName() + " no found non args constructor");
@@ -189,33 +190,6 @@ public class TitleResolver {
             titles.add(title);
         }
         return titles;
-    }
-
-    private List<TitleValidator> convertTitleValidate(Class<? extends TitleValidator>[] validates) {
-        if (validates.length == 0) return Collections.emptyList();
-        List<TitleValidator> validateList = Lists.newArrayListWithCapacity(validates.length);
-        for (Class<? extends TitleValidator> validatorClass : validates) {
-            Constructor<?>[] constructors = validatorClass.getConstructors();
-            if (constructors.length == 1) {
-                Constructor<?> constructor = constructors[0];
-                try {
-                    TitleValidator titleValidator = (TitleValidator) constructor.newInstance();
-                    validateList.add(titleValidator);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                    throw new SettingException(validatorClass.getName() + " no found non args constructor");
-                }
-            } else {
-                throw new SettingException(validatorClass.getName() + " not support multi args constructor");
-            }
-        }
-        return validateList;
-    }
-
-    public List<CellTitle> deepCopy(List<CellTitle> cellTitles) {
-        if (cellTitles.isEmpty()) return cellTitles;
-        List<CellTitle> result = Lists.newArrayListWithCapacity(cellTitles.size());
-        cellTitles.forEach(t -> result.add(t.clone()));
-        return result;
     }
 
 }

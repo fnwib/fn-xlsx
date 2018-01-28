@@ -1,7 +1,7 @@
 package com.github.fnwib.convert;
 
-import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
@@ -15,7 +15,7 @@ import java.util.*;
 @Deprecated
 public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc, String>> {
 
-    private final List<ValueHandler<String>> valueHandlers;
+    private final List<ValueHandler> valueHandlers;
 
     public TitleDescMapExcelConverter() {
         this.valueHandlers = Collections.emptyList();
@@ -26,11 +26,11 @@ public class TitleDescMapExcelConverter implements ExcelConverter<Map<TitleDesc,
         this.valueHandlers = Collections.emptyList();
     }
 
-    public TitleDescMapExcelConverter(List<ValueHandler<String>> valueHandlers) {
+    public TitleDescMapExcelConverter(List<ValueHandler> valueHandlers) {
         this.valueHandlers = valueHandlers;
     }
 
-    public TitleDescMapExcelConverter(ValueHandler<String>... valueHandlers) {
+    public TitleDescMapExcelConverter(ValueHandler... valueHandlers) {
         this.valueHandlers = Lists.newArrayList(valueHandlers);
     }
 

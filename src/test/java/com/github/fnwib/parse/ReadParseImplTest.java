@@ -32,9 +32,9 @@ public class ReadParseImplTest {
 
     @Test
     public void convert() {
-        ValueHandler<String> valueHandler = s -> BCConvert.toSingleByte(s);
-        ValueHandler<String> valueHandler2 = s -> s.trim();
-        List<ValueHandler<String>> valueHandlers = Arrays.asList(valueHandler, valueHandler2);
+        ValueHandler valueHandler = s -> BCConvert.toSingleByte(s);
+        ValueHandler valueHandler2 = s -> s.trim();
+        List<ValueHandler> valueHandlers = Arrays.asList(valueHandler, valueHandler2);
 
         ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
         converterRegistry.addConverter(new SeqKeyMapExcelConverter(valueHandlers));
@@ -88,7 +88,7 @@ public class ReadParseImplTest {
 
     }
 
-    public void checkValueHandler(Model model, List<ValueHandler<String>> valueHandlers) {
+    public void checkValueHandler(Model model, List<ValueHandler> valueHandlers) {
         String test1 = ValueUtil.getStringValue("Text", valueHandlers);
         String test2 = ValueUtil.getStringValue("1/Ac/Tex/Text/重排", valueHandlers);
         Assert.assertEquals("Text One toSingleByte support", test1, model.getText1());

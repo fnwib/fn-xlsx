@@ -14,5 +14,5 @@ public @interface ReadValueHandler {
      *
      * @return
      */
-    Class<? extends ValueHandler<String>>[] value() default {};
+    Class<? extends ValueHandler>[] value() default {};
 }

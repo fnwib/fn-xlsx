@@ -41,7 +41,7 @@ public class ValueUtil {
         return getCellValue(cell, Collections.emptyList());
     }
 
-    public static String getCellValue(Cell cell, Collection<ValueHandler<String>> valueHandlers) {
+    public static String getCellValue(Cell cell, Collection<ValueHandler> valueHandlers) {
         if (cell == null) {
             return "";
         }
@@ -49,12 +49,12 @@ public class ValueUtil {
         return getStringValue(value, valueHandlers);
     }
 
-    public static String getStringValue(final String value, Collection<ValueHandler<String>> valueHandlers) {
+    public static String getStringValue(final String value, Collection<ValueHandler> valueHandlers) {
         if (StringUtils.isBlank(value)) {
             return "";
         }
         String temp = value;
-        for (ValueHandler<String> valueHandler : valueHandlers) {
+        for (ValueHandler valueHandler : valueHandlers) {
             temp = valueHandler.convert(temp);
         }
         return temp;

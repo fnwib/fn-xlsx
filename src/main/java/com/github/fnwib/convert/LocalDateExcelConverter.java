@@ -1,8 +1,8 @@
 package com.github.fnwib.convert;
 
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
@@ -34,17 +34,17 @@ public class LocalDateExcelConverter implements ExcelConverter<LocalDate> {
 
     private static final Pattern SHORT_DATE_PATTERN_NONE = Pattern.compile("^\\d{4}\\d{2}\\d{2}$");
 
-    private final List<ValueHandler<String>> valueHandlers;
+    private final List<ValueHandler> valueHandlers;
 
     public LocalDateExcelConverter() {
         this.valueHandlers = Collections.emptyList();
     }
 
-    public LocalDateExcelConverter(List<ValueHandler<String>> valueHandlers) {
+    public LocalDateExcelConverter(List<ValueHandler> valueHandlers) {
         this.valueHandlers = valueHandlers;
     }
 
-    public LocalDateExcelConverter(ValueHandler<String>... valueHandlers) {
+    public LocalDateExcelConverter(ValueHandler... valueHandlers) {
         this.valueHandlers = Lists.newArrayList(valueHandlers);
     }
 

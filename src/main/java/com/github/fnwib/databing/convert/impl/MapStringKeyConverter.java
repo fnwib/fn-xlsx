@@ -26,7 +26,7 @@ public class MapStringKeyConverter implements PropertyConverter {
 
     public MapStringKeyConverter(Property property,
                                  List<CellTitle> titles,
-                                 List<ValueHandler<String>> valueHandlers) {
+                                 List<ValueHandler> valueHandlers) {
         this.property = property;
         this.titlesSize = titles.size();
         this.singleConverters = Maps.newHashMapWithExpectedSize(titles.size());
@@ -76,8 +76,7 @@ public class MapStringKeyConverter implements PropertyConverter {
             }
             List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);
             objects.forEach((titleName, obj) -> {
-                SingleConverter converter = singleConverters.get(titleName);
-                Optional<CellText> optional = converter.getSingleCellText(obj);
+                Optional<CellText> optional = singleConverters.get(titleName).getSingleCellText(obj);
                 if (optional.isPresent()) {
                     list.add(optional.get());
                 }

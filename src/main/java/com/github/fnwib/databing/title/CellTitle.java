@@ -1,6 +1,5 @@
 package com.github.fnwib.databing.title;
 
-import com.github.fnwib.write.CellText;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -51,10 +50,6 @@ public class CellTitle implements Cloneable {
         this.suffix = suffix;
     }
 
-    public CellText asTextWithText(String text) {
-        return new CellText(cellNum, text);
-    }
-
     @Override
     public CellTitle clone() {
         CellTitle title = new CellTitle(rowNum, cellNum, text);
@@ -63,5 +58,18 @@ public class CellTitle implements Cloneable {
         title.setSuffix(suffix);
         if (bind) title.bind();
         return title;
+    }
+
+
+    public Integer getCellIndex() {
+        return cellNum;
+    }
+
+    public String getCellName() {
+        return text;
+    }
+
+    public Sequence getSequence() {
+        return new Sequence(value);
     }
 }

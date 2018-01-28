@@ -1,7 +1,5 @@
 package com.github.fnwib.annotation;
 
-import com.github.fnwib.databing.title.TitleValidator;
-
 import java.lang.annotation.*;
 
 /**
@@ -63,15 +61,5 @@ public @interface AutoMapping {
      * @return
      */
     String suffix() default "";
-
-
-    /**
-     * 如果当前字段映射了多列
-     * <p>
-     * 可以通过这项配置校验列的顺序
-     *
-     * @return
-     */
-    Class<? extends TitleValidator>[] validate() default {};
 
 }

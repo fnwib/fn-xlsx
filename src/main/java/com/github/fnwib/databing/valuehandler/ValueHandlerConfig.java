@@ -6,15 +6,15 @@ import java.util.List;
 
 public class ValueHandlerConfig {
 
-    private List<ValueHandler<String>> valueHandlers = Lists.newArrayList();
+    private List<ValueHandler> valueHandlers = Lists.newArrayList();
 
-    public void register(ValueHandler<String> valueHandler) {
+    public void register(ValueHandler valueHandler) {
         valueHandlers.add(valueHandler);
     }
 
-    public List<ValueHandler<String>> getValueHandlers() {
-        List<ValueHandler<String>> valueHandlers = Lists.newArrayList();
-        for (ValueHandler<String> valueHandler : this.valueHandlers) {
+    public List<ValueHandler> getValueHandlers() {
+        List<ValueHandler> valueHandlers = Lists.newArrayList();
+        for (ValueHandler valueHandler : this.valueHandlers) {
             valueHandlers.add(valueHandler);
         }
         return valueHandlers;

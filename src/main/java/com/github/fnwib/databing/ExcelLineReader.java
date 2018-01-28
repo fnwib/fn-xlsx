@@ -2,6 +2,7 @@ package com.github.fnwib.databing;
 
 import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.exception.SettingException;
+import com.github.fnwib.jackson.Json;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;

@@ -2,6 +2,7 @@ package com.github.fnwib.databing.convert.impl;
 
 import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.databing.title.CellTitle;
+import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.reflect.Property;
@@ -18,21 +19,21 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-public class MapIntKeyConverter implements PropertyConverter {
+public class MapSequenceKeyConverter implements PropertyConverter {
 
-    private Property                      property;
-    private int                           titlesSize;
-    private Map<Integer, SingleConverter> singleConverters;
+    private Property                        property;
+    private int                             titlesSize;
+    private Map<Sequence, SingleConverter> singleConverters;
 
-    public MapIntKeyConverter(Property property,
-                              List<CellTitle> titles,
-                              List<ValueHandler> valueHandlers) {
+    public MapSequenceKeyConverter(Property property,
+                                    List<CellTitle> titles,
+                                    List<ValueHandler> valueHandlers) {
         this.property = property;
         this.titlesSize = titles.size();
         this.singleConverters = Maps.newHashMapWithExpectedSize(titles.size());
         for (CellTitle title : titles) {
             SingleConverter converter = new SingleConverter(property, property.getContentType(), title, valueHandlers);
-            singleConverters.put(title.getCellNum(), converter);
+            singleConverters.put(title.getSequence(), converter);
         }
     }
 
@@ -48,14 +49,14 @@ public class MapIntKeyConverter implements PropertyConverter {
     }
 
     @Override
-    public Map<Integer, String> getValue(Row row) {
+    public Map<Sequence, String> getValue(Row row) {
         if (!isMatched()) {
             return Collections.emptyMap();
         }
-        Map<Integer, String> map = Maps.newHashMapWithExpectedSize(singleConverters.size());
-        singleConverters.forEach((cellNum, converter) -> {
+        Map<Sequence, String> map = Maps.newHashMapWithExpectedSize(singleConverters.size());
+        singleConverters.forEach((cellTitle, converter) -> {
             String value = converter.getValue(row);
-            map.put(cellNum, value);
+            map.put(cellTitle, value);
         });
         return map;
     }
@@ -70,13 +71,13 @@ public class MapIntKeyConverter implements PropertyConverter {
             if (value == null) {
                 return Collections.emptyList();
             }
-            Map<Integer, Object> objects = (Map<Integer, Object>) value;
+            Map<Sequence, Object> objects = (Map<Sequence, Object>) value;
             if (titlesSize < objects.size()) {
                 throw new SettingException("参数长度大于可写入数据长度");
             }
             List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);
-            objects.forEach((cellNum, obj) -> {
-                Optional<CellText> optional = singleConverters.get(cellNum).getSingleCellText(obj);
+            objects.forEach((sequence, obj) -> {
+                Optional<CellText> optional = singleConverters.get(sequence).getSingleCellText(obj);
                 if (optional.isPresent()) {
                     list.add(optional.get());
                 }

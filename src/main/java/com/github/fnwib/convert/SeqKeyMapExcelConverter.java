@@ -1,8 +1,8 @@
 package com.github.fnwib.convert;
 
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
@@ -19,17 +19,17 @@ import java.util.Map;
 @Deprecated
 public class SeqKeyMapExcelConverter implements ExcelConverter<Map<Integer, String>> {
 
-    private final List<ValueHandler<String>> valueHandlers;
+    private final List<ValueHandler> valueHandlers;
 
     public SeqKeyMapExcelConverter() {
         this.valueHandlers = Collections.emptyList();
     }
 
-    public SeqKeyMapExcelConverter(List<ValueHandler<String>> valueHandlers) {
+    public SeqKeyMapExcelConverter(List<ValueHandler> valueHandlers) {
         this.valueHandlers = valueHandlers;
     }
 
-    public SeqKeyMapExcelConverter(ValueHandler<String>... valueHandlers) {
+    public SeqKeyMapExcelConverter(ValueHandler... valueHandlers) {
         this.valueHandlers = Lists.newArrayList(valueHandlers);
     }
 

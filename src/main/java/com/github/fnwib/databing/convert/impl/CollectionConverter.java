@@ -25,7 +25,7 @@ public class CollectionConverter implements PropertyConverter {
 
     public CollectionConverter(Property property,
                                List<CellTitle> titles,
-                               List<ValueHandler<String>> valueHandlers) {
+                               List<ValueHandler> valueHandlers) {
         this.property = property;
         this.titlesSize = titles.size();
         this.singleConverters = Lists.newArrayListWithCapacity(titles.size());

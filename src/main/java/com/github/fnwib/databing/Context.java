@@ -54,14 +54,14 @@ public enum Context {
      *
      * @param valueHandlers
      */
-    public void registerContentValueHandlers(ValueHandler<String>... valueHandlers) {
-        for (ValueHandler<String> valueHandler : valueHandlers) {
+    public void registerContentValueHandlers(ValueHandler... valueHandlers) {
+        for (ValueHandler valueHandler : valueHandlers) {
             this.valueHandlerConfig.register(valueHandler);
         }
     }
 
 
-    public List<ValueHandler<String>> findContentValueHandlers() {
+    public List<ValueHandler> findContentValueHandlers() {
         return valueHandlerConfig.getValueHandlers();
     }
 
@@ -70,7 +70,7 @@ public enum Context {
      *
      * @param valueHandlers
      */
-    public void registerTitltValueHandlers(List<ValueHandler<String>> valueHandlers) {
+    public void registerTitltValueHandlers(List<ValueHandler> valueHandlers) {
         titleResolver.register(valueHandlers);
     }
 
@@ -79,7 +79,7 @@ public enum Context {
      *
      * @param valueHandlers
      */
-    public void registerTitleValueHandlers(ValueHandler<String>... valueHandlers) {
+    public void registerTitleValueHandlers(ValueHandler... valueHandlers) {
         titleResolver.register(valueHandlers);
     }
 

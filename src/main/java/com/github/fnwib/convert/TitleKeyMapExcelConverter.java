@@ -1,8 +1,8 @@
 package com.github.fnwib.convert;
 
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.ValueUtil;
@@ -20,17 +20,17 @@ import java.util.Map;
 @Deprecated
 public class TitleKeyMapExcelConverter implements ExcelConverter<Map<String, String>> {
 
-    private final List<ValueHandler<String>> valueHandlers;
+    private final List<ValueHandler> valueHandlers;
 
     public TitleKeyMapExcelConverter() {
         this.valueHandlers = Collections.emptyList();
     }
 
-    public TitleKeyMapExcelConverter(List<ValueHandler<String>> valueHandlers) {
+    public TitleKeyMapExcelConverter(List<ValueHandler> valueHandlers) {
         this.valueHandlers = valueHandlers;
     }
 
-    public TitleKeyMapExcelConverter(ValueHandler<String>... valueHandlers) {
+    public TitleKeyMapExcelConverter(ValueHandler... valueHandlers) {
         this.valueHandlers = Lists.newArrayList(valueHandlers);
     }
 
