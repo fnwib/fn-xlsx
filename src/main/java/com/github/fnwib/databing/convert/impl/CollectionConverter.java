@@ -30,7 +30,7 @@ public class CollectionConverter implements PropertyConverter {
         this.titlesSize = titles.size();
         this.singleConverters = Lists.newArrayListWithCapacity(titles.size());
         for (CellTitle title : titles) {
-            SingleConverter converter = new SingleConverter(property, title, valueHandlers);
+            SingleConverter converter = new SingleConverter(property,property.getContentType(), title, valueHandlers);
             singleConverters.add(converter);
         }
     }

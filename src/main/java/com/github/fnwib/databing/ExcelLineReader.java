@@ -12,12 +12,12 @@ import java.util.Set;
 
 @Slf4j
 public class ExcelLineReader<T> implements LineReader<T> {
-    private final Class<T>           entityClass;
-    private final Set<PropertyConverter> titleTokens;
+    private final Class<T>               entityClass;
+    private final Set<PropertyConverter> converters;
 
     public ExcelLineReader(Class<T> entityClass) {
         this.entityClass = entityClass;
-        this.titleTokens = Sets.newHashSet();
+        this.converters = Sets.newHashSet();
     }
 
     @Override
@@ -25,21 +25,21 @@ public class ExcelLineReader<T> implements LineReader<T> {
         if (row == null) {
             return false;
         }
-        if (!titleTokens.isEmpty()) {
-            titleTokens.clear();
+        if (!converters.isEmpty()) {
+            converters.clear();
         }
         Set<PropertyConverter> titleTokens = Context.INSTANCE.resolve(entityClass, row);
         boolean flag = !titleTokens.isEmpty();
         if (flag) {
-            titleTokens.forEach(t -> this.titleTokens.add(t));
+            titleTokens.forEach(t -> this.converters.add(t));
         }
         return flag;
     }
 
     @Override
     public T read(Row row) {
-        Map<String, Object> result = Maps.newHashMapWithExpectedSize(titleTokens.size());
-        for (PropertyConverter converter : titleTokens) {
+        Map<String, Object> result = Maps.newHashMapWithExpectedSize(converters.size());
+        for (PropertyConverter converter : converters) {
             String mapKey = converter.getKey();
             Object mapValue = converter.getValue(row);
             result.put(mapKey, mapValue);
@@ -50,9 +50,9 @@ public class ExcelLineReader<T> implements LineReader<T> {
 
     @Override
     public LineWriter<T> getLineWriter() {
-        if (titleTokens.isEmpty()) {
+        if (converters.isEmpty()) {
             throw new SettingException("没有匹配到Title");
         }
-        return new ExcelLineWriter<>(titleTokens);
+        return new ExcelLineWriter<>(converters);
     }
 }

@@ -31,7 +31,7 @@ public class MapIntKeyConverter implements PropertyConverter {
         this.titlesSize = titles.size();
         this.singleConverters = Maps.newHashMapWithExpectedSize(titles.size());
         for (CellTitle title : titles) {
-            SingleConverter converter = new SingleConverter(property, title, valueHandlers);
+            SingleConverter converter = new SingleConverter(property, property.getContentType(), title, valueHandlers);
             singleConverters.put(title.getCellNum(), converter);
         }
     }

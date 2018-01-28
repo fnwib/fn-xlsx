@@ -1,5 +1,6 @@
 package com.github.fnwib.databing.convert.impl;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.databing.deser.CellDeserializer;
@@ -39,6 +40,17 @@ public class SingleConverter implements PropertyConverter {
         this.serializer = Context.INSTANCE.findSerializer(property.getJavaType());
     }
 
+    public SingleConverter(Property property,
+                           JavaType contentType,
+                           CellTitle cellTitle,
+                           List<ValueHandler<String>> valueHandlers) {
+        this.property = property;
+        this.cellTitle = cellTitle;
+        this.valueHandlers = valueHandlers;
+        this.deserializer = Context.INSTANCE.findCellDeserializer(contentType);
+        this.serializer = Context.INSTANCE.findSerializer(contentType);
+    }
+
     @Override
     public boolean isMatched() {
         return cellTitle != null;
@@ -51,6 +63,9 @@ public class SingleConverter implements PropertyConverter {
 
     @Override
     public String getValue(Row row) {
+        if (!isMatched()) {
+            return null;
+        }
         Cell cell = row.getCell(cellTitle.getCellNum());
         if (deserializer != null) {
             Object deserialize = deserializer.deserialize(cell);

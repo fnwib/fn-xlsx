@@ -1,9 +1,9 @@
 package model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
+import com.github.fnwib.databing.title.impl.MultiTitleIntValidator;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,7 +16,6 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class AutoMappingModel {
     @AutoMapping(operation = Operation.LINE_NUM)
     private Integer lineNum;
@@ -55,10 +54,10 @@ public class AutoMappingModel {
     @AutoMapping(prefix = "Map", value = "[A-Z]")
     private Map<Integer, String> stringKeyMap;
 
-    @AutoMapping(prefix = "Map", value = "1", suffix = "(Chinese Name)")
+    @AutoMapping(prefix = "Map", value = "1", suffix = "(Chinese Name)", validate = {MultiTitleIntValidator.class})
     private Map<Integer, String> intKeyMap2;
 
-    @AutoMapping(prefix = "Map", value = "\\d+", suffix = "(Chinese Name)", exclude = "1")
+    @AutoMapping(prefix = "Map", value = "\\d+", suffix = "(Chinese Name)", exclude = "1", validate = {MultiTitleIntValidator.class})
     private Map<Integer, String> intKeyMap3;
 
     @AutoMapping("Excel no match")

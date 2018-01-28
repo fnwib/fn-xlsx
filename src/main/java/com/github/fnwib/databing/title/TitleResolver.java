@@ -161,20 +161,21 @@ public class TitleResolver {
 
 
     private List<ValueHandler<String>> getValueHandlers(ReadValueHandler handler) {
-        if (handler == null) return Collections.emptyList();
         List<ValueHandler<String>> valueHandlers = Context.INSTANCE.findContentValueHandlers();
-        for (Class<? extends ValueHandler<String>> h : handler.value()) {
-            Constructor<?>[] constructors = h.getConstructors();
-            if (constructors.length == 1) {
-                Constructor<?> constructor = constructors[0];
-                try {
-                    ValueHandler<String> valueHandler = (ValueHandler<String>) constructor.newInstance();
-                    valueHandlers.add(valueHandler);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                    throw new SettingException(h.getName() + " no found non args constructor");
+        if (handler != null) {
+            for (Class<? extends ValueHandler<String>> h : handler.value()) {
+                Constructor<?>[] constructors = h.getConstructors();
+                if (constructors.length == 1) {
+                    Constructor<?> constructor = constructors[0];
+                    try {
+                        ValueHandler<String> valueHandler = (ValueHandler<String>) constructor.newInstance();
+                        valueHandlers.add(valueHandler);
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                        throw new SettingException(h.getName() + " no found non args constructor");
+                    }
+                } else {
+                    throw new SettingException(h.getName() + " not support multi args constructor");
                 }
-            } else {
-                throw new SettingException(h.getName() + " not support multi args constructor");
             }
         }
         return valueHandlers;

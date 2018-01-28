@@ -2,7 +2,6 @@ package com.github.fnwib.util;
 
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
@@ -38,8 +37,8 @@ public class ValueUtil {
         }
     }
 
-    public static String getCellValue(Cell cell, ValueHandler<String>... valueHandlers) {
-        return getCellValue(cell, Lists.newArrayList(valueHandlers));
+    public static String getCellValue(Cell cell) {
+        return getCellValue(cell, Collections.emptyList());
     }
 
     public static String getCellValue(Cell cell, Collection<ValueHandler<String>> valueHandlers) {
