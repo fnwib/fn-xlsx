@@ -90,8 +90,8 @@ public class ResultFileSetting {
     }
 
 
-    public boolean valid(AtomicInteger rowNum) {
-        return rowNum.get() <= maxRowsCanWrite;
+    public boolean gt(AtomicInteger rowNum) {
+        return rowNum.get() > maxRowsCanWrite;
     }
 
 }

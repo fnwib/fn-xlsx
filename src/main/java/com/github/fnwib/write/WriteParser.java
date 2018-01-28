@@ -1,13 +1,12 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.databing.LineWriter;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.List;
 
 @Deprecated
-public interface WriteParser<T> extends LineWriter<T> {
+public interface WriteParser<T> {
 
     void setSheet(Sheet sheet);
 

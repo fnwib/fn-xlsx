@@ -1,14 +1,10 @@
 package com.github.fnwib.parse;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.convert.*;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.read.ReadParser;
-import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.util.BCConvert;
 import com.github.fnwib.util.ValueUtil;
-import com.google.common.collect.Lists;
 import com.monitorjbl.xlsx.StreamingReader;
 import model.Model;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,10 +17,8 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 @Deprecated
 public class ReadParseImplTest {
 

@@ -2,8 +2,6 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.write.config.ExportType;
 import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.config.WorkbookWrap;
 import com.github.fnwib.write.config.WorkbookWrapFactory;
@@ -55,7 +53,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
     @Override
     public void write(T element) {
         checkState();
-        if (!workbookConfig.getResultFileSetting().valid(currentRowNum)) {
+        if (workbookConfig.getResultFileSetting().gt(currentRowNum)) {
             useNextSheet();
         }
         lineWriter.convert(currentRowNum.getAndAdd(1), element);
@@ -77,7 +75,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         if (elements.size() == 1) {
             this.write(elements);
         } else {
-            if (!workbookConfig.getResultFileSetting().valid(currentRowNum)) {
+            if (workbookConfig.getResultFileSetting().gt(currentRowNum)) {
                 useNextSheet();
             }
             lineWriter.convert(currentRowNum.getAndAdd(elements.size()), elements, mergedRangeIndexes);

@@ -1,6 +1,7 @@
 package com.github.fnwib.databing;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.databing.deser.CellDeserializer;
 import com.github.fnwib.databing.deser.DeserializerConfig;
 import com.github.fnwib.databing.ser.Serializer;
@@ -11,7 +12,6 @@ import com.github.fnwib.databing.valuehandler.ValueHandlerConfig;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public enum Context {
@@ -83,7 +83,7 @@ public enum Context {
         titleResolver.register(valueHandlers);
     }
 
-    public Set<PropertyToken> resolve(Class<?> entityClass, Row row) {
+    public Set<PropertyConverter> resolve(Class<?> entityClass, Row row) {
         return titleResolver.resolve(entityClass, row);
     }
 }

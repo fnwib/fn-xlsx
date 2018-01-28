@@ -38,7 +38,7 @@ public final class TitleMatcher {
 
     public List<CellTitle> match(List<CellTitle> titles) {
         List<CellTitle> result = Lists.newArrayList();
-        log.info("annotation -> title is [{}] , prefix is [{}] , suffix is [{}] ,exclude is [{}]",
+        log.debug("annotation -> title is [{}] , prefix is [{}] , suffix is [{}] ,exclude is [{}]",
                 titlePattern.toString(),
                 prefix,
                 suffix,
@@ -60,7 +60,7 @@ public final class TitleMatcher {
                 title.bind();
                 title.setPrefix(prefix);
                 title.setSuffix(suffix);
-                title.setValue(root.get());
+                title.setValue(root.get().trim());
                 result.add(title);
             }
         }

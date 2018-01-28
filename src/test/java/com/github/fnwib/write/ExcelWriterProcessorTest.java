@@ -1,12 +1,8 @@
 package com.github.fnwib.write;
 
 import com.github.fnwib.databing.LineReader;
-import com.github.fnwib.parse.ParseImpl;
-import com.github.fnwib.parse.Parser;
 import com.github.fnwib.read.ExcelReader;
-import com.github.fnwib.read.ExcelReaderImpl;
 import com.github.fnwib.read.ExcelReaderImpl2;
-import com.github.fnwib.write.config.ExportType;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
 import com.github.fnwib.write.config.WorkbookConfig;
@@ -53,21 +49,15 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
             Assert.assertEquals("数字int不一致", sourceModel.getIntNum(), targetModel.getIntNum());
             Assert.assertEquals("数字long不一致", sourceModel.getLongNum(), targetModel.getLongNum());
             Assert.assertEquals("日期不一致", sourceModel.getLocalDate(), targetModel.getLocalDate());
-            Map<Integer, String> sourceNumberMap = sourceModel.getMapNumber();
-            Map<Integer, String> targetNumberMap = targetModel.getMapNumber();
-            System.out.println(sourceNumberMap);
-            System.out.println(targetNumberMap);
-            sourceNumberMap.forEach((titleDesc, s) -> {
-                String s1 = targetNumberMap.get(titleDesc);
-                Assert.assertEquals("MAP number 值不一致", StringUtils.trimToEmpty(s), StringUtils.trimToEmpty(s1));
-            });
 
-            Map<Integer, String> sourceStringMap = sourceModel.getMapString();
-            Map<Integer, String> targetStringMap = targetModel.getMapString();
-            sourceStringMap.forEach((titleDesc, s) -> {
-                String s1 = targetStringMap.get(titleDesc);
-                Assert.assertEquals("MAP String 值不一致", StringUtils.trimToEmpty(s), StringUtils.trimToEmpty(s1));
-            });
+            List<String> sourceNumberList = sourceModel.getListNumber();
+            List<String> targetNumberList = targetModel.getListNumber();
+            Assert.assertArrayEquals("List number 值不一致",sourceNumberList.toArray(),targetNumberList.toArray());
+
+            List<String> sourceStringMap = sourceModel.getListNumber();
+            List<String> targetStringMap = targetModel.getListNumber();
+            Assert.assertArrayEquals("List String 值不一致",sourceStringMap.toArray(),targetStringMap.toArray());
+
             Assert.assertEquals("动态添加的列AAA", sourceModel.getAaa(), targetModel.getAaa());
             Assert.assertEquals("enumType", sourceModel.getEnumType(), targetModel.getEnumType());
         }
@@ -108,18 +98,13 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
                 Assert.assertEquals("数字long不一致", sourceModel.getLongNum(), targetModel.getLongNum());
                 Assert.assertEquals("日期不一致", sourceModel.getLocalDate(), targetModel.getLocalDate());
             } else {
-                Map<Integer, String> sourceNumberMap = sourceModel.getMapNumber();
-                Map<Integer, String> targetNumberMap = targetModel.getMapNumber();
-                sourceNumberMap.forEach((titleDesc, s) -> {
-                    String s1 = targetNumberMap.get(titleDesc);
-                    Assert.assertEquals("MAP number 值不一致", s, s1);
-                });
-                Map<Integer, String> sourceStringMap = sourceModel.getMapString();
-                Map<Integer, String> targetStringMap = targetModel.getMapString();
-                sourceStringMap.forEach((titleDesc, s) -> {
-                    String s1 = targetStringMap.get(titleDesc);
-                    Assert.assertEquals("MAP String 值不一致", s, s1);
-                });
+                List<String> sourceNumberList = sourceModel.getListNumber();
+                List<String> targetNumberList = targetModel.getListNumber();
+                Assert.assertArrayEquals("List number 值不一致",sourceNumberList.toArray(),targetNumberList.toArray());
+
+                List<String> sourceStringMap = sourceModel.getListNumber();
+                List<String> targetStringMap = targetModel.getListNumber();
+                Assert.assertArrayEquals("List String 值不一致",sourceStringMap.toArray(),targetStringMap.toArray());
                 Assert.assertEquals("动态添加的列AAA", sourceModel.getAaa(), targetModel.getAaa());
             }
 

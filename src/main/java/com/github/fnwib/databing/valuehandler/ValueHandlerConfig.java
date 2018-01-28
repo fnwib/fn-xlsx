@@ -1,6 +1,5 @@
 package com.github.fnwib.databing.valuehandler;
 
-import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.google.common.collect.Lists;
 
 import java.util.List;

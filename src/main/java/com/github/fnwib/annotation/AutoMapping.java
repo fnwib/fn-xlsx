@@ -1,14 +1,31 @@
 package com.github.fnwib.annotation;
 
 import com.github.fnwib.databing.title.TitleValidator;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
 
 import java.lang.annotation.*;
 
+/**
+ * 完整title 为
+ * 1  prefix
+ * 2  value（除exclude）
+ * 3  suffix
+ * 拼接结果
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface AutoMapping {
+
+    /**
+     * <p>
+     * LINE_NUM 字段是excel行号 从1开始
+     * DEFAULT Value
+     * <p>
+     *
+     * @return
+     */
+    Operation operation() default Operation.DEFAULT;
+
 
     /**
      * title 前缀
@@ -22,7 +39,7 @@ public @interface AutoMapping {
      * Excel的列title 名称
      * 支持正则表达式
      * <p>
-     * "aaa 12"  -> "aaa \\d"
+     * "aaa 12"  -> "aaa \\d+"
      * "aaa 汉字"  -> "aaa.*"
      * "aaa" "bbb"  -> "aaa|bbb"
      * <p>
@@ -47,24 +64,6 @@ public @interface AutoMapping {
      */
     String suffix() default "";
 
-    /**
-     * 对Excel列的操作类型
-     * <p>
-     * LINE_NUM 字段是excel行号 从1开始
-     * DEFAULT 不变
-     * REORDER
-     * <p>
-     *
-     * @return
-     */
-    Operation operation() default Operation.DEFAULT;
-
-    /**
-     * 值处理器
-     *
-     * @return
-     */
-    Class<? extends ValueHandler<String>>[] handlers() default {};
 
     /**
      * 如果当前字段映射了多列

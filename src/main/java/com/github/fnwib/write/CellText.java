@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode
 @ToString
-public class CellText {
+public class CellText implements Cloneable {
     private int    rowNum;
     private int    cellNum;
     private String text;
@@ -27,5 +27,9 @@ public class CellText {
         this.rowNum = rowNum;
         return this;
     }
-
+//
+//    @Override
+//    public CellText clone() {
+//        return new CellText(rowNum, cellNum, text);
+//    }
 }

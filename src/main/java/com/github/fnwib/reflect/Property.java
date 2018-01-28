@@ -1,9 +1,7 @@
 package com.github.fnwib.reflect;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.Getter;
-import org.apache.poi.ss.formula.functions.T;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -39,5 +37,14 @@ public class Property {
     public Method getReadMethod() {
         return propertyDescriptor.getReadMethod();
     }
+
+    public JavaType getKeyType() {
+        return javaType.getKeyType();
+    }
+
+    public JavaType getContentType() {
+        return javaType.getContentType();
+    }
+
 
 }

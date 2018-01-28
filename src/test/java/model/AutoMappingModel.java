@@ -3,6 +3,7 @@ package model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.Operation;
+import com.github.fnwib.annotation.ReadValueHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,12 +20,14 @@ import java.util.Map;
 public class AutoMappingModel {
     @AutoMapping(operation = Operation.LINE_NUM)
     private Integer lineNum;
-    @AutoMapping(value = "Text One", handlers = {ToUpperHandler.class})
+    @ReadValueHandler({ToUpperHandler.class})
+    @AutoMapping(value = "Text One")
     private String  text1;
     @AutoMapping("Text Two")
     private String  text2;
 
-    @AutoMapping(value = "Text Reorder", handlers = {RecordHandler.class})
+    @ReadValueHandler({RecordHandler.class})
+    @AutoMapping(value = "Text Reorder")
     private String text3;
 
     @AutoMapping("integer")
@@ -50,7 +53,7 @@ public class AutoMappingModel {
     private Map<Integer, String> intKeyMap;
 
     @AutoMapping(prefix = "Map", value = "[A-Z]")
-    private Map<String, String> stringKeyMap;
+    private Map<Integer, String> stringKeyMap;
 
     @AutoMapping(prefix = "Map", value = "1", suffix = "(Chinese Name)")
     private Map<Integer, String> intKeyMap2;

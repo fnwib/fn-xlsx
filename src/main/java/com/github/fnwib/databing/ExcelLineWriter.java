@@ -1,6 +1,6 @@
 package com.github.fnwib.databing;
 
-import com.fasterxml.jackson.databind.JavaType;
+import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.write.CellText;
 import com.github.fnwib.write.CellTextMatrix;
@@ -20,12 +20,12 @@ import java.util.stream.Stream;
 @Slf4j
 public class ExcelLineWriter<T> implements LineWriter<T> {
 
-    private Sheet              sheet;
-    private CellStyle          cellStyle;
-    private Set<PropertyToken> tokens;
+    private Sheet                  sheet;
+    private CellStyle              cellStyle;
+    private Set<PropertyConverter> converters;
 
-    public ExcelLineWriter(Set<PropertyToken> tokens) {
-        this.tokens = tokens;
+    public ExcelLineWriter(Set<PropertyConverter> converters) {
+        this.converters = converters;
     }
 
     @Override
@@ -40,9 +40,8 @@ public class ExcelLineWriter<T> implements LineWriter<T> {
 
     private Stream<CellText> getCellTextStream(T element) {
         Stream.Builder<List<CellText>> builder = Stream.builder();
-        for (PropertyToken token : tokens) {
-            WriteToken writeToken = token.getWriteToken();
-            List<CellText> cellText = writeToken.getCellText(element);
+        for (PropertyConverter converter : converters) {
+            List<CellText> cellText = converter.getCellText(element);
             builder.add(cellText);
         }
         return builder.build().flatMap(List::stream).sorted(Comparator.comparing(CellText::getCellNum));

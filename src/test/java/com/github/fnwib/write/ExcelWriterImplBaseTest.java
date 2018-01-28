@@ -1,7 +1,5 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.databing.title.CellTitle;
-import com.github.fnwib.parse.TitleDesc;
 import com.github.fnwib.util.UUIDUtils;
 import model.EnumType;
 import model.WriteModel;
@@ -13,9 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ExcelWriterImplBaseTest {
 
@@ -49,25 +45,22 @@ public class ExcelWriterImplBaseTest {
         List<WriteModel> result = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
 
-            Map<Integer, String> mapNumber = new HashMap<>();
-            mapNumber.put(4, "Map1");
-            mapNumber.put(5, "Map2");
-            mapNumber.put(6, "Map3");
-            Map<Integer, String> mapString = new HashMap<>();
-            mapString.put(7, "Map1");
-            mapString.put(8, "Map2");
-            mapString.put(9, "Map3");
+            List<String> mapNumber = new ArrayList<>();
+            mapNumber.add("null");
+            mapNumber.add("Map2");
+            mapNumber.add("Map3");
+            List<String> mapString = new ArrayList<>();
+            mapString.add("Map1");
+            mapString.add("null");
+            mapString.add("Map3");
+            mapString.add("Map4");
 
-            if (i == 0) {
-                mapNumber.put(4, null);
-                mapString.put(7, null);
-            }
             WriteModel model = WriteModel.builder().string("A").intNum(1000000000)
                     .longNum(1111111111111111111L)
                     .aaa("AAAA")
                     .sequence(i)
                     .enumType(EnumType.A)
-                    .localDate(LocalDate.now()).mapString(mapString).mapNumber(mapNumber).build();
+                    .localDate(LocalDate.now()).listString(mapString).listNumber(mapNumber).build();
             result.add(model);
         }
         return result;
