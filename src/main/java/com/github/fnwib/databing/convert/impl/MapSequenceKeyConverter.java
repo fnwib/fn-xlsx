@@ -21,19 +21,19 @@ import java.util.Optional;
 @Slf4j
 public class MapSequenceKeyConverter implements PropertyConverter {
 
-    private Property                        property;
-    private int                             titlesSize;
-    private Map<Sequence, SingleConverter> singleConverters;
+    private Property                     property;
+    private int                          titlesSize;
+    private Map<Sequence, BeanConverter> converters;
 
     public MapSequenceKeyConverter(Property property,
-                                    List<CellTitle> titles,
-                                    List<ValueHandler> valueHandlers) {
+                                   List<CellTitle> titles,
+                                   List<ValueHandler> valueHandlers) {
         this.property = property;
         this.titlesSize = titles.size();
-        this.singleConverters = Maps.newHashMapWithExpectedSize(titles.size());
+        this.converters = Maps.newHashMapWithExpectedSize(titles.size());
         for (CellTitle title : titles) {
-            SingleConverter converter = new SingleConverter(property, property.getContentType(), title, valueHandlers);
-            singleConverters.put(title.getSequence(), converter);
+            BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
+            converters.put(title.getSequence(), converter);
         }
     }
 
@@ -53,8 +53,8 @@ public class MapSequenceKeyConverter implements PropertyConverter {
         if (!isMatched()) {
             return Collections.emptyMap();
         }
-        Map<Sequence, String> map = Maps.newHashMapWithExpectedSize(singleConverters.size());
-        singleConverters.forEach((cellTitle, converter) -> {
+        Map<Sequence, String> map = Maps.newHashMapWithExpectedSize(converters.size());
+        converters.forEach((cellTitle, converter) -> {
             String value = converter.getValue(row);
             map.put(cellTitle, value);
         });
@@ -77,7 +77,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
             }
             List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);
             objects.forEach((sequence, obj) -> {
-                Optional<CellText> optional = singleConverters.get(sequence).getSingleCellText(obj);
+                Optional<CellText> optional = converters.get(sequence).getSingleCellText(obj);
                 if (optional.isPresent()) {
                     list.add(optional.get());
                 }

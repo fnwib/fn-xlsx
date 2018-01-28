@@ -20,19 +20,19 @@ import java.util.Optional;
 @Slf4j
 public class MapIntKeyConverter implements PropertyConverter {
 
-    private Property                      property;
-    private int                           titlesSize;
-    private Map<Integer, SingleConverter> singleConverters;
+    private Property                    property;
+    private int                         titlesSize;
+    private Map<Integer, BeanConverter> converters;
 
     public MapIntKeyConverter(Property property,
                               List<CellTitle> titles,
                               List<ValueHandler> valueHandlers) {
         this.property = property;
         this.titlesSize = titles.size();
-        this.singleConverters = Maps.newHashMapWithExpectedSize(titles.size());
+        this.converters = Maps.newHashMapWithExpectedSize(titles.size());
         for (CellTitle title : titles) {
-            SingleConverter converter = new SingleConverter(property, property.getContentType(), title, valueHandlers);
-            singleConverters.put(title.getCellNum(), converter);
+            BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
+            converters.put(title.getCellNum(), converter);
         }
     }
 
@@ -52,8 +52,8 @@ public class MapIntKeyConverter implements PropertyConverter {
         if (!isMatched()) {
             return Collections.emptyMap();
         }
-        Map<Integer, String> map = Maps.newHashMapWithExpectedSize(singleConverters.size());
-        singleConverters.forEach((cellNum, converter) -> {
+        Map<Integer, String> map = Maps.newHashMapWithExpectedSize(converters.size());
+        converters.forEach((cellNum, converter) -> {
             String value = converter.getValue(row);
             map.put(cellNum, value);
         });
@@ -76,7 +76,7 @@ public class MapIntKeyConverter implements PropertyConverter {
             }
             List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);
             objects.forEach((cellNum, obj) -> {
-                Optional<CellText> optional = singleConverters.get(cellNum).getSingleCellText(obj);
+                Optional<CellText> optional = converters.get(cellNum).getSingleCellText(obj);
                 if (optional.isPresent()) {
                     list.add(optional.get());
                 }

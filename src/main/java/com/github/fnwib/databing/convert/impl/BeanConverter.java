@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class SingleConverter implements PropertyConverter {
+public class BeanConverter implements PropertyConverter {
 
     private       Property                   property;
     private       CellTitle                  cellTitle;
@@ -30,7 +30,7 @@ public class SingleConverter implements PropertyConverter {
     private final CellDeserializer<?>        deserializer;
     private final Serializer                 serializer;
 
-    public SingleConverter(Property property,
+    public BeanConverter(Property property,
                            CellTitle cellTitle,
                            List<ValueHandler> valueHandlers) {
         this.property = property;
@@ -40,7 +40,7 @@ public class SingleConverter implements PropertyConverter {
         this.serializer = Context.INSTANCE.findSerializer(property.getJavaType());
     }
 
-    public SingleConverter(Property property,
+    public BeanConverter(Property property,
                            JavaType contentType,
                            CellTitle cellTitle,
                            List<ValueHandler> valueHandlers) {

@@ -19,19 +19,19 @@ import java.util.Optional;
 @Slf4j
 public class CollectionConverter implements PropertyConverter {
 
-    private Property              property;
-    private int                   titlesSize;
-    private List<SingleConverter> singleConverters;
+    private Property            property;
+    private int                 titlesSize;
+    private List<BeanConverter> converters;
 
     public CollectionConverter(Property property,
                                List<CellTitle> titles,
                                List<ValueHandler> valueHandlers) {
         this.property = property;
         this.titlesSize = titles.size();
-        this.singleConverters = Lists.newArrayListWithCapacity(titles.size());
+        this.converters = Lists.newArrayListWithCapacity(titles.size());
         for (CellTitle title : titles) {
-            SingleConverter converter = new SingleConverter(property,property.getContentType(), title, valueHandlers);
-            singleConverters.add(converter);
+            BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
+            converters.add(converter);
         }
     }
 
@@ -51,8 +51,8 @@ public class CollectionConverter implements PropertyConverter {
         if (!isMatched()) {
             return Collections.emptyList();
         }
-        Collection<String> list = Lists.newArrayListWithCapacity(singleConverters.size());
-        for (SingleConverter converter : singleConverters) {
+        Collection<String> list = Lists.newArrayListWithCapacity(converters.size());
+        for (BeanConverter converter : converters) {
             String value = converter.getValue(row);
             list.add(value);
         }
@@ -76,7 +76,7 @@ public class CollectionConverter implements PropertyConverter {
             List<CellText> cellTexts = Lists.newArrayListWithCapacity(objects.size());
             int i = 0;
             for (Object object : objects) {
-                SingleConverter converter = singleConverters.get(i);
+                BeanConverter converter = converters.get(i);
                 Optional<CellText> optional = converter.getSingleCellText(object);
                 if (optional.isPresent()) {
                     cellTexts.add(optional.get());
