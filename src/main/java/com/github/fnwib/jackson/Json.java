@@ -3,7 +3,7 @@ package com.github.fnwib.jackson;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.github.fnwib.databing.title.CellTitle;
+import com.github.fnwib.databing.title.Sequence;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -16,9 +16,8 @@ public enum Json {
     Json() {
         this.mapper = new ObjectMapper().findAndRegisterModules();
         SimpleModule m = new SimpleModule();
-        m.addKeyDeserializer(CellTitle.class, new CellTitleKeyDeserializer());
+        m.addKeyDeserializer(Sequence.class, new CellSequenceDeserializer());
         mapper.registerModule(m);
-
     }
 
     public ObjectMapper get() {

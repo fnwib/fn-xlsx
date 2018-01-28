@@ -15,4 +15,9 @@ public class Sequence {
     public Integer asInt() {
         return Integer.parseInt(value);
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

@@ -18,15 +18,6 @@ public @interface CellType {
      */
     Operation operation() default Operation.DEFAULT;
 
-
-    /**
-     * title 前缀
-     * 完整匹配-不支持正则
-     *
-     * @return
-     */
-    String prefix() default "";
-
     /**
      * Excel的列title 名称
      * 支持正则表达式
@@ -47,14 +38,5 @@ public @interface CellType {
      * @return
      */
     String exclude() default "";
-
-    /**
-     * title 后缀
-     * 完整匹配-不支持正则
-     *
-     * @return
-     */
-    String suffix() default "";
-
 
 }

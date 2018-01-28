@@ -61,16 +61,16 @@ public class TitleResolver {
         List<Property> properties = BeanResolver.INSTANCE.getProperties(entityClass);
         Set<PropertyConverter> converters = Sets.newHashSet();
         for (Property property : properties) {
-            final CellType cellType = property.getAnnotation(CellType.class);
-            final AutoMapping mapping = property.getAnnotation(AutoMapping.class);
-            final ReadValueHandler handler = property.getAnnotation(ReadValueHandler.class);
+            CellType cellType = property.getAnnotation(CellType.class);
+            AutoMapping mapping = property.getAnnotation(AutoMapping.class);
+            ReadValueHandler handler = property.getAnnotation(ReadValueHandler.class);
             if (mapping != null) {
                 PropertyConverter converter = getPropertyConverter(property, cellTitles, mapping, handler);
                 converters.add(converter);
                 continue;
             }
             if (cellType != null) {
-                PropertyConverter converter = getPropertyConverter(property, cellTitles,cellType, handler);
+                PropertyConverter converter = getPropertyConverter(property, cellTitles, cellType, handler);
                 converters.add(converter);
                 continue;
             }
@@ -91,7 +91,7 @@ public class TitleResolver {
         List<CellTitle> match = titleMatcher.match(cellTitles);
         if (cellType.operation() == Operation.LINE_NUM) {
             final CellTitle title;
-            if (StringUtils.isAnyBlank(cellType.prefix(), cellType.title(), cellType.suffix())) {
+            if (StringUtils.isBlank(cellType.title())) {
                 title = null;
             } else {
                 title = match.get(0);
@@ -145,6 +145,13 @@ public class TitleResolver {
                 }
                 converter = new MapStringKeyConverter(property, titles, valueHandlers);
             } else if (javaType.getKeyType().getRawClass() == Sequence.class) {
+                Map<Sequence, List<CellTitle>> titleNames = titles.stream().collect(Collectors.groupingBy(CellTitle::getSequence));
+                titleNames = Maps.filterValues(titleNames, v -> v.size() > 1);
+                if (titleNames.size() > 0) {
+                    log.error("-> property is [{}] ,type is [{}]", property.getName(), javaType);
+                    titleNames.forEach((titleName, sameNameTitles) -> log.error("-> 存在相同名称的tile[{}]", sameNameTitles));
+                    throw new SettingException("Map类型的key是Sequence(title sequence)匹配到title存在相同的名称");
+                }
                 converter = new MapSequenceKeyConverter(property, titles, valueHandlers);
             } else {
                 String format = String.format("Map类型的key只支持 %s(cell index) | %s (cell name ) | %s (cell sequence)", Integer.class, String.class, Sequence.class);

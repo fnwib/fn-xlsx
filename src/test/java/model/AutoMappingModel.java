@@ -49,7 +49,7 @@ public class AutoMappingModel {
     private List<LocalDate> localDateList;
 
     @AutoMapping(prefix = "Map", value = "\\d+")
-    private Map<Integer, String> intKeyMap;
+    private Map<Sequence, String> intKeyMap;
 
     @AutoMapping(prefix = "Map", value = "[A-Z]")
     private Map<Integer, String> stringKeyMap;
@@ -62,9 +62,6 @@ public class AutoMappingModel {
 
     @AutoMapping("Excel no match")
     private Map<Integer, String> noMatchMap;
-
-    @AutoMapping(prefix = "Map2", value = "[A-Z]")
-    private Map<Sequence, String> sequenceStringMap;
 
 
 }
