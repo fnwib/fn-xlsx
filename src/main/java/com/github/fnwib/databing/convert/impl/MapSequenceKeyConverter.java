@@ -73,6 +73,8 @@ public class MapSequenceKeyConverter implements PropertyConverter {
             }
             Map<Sequence, Object> objects = (Map<Sequence, Object>) value;
             if (titlesSize < objects.size()) {
+                log.error("-->property name is {} , matched tile size is [{}] , value is [{}]",
+                        property.getName(), titlesSize, element);
                 throw new SettingException("参数长度大于可写入数据长度");
             }
             List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);

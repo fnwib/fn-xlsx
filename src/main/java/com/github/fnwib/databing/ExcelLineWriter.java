@@ -77,6 +77,10 @@ public class ExcelLineWriter<T> implements LineWriter<T> {
         for (Integer mergedRangeIndex : mergedRangeIndexes) {
             boolean sameMatrixColumn = cellTextMatrix.isSameMatrixColumn(mergedRangeIndex);
             if (!sameMatrixColumn) {
+                log.error("-> 列值不同不能合并单元格 cell index is [{}]", mergedRangeIndex);
+                for (T element : elements) {
+                    log.error(" -> value [{}]", element);
+                }
                 throw new ExcelException("列值不同不能合并单元格");
             }
             CellRangeAddress cellRangeAddress = new CellRangeAddress(rowNum, rowNum + elements.size() - 1,

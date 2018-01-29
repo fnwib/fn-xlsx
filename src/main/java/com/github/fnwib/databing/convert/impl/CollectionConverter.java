@@ -71,6 +71,8 @@ public class CollectionConverter implements PropertyConverter {
             }
             Collection<Object> objects = (Collection<Object>) value;
             if (titlesSize < objects.size()) {
+                log.error("-->property name is {} , matched tile size is [{}] , value is [{}]",
+                        property.getName(), titlesSize, element);
                 throw new SettingException("参数长度大于可写入数据长度");
             }
             List<CellText> cellTexts = Lists.newArrayListWithCapacity(objects.size());
