@@ -2,8 +2,6 @@ package com.github.fnwib.read;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.parse.Parser;
-import com.github.fnwib.parse.Title;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,15 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Deprecated
-@Slf4j
 public class ExcelReaderImpl<T> implements ExcelReader<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(ExcelReaderImpl.class);
+
 
     private int TITLE = -1;
 

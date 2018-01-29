@@ -22,11 +22,11 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
     @Test
     public void write() {
         ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
-        TemplateSetting templateSetting = TemplateSetting.builder().template(tempTemplateFile)
-                .addLastTitles(Lists.newArrayList("AAA", "序号"))
-                .cellText(new CellText(0, 0, "标题"))
-                .useDefaultCellStyle(true)
-                .build();
+        TemplateSetting templateSetting = new TemplateSetting();
+        templateSetting.setTemplate(tempTemplateFile);
+        templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
+        templateSetting.addCellText(new CellText(0, 0, "标题"));
+        templateSetting.useDefaultCellStyle();
         List<WriteModel> source = getDataList(6);
         List<WriteModel> target = new ArrayList<>();
         WorkbookConfig<WriteModel> writeConfig = new WorkbookConfig(WriteModel.class, resultFileSetting, templateSetting);
@@ -68,9 +68,11 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
     @Test
     public void writeMergedRegion() {
         ResultFileSetting resultFileSetting = new ResultFileSetting(2, "aaaa2zs2.xlsx", exportFolder);
-        TemplateSetting templateSetting = TemplateSetting.builder().template(tempTemplateFile)
-                .addLastTitles(Lists.newArrayList("AAA", "序号"))
-                .build();
+
+        TemplateSetting templateSetting = new TemplateSetting();
+        templateSetting.setTemplate(tempTemplateFile);
+        templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
+
         WorkbookConfig writeConfig = new WorkbookConfig(WriteModel.class, resultFileSetting, templateSetting);
         ExcelWriterProcessor<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
 

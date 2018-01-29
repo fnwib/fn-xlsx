@@ -1,14 +1,7 @@
 package com.github.fnwib.databing.title;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.util.Objects;
 
-@Getter
-@EqualsAndHashCode
-@ToString
 public class CellTitle implements Cloneable {
     private final Integer rowNum;
     private final Integer cellNum;
@@ -28,6 +21,18 @@ public class CellTitle implements Cloneable {
         this.cellNum = cellNum;
         this.text = text;
         this.bind = false;
+    }
+
+    public Integer getRowNum() {
+        return rowNum;
+    }
+
+    public Integer getCellNum() {
+        return cellNum;
+    }
+
+    public String getText() {
+        return text;
     }
 
     public boolean isBind() {
@@ -60,16 +65,40 @@ public class CellTitle implements Cloneable {
         return title;
     }
 
-
-    public Integer getCellIndex() {
-        return cellNum;
-    }
-
-    public String getCellName() {
-        return text;
-    }
-
     public Sequence getSequence() {
         return new Sequence(value);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CellTitle title = (CellTitle) o;
+        return bind == title.bind &&
+                com.google.common.base.Objects.equal(rowNum, title.rowNum) &&
+                com.google.common.base.Objects.equal(cellNum, title.cellNum) &&
+                com.google.common.base.Objects.equal(text, title.text) &&
+                com.google.common.base.Objects.equal(prefix, title.prefix) &&
+                com.google.common.base.Objects.equal(value, title.value) &&
+                com.google.common.base.Objects.equal(suffix, title.suffix);
+    }
+
+    @Override
+    public int hashCode() {
+        return com.google.common.base.Objects.hashCode(rowNum, cellNum, text, prefix, value, suffix, bind);
+    }
+
+    @Override
+    public String toString() {
+        return "CellTitle{" +
+                "rowNum=" + rowNum +
+                ", cellNum=" + cellNum +
+                ", text='" + text + '\'' +
+                ", prefix='" + prefix + '\'' +
+                ", value='" + value + '\'' +
+                ", suffix='" + suffix + '\'' +
+                ", bind=" + bind +
+                '}';
     }
 }

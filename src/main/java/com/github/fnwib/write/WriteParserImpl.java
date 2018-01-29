@@ -7,12 +7,13 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.reflect.Property;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,8 +26,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Deprecated
-@Slf4j
 public class WriteParserImpl<T> implements WriteParser<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(WriteParserImpl.class);
+
 
     private final Map<Method, Title> RULES = new HashMap<>();
 

@@ -1,19 +1,23 @@
 package com.github.fnwib.databing.valuehandler;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Queues;
 
-import java.util.List;
+import java.util.Collection;
 
 public class ValueHandlerConfig {
 
-    private List<ValueHandler> valueHandlers = Lists.newArrayList();
+    private Collection<ValueHandler> valueHandlers = Queues.newLinkedBlockingDeque();
 
-    public void register(ValueHandler valueHandler) {
+    public synchronized void register(ValueHandler valueHandler) {
+        if (valueHandlers.contains(valueHandler)) {
+            return;
+        }
         valueHandlers.add(valueHandler);
     }
 
-    public List<ValueHandler> getValueHandlers() {
-        List<ValueHandler> valueHandlers = Lists.newArrayList();
+    public Collection<ValueHandler> getValueHandlers() {
+        Collection<ValueHandler> valueHandlers = Lists.newArrayList();
         for (ValueHandler valueHandler : this.valueHandlers) {
             valueHandlers.add(valueHandler);
         }

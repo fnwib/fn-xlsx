@@ -2,19 +2,20 @@ package com.github.fnwib.write.config;
 
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.UUIDUtils;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Getter
-@Slf4j
 public class ResultFileSetting {
+
+    private static final Logger log = LoggerFactory.getLogger(ResultFileSetting.class);
+
 
     private static final String EXTENSION = ".xlsx";
 
@@ -64,7 +65,6 @@ public class ResultFileSetting {
             this.resultFolder = resultFolder;
         }
         this.baseName = FilenameUtils.getBaseName(filename);
-//        this.extension = "." + FilenameUtils.getExtension(filename);
 
     }
 
@@ -94,4 +94,11 @@ public class ResultFileSetting {
         return rowNum.get() > maxRowsCanWrite;
     }
 
+    public File getResultFolder() {
+        return resultFolder;
+    }
+
+    public int getMaxRowsCanWrite() {
+        return maxRowsCanWrite;
+    }
 }

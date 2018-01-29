@@ -1,14 +1,12 @@
 package com.github.fnwib.reflect;
 
 import com.fasterxml.jackson.databind.JavaType;
-import lombok.Getter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-@Getter
 public class Property {
 
     private final Field              field;
@@ -20,6 +18,18 @@ public class Property {
         this.field = field;
         this.javaType = javaType;
         this.propertyDescriptor = propertyDescriptor;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public JavaType getJavaType() {
+        return javaType;
+    }
+
+    public PropertyDescriptor getPropertyDescriptor() {
+        return propertyDescriptor;
     }
 
     public String getName() {

@@ -2,25 +2,30 @@ package com.github.fnwib.write.config;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-@Slf4j
 public class WorkbookWrapFactory<T> {
 
+    private static final Logger log = LoggerFactory.getLogger(WorkbookWrapFactory.class);
+
+
     private final WorkbookConfig<T> workbookConfig;
-    @Getter
     private final Integer           titleRowNum;
 
     public WorkbookWrapFactory(WorkbookConfig<T> workbookConfig) {
         this.workbookConfig = workbookConfig;
         this.titleRowNum = findTitle();
+    }
+
+    public Integer getTitleRowNum() {
+        return titleRowNum;
     }
 
     private int findTitle() {

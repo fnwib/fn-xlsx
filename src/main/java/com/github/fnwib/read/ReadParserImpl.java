@@ -8,7 +8,6 @@ import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.parse.Title;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.util.ValueUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +19,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 @Deprecated
-@Slf4j
 public class ReadParserImpl<T> implements ReadParser<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(ReadParserImpl.class);
+
 
     private Class<T> entityClass;
 

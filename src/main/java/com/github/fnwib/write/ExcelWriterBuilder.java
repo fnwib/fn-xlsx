@@ -3,18 +3,14 @@ package com.github.fnwib.write;
 import com.github.fnwib.convert.*;
 import com.github.fnwib.parse.ParseImpl;
 import com.github.fnwib.parse.Parser;
-import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.write.config.ExportType;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
 import com.github.fnwib.write.config.WorkbookConfig;
-import org.apache.poi.ss.usermodel.CellStyle;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ExcelWriterBuilder {
 
@@ -82,8 +78,11 @@ public class ExcelWriterBuilder {
         public ExcelWriter<T> build() {
 
             ResultFileSetting resultFileSetting = new ResultFileSetting(filename, resultFolder);
-            TemplateSetting templateSetting = TemplateSetting.builder().template(template)
-                    .useDefaultCellStyle(true).addLastTitles(addLastTitles).sheetName(sheetName).build();
+            TemplateSetting templateSetting = new TemplateSetting();
+            templateSetting.setTemplate(template);
+            templateSetting.useDefaultCellStyle();
+            templateSetting.addLastTitles(addLastTitles);
+            templateSetting.setSheetName(sheetName);
             ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
             converterRegistry.addConverter(new StringExcelConverter());
             converterRegistry.addConverter(new LocalDateExcelConverter());
@@ -91,7 +90,7 @@ public class ExcelWriterBuilder {
             converterRegistry.addConverterFactory(new NumberExcelConverterFactory());
             Parser<T> parser = new ParseImpl<>(entityClass, converterRegistry, 0.6);
 
-            WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(parser,ExportType.SingleSheet, resultFileSetting, templateSetting);
+            WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(parser, ExportType.SingleSheet, resultFileSetting, templateSetting);
             return new ExcelWriterProcessor<>(workbookConfig);
         }
 

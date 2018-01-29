@@ -1,67 +1,218 @@
 package model;
 
-import com.github.fnwib.annotation.AutoMapping;
+import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
 import com.github.fnwib.databing.title.Sequence;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-@Getter
-@Setter
-@ToString
 public class AutoMappingModel {
-    @AutoMapping(operation = Operation.LINE_NUM)
+    @CellType(operation = Operation.LINE_NUM)
     private Integer lineNum;
     @ReadValueHandler({ToUpperHandler.class})
-    @AutoMapping(value = "Text One")
+    @CellType(title = "Text One")
     private String  text1;
-    @AutoMapping("Text Two")
+    @CellType(title = "Text Two")
     private String  text2;
 
     @ReadValueHandler({RecordHandler.class})
-    @AutoMapping(value = "Text Reorder")
+    @CellType(title = "Text Reorder")
     private String text3;
 
-    @AutoMapping("integer")
+    @CellType(title = "integer")
     private Integer    intNum;
-    @AutoMapping("long")
+    @CellType(title = "long")
     private Long       longNum;
-    @AutoMapping("float")
+    @CellType(title = "float")
     private Float      floatNum;
-    @AutoMapping("double")
+    @CellType(title = "double")
     private Double     doubleNum;
-    @AutoMapping("bigDecimal")
+    @CellType(title = "bigDecimal")
     private BigDecimal bigDecimal;
 
-    @AutoMapping("Number Null")
+    @CellType(title = "Number Null")
     private Integer intNumNull;
 
-    @AutoMapping("LocalDate null")
+    @CellType(title = "LocalDate null")
     private LocalDate       localDate;
-    @AutoMapping(prefix = "LocalDate", value = "\\d+")
+    @CellType(prefix = "LocalDate", title = "\\d+")
     private List<LocalDate> localDateList;
 
-    @AutoMapping(prefix = "Map", value = "\\d+")
+    @CellType(prefix = "Map", title = "\\d+")
     private Map<Sequence, String> intKeyMap;
 
-    @AutoMapping(prefix = "Map", value = "[A-Z]")
+    @CellType(prefix = "Map", title = "[A-Z]")
     private Map<Integer, String> stringKeyMap;
 
-    @AutoMapping(prefix = "Map", value = "1", suffix = "(Chinese Name)")
+    @CellType(prefix = "Map", title = "1", suffix = "(Chinese Name)")
     private Map<Integer, String> intKeyMap2;
 
-    @AutoMapping(prefix = "Map", value = "\\d+", suffix = "(Chinese Name)", exclude = "1")
+    @CellType(prefix = "Map", title = "\\d+", suffix = "(Chinese Name)", exclude = "1")
     private Map<Integer, String> intKeyMap3;
 
-    @AutoMapping("Excel no match")
+    @CellType(title = "Excel no match")
     private Map<Integer, String> noMatchMap;
 
+    public Integer getLineNum() {
+        return lineNum;
+    }
 
+    public void setLineNum(Integer lineNum) {
+        this.lineNum = lineNum;
+    }
+
+    public String getText1() {
+        return text1;
+    }
+
+    public void setText1(String text1) {
+        this.text1 = text1;
+    }
+
+    public String getText2() {
+        return text2;
+    }
+
+    public void setText2(String text2) {
+        this.text2 = text2;
+    }
+
+    public String getText3() {
+        return text3;
+    }
+
+    public void setText3(String text3) {
+        this.text3 = text3;
+    }
+
+    public Integer getIntNum() {
+        return intNum;
+    }
+
+    public void setIntNum(Integer intNum) {
+        this.intNum = intNum;
+    }
+
+    public Long getLongNum() {
+        return longNum;
+    }
+
+    public void setLongNum(Long longNum) {
+        this.longNum = longNum;
+    }
+
+    public Float getFloatNum() {
+        return floatNum;
+    }
+
+    public void setFloatNum(Float floatNum) {
+        this.floatNum = floatNum;
+    }
+
+    public Double getDoubleNum() {
+        return doubleNum;
+    }
+
+    public void setDoubleNum(Double doubleNum) {
+        this.doubleNum = doubleNum;
+    }
+
+    public BigDecimal getBigDecimal() {
+        return bigDecimal;
+    }
+
+    public void setBigDecimal(BigDecimal bigDecimal) {
+        this.bigDecimal = bigDecimal;
+    }
+
+    public Integer getIntNumNull() {
+        return intNumNull;
+    }
+
+    public void setIntNumNull(Integer intNumNull) {
+        this.intNumNull = intNumNull;
+    }
+
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
+
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
+    }
+
+    public List<LocalDate> getLocalDateList() {
+        return localDateList;
+    }
+
+    public void setLocalDateList(List<LocalDate> localDateList) {
+        this.localDateList = localDateList;
+    }
+
+    public Map<Sequence, String> getIntKeyMap() {
+        return intKeyMap;
+    }
+
+    public void setIntKeyMap(Map<Sequence, String> intKeyMap) {
+        this.intKeyMap = intKeyMap;
+    }
+
+    public Map<Integer, String> getStringKeyMap() {
+        return stringKeyMap;
+    }
+
+    public void setStringKeyMap(Map<Integer, String> stringKeyMap) {
+        this.stringKeyMap = stringKeyMap;
+    }
+
+    public Map<Integer, String> getIntKeyMap2() {
+        return intKeyMap2;
+    }
+
+    public void setIntKeyMap2(Map<Integer, String> intKeyMap2) {
+        this.intKeyMap2 = intKeyMap2;
+    }
+
+    public Map<Integer, String> getIntKeyMap3() {
+        return intKeyMap3;
+    }
+
+    public void setIntKeyMap3(Map<Integer, String> intKeyMap3) {
+        this.intKeyMap3 = intKeyMap3;
+    }
+
+    public Map<Integer, String> getNoMatchMap() {
+        return noMatchMap;
+    }
+
+    public void setNoMatchMap(Map<Integer, String> noMatchMap) {
+        this.noMatchMap = noMatchMap;
+    }
+
+    @Override
+    public String toString() {
+        return "AutoMappingModel{" +
+                "lineNum=" + lineNum +
+                ", text1='" + text1 + '\'' +
+                ", text2='" + text2 + '\'' +
+                ", text3='" + text3 + '\'' +
+                ", intNum=" + intNum +
+                ", longNum=" + longNum +
+                ", floatNum=" + floatNum +
+                ", doubleNum=" + doubleNum +
+                ", bigDecimal=" + bigDecimal +
+                ", intNumNull=" + intNumNull +
+                ", localDate=" + localDate +
+                ", localDateList=" + localDateList +
+                ", intKeyMap=" + intKeyMap +
+                ", stringKeyMap=" + stringKeyMap +
+                ", intKeyMap2=" + intKeyMap2 +
+                ", intKeyMap3=" + intKeyMap3 +
+                ", noMatchMap=" + noMatchMap +
+                '}';
+    }
 }

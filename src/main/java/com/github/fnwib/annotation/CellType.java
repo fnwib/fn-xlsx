@@ -2,7 +2,6 @@ package com.github.fnwib.annotation;
 
 import java.lang.annotation.*;
 
-@Deprecated
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
@@ -17,6 +16,15 @@ public @interface CellType {
      * @return
      */
     Operation operation() default Operation.DEFAULT;
+
+
+    /**
+     * title 前缀
+     * 完整匹配-不支持正则
+     *
+     * @return
+     */
+    String prefix() default "";
 
     /**
      * Excel的列title 名称
@@ -38,5 +46,13 @@ public @interface CellType {
      * @return
      */
     String exclude() default "";
+
+    /**
+     * title 后缀
+     * 完整匹配-不支持正则
+     *
+     * @return
+     */
+    String suffix() default "";
 
 }

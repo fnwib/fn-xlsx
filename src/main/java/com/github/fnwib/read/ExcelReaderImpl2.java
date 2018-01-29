@@ -2,12 +2,13 @@ package com.github.fnwib.read;
 
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.exception.ExcelException;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,8 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 public class ExcelReaderImpl2<T> implements ExcelReader<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(ExcelReaderImpl2.class);
+
 
     private int TITLE = -1;
 

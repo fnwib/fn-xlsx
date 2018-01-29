@@ -1,12 +1,7 @@
 package com.github.fnwib.write;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import com.google.common.base.Objects;
 
-@Getter
-@EqualsAndHashCode
-@ToString
 public class CellText implements Cloneable {
     private int    rowNum;
     private int    cellNum;
@@ -27,9 +22,40 @@ public class CellText implements Cloneable {
         this.rowNum = rowNum;
         return this;
     }
-//
-//    @Override
-//    public CellText clone() {
-//        return new CellText(rowNum, cellNum, text);
-//    }
+
+    public int getRowNum() {
+        return rowNum;
+    }
+
+    public int getCellNum() {
+        return cellNum;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CellText cellText = (CellText) o;
+        return rowNum == cellText.rowNum &&
+                cellNum == cellText.cellNum &&
+                Objects.equal(text, cellText.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(rowNum, cellNum, text);
+    }
+
+    @Override
+    public String toString() {
+        return "CellText{" +
+                "rowNum=" + rowNum +
+                ", cellNum=" + cellNum +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }

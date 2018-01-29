@@ -4,7 +4,6 @@ import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.convert.ExcelConverter;
 import com.github.fnwib.util.MiddleDifference;
 import com.google.common.base.Joiner;
-import lombok.ToString;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +14,8 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
 @Deprecated
-@ToString
 public final class Title {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Title.class);
@@ -129,5 +128,15 @@ public final class Title {
         return true;
     }
 
-
+    @Override
+    public String toString() {
+        return "Title{" +
+                "fieldName='" + fieldName + '\'' +
+                ", cellType=" + cellType +
+                ", list=" + list +
+                ", min=" + min +
+                ", empty=" + empty +
+                ", converter=" + converter +
+                '}';
+    }
 }

@@ -1,23 +1,34 @@
 package com.github.fnwib.databing;
 
 import com.github.fnwib.databing.convert.PropertyConverter;
+import com.github.fnwib.databing.title.TitleResolver;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
 
-@Slf4j
 public class ExcelLineReader<T> implements LineReader<T> {
+    private static final Logger log = LoggerFactory.getLogger(ExcelLineReader.class);
+
     private final Class<T>               entityClass;
+    private final TitleResolver          titleResolver;
     private final Set<PropertyConverter> converters;
 
     public ExcelLineReader(Class<T> entityClass) {
         this.entityClass = entityClass;
+        this.titleResolver = Context.INSTANCE.getContextConfig().getTitleResolver();
+        this.converters = Sets.newHashSet();
+    }
+
+    public ExcelLineReader(Class<T> entityClass, LocalConfig localConfig) {
+        this.entityClass = entityClass;
+        this.titleResolver = localConfig.getTitleResolver();
         this.converters = Sets.newHashSet();
     }
 
@@ -29,7 +40,7 @@ public class ExcelLineReader<T> implements LineReader<T> {
         if (!converters.isEmpty()) {
             converters.clear();
         }
-        Set<PropertyConverter> titleTokens = Context.INSTANCE.resolve(entityClass, row);
+        Set<PropertyConverter> titleTokens = titleResolver.resolve(entityClass, row);
         boolean flag = !titleTokens.isEmpty();
         if (flag) {
             titleTokens.forEach(t -> this.converters.add(t));

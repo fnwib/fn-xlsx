@@ -5,16 +5,17 @@ import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.ValueUtil;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
 public final class TitleMatcher {
+    private static final Logger log = LoggerFactory.getLogger(TitleMatcher.class);
 
     private final String  prefix;
     private final Pattern titlePattern;
@@ -30,9 +31,9 @@ public final class TitleMatcher {
 
     @Deprecated
     public TitleMatcher(CellType mapping) {
-        this.prefix = "";
+        this.prefix = mapping.prefix();
         this.titlePattern = Pattern.compile(mapping.title().trim());
-        this.suffix = "";
+        this.suffix = mapping.suffix();
         this.exclude = mapping.exclude();
     }
 

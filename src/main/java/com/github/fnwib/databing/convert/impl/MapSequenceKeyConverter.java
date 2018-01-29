@@ -9,17 +9,17 @@ import com.github.fnwib.reflect.Property;
 import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-@Slf4j
 public class MapSequenceKeyConverter implements PropertyConverter {
+
+    private static final Logger log = LoggerFactory.getLogger(MapSequenceKeyConverter.class);
+
 
     private Property                     property;
     private int                          titlesSize;
@@ -27,7 +27,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
 
     public MapSequenceKeyConverter(Property property,
                                    List<CellTitle> titles,
-                                   List<ValueHandler> valueHandlers) {
+                                   Collection<ValueHandler> valueHandlers) {
         this.property = property;
         this.titlesSize = titles.size();
         this.converters = Maps.newHashMapWithExpectedSize(titles.size());

@@ -4,12 +4,13 @@ import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.write.CellText;
 import com.github.fnwib.write.CellTextMatrix;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 import java.util.List;
@@ -17,8 +18,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 public class ExcelLineWriter<T> implements LineWriter<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(ExcelLineWriter.class);
 
     private Sheet                  sheet;
     private CellStyle              cellStyle;

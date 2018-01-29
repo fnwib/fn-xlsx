@@ -5,7 +5,6 @@ import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
-import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.databing.convert.impl.*;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
@@ -16,10 +15,11 @@ import com.github.fnwib.util.ValueUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,31 +29,16 @@ import java.util.stream.Collectors;
 /**
  * title解析器  将Excel.Row与Entity.Field做映射
  */
-@Slf4j
 public class TitleResolver {
 
-    private final List<ValueHandler> titleValueHandlers = Lists.newArrayList();
+    private static final Logger log = LoggerFactory.getLogger(TitleResolver.class);
 
-    /**
-     * 注册title处理器
-     *
-     * @param valueHandlers
-     */
-    public void register(List<ValueHandler> valueHandlers) {
-        for (ValueHandler valueHandler : valueHandlers) {
-            this.titleValueHandlers.add(valueHandler);
-        }
-    }
+    private final Collection<ValueHandler> readContentValueHandlers;
+    private final Collection<ValueHandler> titleValueHandlers;
 
-    /**
-     * 注册title处理器
-     *
-     * @param valueHandlers
-     */
-    public void register(ValueHandler... valueHandlers) {
-        for (ValueHandler valueHandler : valueHandlers) {
-            this.titleValueHandlers.add(valueHandler);
-        }
+    public TitleResolver(Collection<ValueHandler> readContentValueHandlers, Collection<ValueHandler> titleValueHandlers) {
+        this.readContentValueHandlers = readContentValueHandlers;
+        this.titleValueHandlers = titleValueHandlers;
     }
 
     public Set<PropertyConverter> resolve(Class<?> entityClass, Row row) {
@@ -91,7 +76,7 @@ public class TitleResolver {
         List<CellTitle> match = titleMatcher.match(cellTitles);
         if (cellType.operation() == Operation.LINE_NUM) {
             final CellTitle title;
-            if (StringUtils.isBlank(cellType.title())) {
+            if (StringUtils.isAnyBlank(cellType.prefix(), cellType.title(), cellType.suffix())) {
                 title = null;
             } else {
                 title = match.get(0);
@@ -100,7 +85,7 @@ public class TitleResolver {
         } else if (cellType.operation() == Operation.REORDER) {
             throw new SettingException("不支持类型,请使用@ReadValueHandler 的handler自行实现值处理");
         }
-        List<ValueHandler> valueHandlers = getValueHandlers(handler);
+        Collection<ValueHandler> valueHandlers = getReadContentValueHandlers(handler);
         return getPropertyConverter(property, match, valueHandlers);
     }
 
@@ -123,11 +108,11 @@ public class TitleResolver {
         } else if (mapping.operation() == Operation.REORDER) {
             throw new SettingException("不支持类型,请使用@ReadValueHandler 的handler自行实现值处理");
         }
-        List<ValueHandler> valueHandlers = getValueHandlers(handler);
+        Collection<ValueHandler> valueHandlers = getReadContentValueHandlers(handler);
         return getPropertyConverter(property, match, valueHandlers);
     }
 
-    private PropertyConverter getPropertyConverter(Property property, List<CellTitle> titles, List<ValueHandler> valueHandlers) {
+    private PropertyConverter getPropertyConverter(Property property, List<CellTitle> titles, Collection<ValueHandler> valueHandlers) {
         final PropertyConverter converter;
         final JavaType javaType = property.getJavaType();
         if (javaType.isCollectionLikeType()) {
@@ -159,17 +144,17 @@ public class TitleResolver {
             }
         } else {
             if (titles.isEmpty()) {
-                converter = new SingleConverter(property, null, valueHandlers);
+                converter = new BeanConverter(property, null, valueHandlers);
             } else {
-                converter = new SingleConverter(property, titles.get(0), valueHandlers);
+                converter = new BeanConverter(property, titles.get(0), valueHandlers);
             }
         }
         return converter;
     }
 
 
-    private List<ValueHandler> getValueHandlers(ReadValueHandler handler) {
-        List<ValueHandler> valueHandlers = Context.INSTANCE.findContentValueHandlers();
+    private Collection<ValueHandler> getReadContentValueHandlers(ReadValueHandler handler) {
+        Collection<ValueHandler> valueHandlers = Lists.newArrayList(readContentValueHandlers);
         if (handler != null) {
             for (Class<? extends ValueHandler> h : handler.value()) {
                 Constructor<?>[] constructors = h.getConstructors();

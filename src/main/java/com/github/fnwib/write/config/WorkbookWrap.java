@@ -4,13 +4,13 @@ import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.write.CellText;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-@Slf4j
-@Getter
 public class WorkbookWrap<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(WorkbookWrap.class);
 
     private static final int defaultSheetIndex = 0;
 
@@ -139,4 +139,43 @@ public class WorkbookWrap<T> {
         }
     }
 
+    public static int getDefaultSheetIndex() {
+        return defaultSheetIndex;
+    }
+
+    public LineWriter<T> getLineWriter() {
+        return lineWriter;
+    }
+
+    public File getTemplateFile() {
+        return templateFile;
+    }
+
+    public XSSFWorkbook getTemplateWorkbook() {
+        return templateWorkbook;
+    }
+
+    public SXSSFWorkbook getWriteWorkbooks() {
+        return writeWorkbooks;
+    }
+
+    public ResultFileSetting getResultFileSetting() {
+        return resultFileSetting;
+    }
+
+    public TemplateSetting getTemplateSetting() {
+        return templateSetting;
+    }
+
+    public WorkbookConfig<T> getWorkbookConfig() {
+        return workbookConfig;
+    }
+
+    public int getTitleRowNum() {
+        return titleRowNum;
+    }
+
+    public boolean isWritten() {
+        return written;
+    }
 }

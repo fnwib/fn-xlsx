@@ -3,19 +3,11 @@ package model;
 
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
-import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-@Getter
-@Setter
-@ToString
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
 public class WriteModel {
     @AutoMapping("序号")
     private Integer      sequence;
@@ -46,4 +38,92 @@ public class WriteModel {
 
     @AutoMapping("enumType")
     private EnumType enumType;
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
+    public String getString() {
+        return string;
+    }
+
+    public void setString(String string) {
+        this.string = string;
+    }
+
+    public Integer getIntNum() {
+        return intNum;
+    }
+
+    public void setIntNum(Integer intNum) {
+        this.intNum = intNum;
+    }
+
+    public Long getLongNum() {
+        return longNum;
+    }
+
+    public void setLongNum(Long longNum) {
+        this.longNum = longNum;
+    }
+
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
+
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
+    }
+
+    public List<String> getListNumber() {
+        return listNumber;
+    }
+
+    public void setListNumber(List<String> listNumber) {
+        this.listNumber = listNumber;
+    }
+
+    public List<String> getListString() {
+        return listString;
+    }
+
+    public void setListString(List<String> listString) {
+        this.listString = listString;
+    }
+
+    public Map<Integer, String> getMapNull() {
+        return mapNull;
+    }
+
+    public void setMapNull(Map<Integer, String> mapNull) {
+        this.mapNull = mapNull;
+    }
+
+    public Map<Integer, String> getNoMatchMap() {
+        return noMatchMap;
+    }
+
+    public void setNoMatchMap(Map<Integer, String> noMatchMap) {
+        this.noMatchMap = noMatchMap;
+    }
+
+    public String getAaa() {
+        return aaa;
+    }
+
+    public void setAaa(String aaa) {
+        this.aaa = aaa;
+    }
+
+    public EnumType getEnumType() {
+        return enumType;
+    }
+
+    public void setEnumType(EnumType enumType) {
+        this.enumType = enumType;
+    }
 }

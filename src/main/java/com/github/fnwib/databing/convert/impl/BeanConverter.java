@@ -12,27 +12,30 @@ import com.github.fnwib.reflect.Property;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 public class BeanConverter implements PropertyConverter {
 
-    private       Property                   property;
-    private       CellTitle                  cellTitle;
-    private       List<ValueHandler> valueHandlers;
-    private final CellDeserializer<?>        deserializer;
-    private final Serializer                 serializer;
+    private static final Logger log = LoggerFactory.getLogger(BeanConverter.class);
+
+    private       Property                 property;
+    private       CellTitle                cellTitle;
+    private       Collection<ValueHandler> valueHandlers;
+    private final CellDeserializer<?>      deserializer;
+    private final Serializer               serializer;
 
     public BeanConverter(Property property,
-                           CellTitle cellTitle,
-                           List<ValueHandler> valueHandlers) {
+                         CellTitle cellTitle,
+                         Collection<ValueHandler> valueHandlers) {
         this.property = property;
         this.cellTitle = cellTitle;
         this.valueHandlers = valueHandlers;
@@ -41,9 +44,9 @@ public class BeanConverter implements PropertyConverter {
     }
 
     public BeanConverter(Property property,
-                           JavaType contentType,
-                           CellTitle cellTitle,
-                           List<ValueHandler> valueHandlers) {
+                         JavaType contentType,
+                         CellTitle cellTitle,
+                         Collection<ValueHandler> valueHandlers) {
         this.property = property;
         this.cellTitle = cellTitle;
         this.valueHandlers = valueHandlers;

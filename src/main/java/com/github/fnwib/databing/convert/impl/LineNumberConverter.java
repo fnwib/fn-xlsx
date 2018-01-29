@@ -5,16 +5,18 @@ import com.github.fnwib.databing.title.CellTitle;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
-@Slf4j
 public class LineNumberConverter implements PropertyConverter {
+
+    private static final Logger log = LoggerFactory.getLogger(LineNumberConverter.class);
 
     private final String    name;
     private final Method    readMethod;

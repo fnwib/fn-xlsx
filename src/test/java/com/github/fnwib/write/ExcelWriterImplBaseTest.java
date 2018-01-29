@@ -55,12 +55,17 @@ public class ExcelWriterImplBaseTest {
             mapString.add("Map3");
             mapString.add("Map4");
 
-            WriteModel model = WriteModel.builder().string("A").intNum(1000000000)
-                    .longNum(1111111111111111111L)
-                    .aaa("AAAA")
-                    .sequence(i)
-                    .enumType(EnumType.A)
-                    .localDate(LocalDate.now()).listString(mapString).listNumber(mapNumber).build();
+            WriteModel model = new WriteModel();
+            model.setString("A");
+            model.setIntNum(1000000000);
+            model.setLongNum(1111111111111111111L);
+            model.setAaa("AAAA");
+            model.setSequence(i);
+            model.setEnumType(EnumType.A);
+            model.setLocalDate(LocalDate.now());
+            model.setLocalDate(LocalDate.now());
+            model.setListString(mapString);
+            model.setListNumber(mapNumber);
             result.add(model);
         }
         return result;

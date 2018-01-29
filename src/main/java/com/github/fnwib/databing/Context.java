@@ -1,34 +1,39 @@
 package com.github.fnwib.databing;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.databing.deser.CellDeserializer;
 import com.github.fnwib.databing.deser.DeserializerConfig;
+import com.github.fnwib.databing.deser.LocalDateCellDeserializer;
 import com.github.fnwib.databing.ser.Serializer;
 import com.github.fnwib.databing.ser.SerializerConfig;
-import com.github.fnwib.databing.title.TitleResolver;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.databing.valuehandler.ValueHandlerConfig;
-import org.apache.poi.ss.usermodel.Row;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
+/**
+ * 全局配置
+ */
 public enum Context {
 
     INSTANCE;
 
-    private final DeserializerConfig deserializerConfig = new DeserializerConfig();
-    private final SerializerConfig   serializerConfig   = new SerializerConfig();
-    private final ValueHandlerConfig valueHandlerConfig = new ValueHandlerConfig();
-    private final TitleResolver      titleResolver      = new TitleResolver();
+    private final DeserializerConfig deserializerConfig;
+    private final SerializerConfig   serializerConfig;
+    private final LocalConfig        contextConfig;
+
+    Context() {
+        deserializerConfig = new DeserializerConfig();
+        deserializerConfig.register(new LocalDateCellDeserializer());
+        serializerConfig = new SerializerConfig();
+        this.contextConfig = new LocalConfig();
+    }
 
     /**
-     * 注册类型转换器
+     * 注册全局反序列化组件
      *
      * @param cellDeserializer
      */
-    public void register(CellDeserializer<?> cellDeserializer) {
+    public synchronized void register(CellDeserializer<?> cellDeserializer) {
         this.deserializerConfig.register(cellDeserializer);
     }
 
@@ -36,15 +41,15 @@ public enum Context {
         return deserializerConfig.findCellDeserializer(javaType);
     }
 
-
-    public void register(Serializer serializer) {
+    /**
+     * 注册全局序列化组件
+     *
+     * @param serializer
+     */
+    public synchronized void register(Serializer serializer) {
         this.serializerConfig.register(serializer);
     }
 
-    /**
-     * @param javaType
-     * @return
-     */
     public Serializer findSerializer(JavaType javaType) {
         return serializerConfig.findSerializer(javaType);
     }
@@ -54,24 +59,13 @@ public enum Context {
      *
      * @param valueHandlers
      */
-    public void registerContentValueHandlers(ValueHandler... valueHandlers) {
-        for (ValueHandler valueHandler : valueHandlers) {
-            this.valueHandlerConfig.register(valueHandler);
-        }
+    public synchronized void registerContentValueHandlers(Collection<ValueHandler> valueHandlers) {
+        this.contextConfig.registerReadContentValueHandlers(valueHandlers);
     }
 
 
-    public List<ValueHandler> findContentValueHandlers() {
-        return valueHandlerConfig.getValueHandlers();
-    }
-
-    /**
-     * 注册title处理器
-     *
-     * @param valueHandlers
-     */
-    public void registerTitltValueHandlers(List<ValueHandler> valueHandlers) {
-        titleResolver.register(valueHandlers);
+    public Collection<ValueHandler> findContentValueHandlers() {
+        return contextConfig.getContentValueHandlers();
     }
 
     /**
@@ -79,11 +73,11 @@ public enum Context {
      *
      * @param valueHandlers
      */
-    public void registerTitleValueHandlers(ValueHandler... valueHandlers) {
-        titleResolver.register(valueHandlers);
+    public synchronized void registerTitltValueHandlers(Collection<ValueHandler> valueHandlers) {
+        contextConfig.registerTitleValueHandlers(valueHandlers);
     }
 
-    public Set<PropertyConverter> resolve(Class<?> entityClass, Row row) {
-        return titleResolver.resolve(entityClass, row);
+    public LocalConfig getContextConfig() {
+        return contextConfig;
     }
 }

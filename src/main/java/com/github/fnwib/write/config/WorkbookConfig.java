@@ -4,15 +4,11 @@ import com.github.fnwib.databing.ExcelLineReader;
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.parse.Parser;
 import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-@Slf4j
-@Getter
 public class WorkbookConfig<T> {
 
     private final Class<T>          entityClass;
@@ -53,4 +49,11 @@ public class WorkbookConfig<T> {
         return lineReader;
     }
 
+    public ResultFileSetting getResultFileSetting() {
+        return resultFileSetting;
+    }
+
+    public TemplateSetting getTemplateSetting() {
+        return templateSetting;
+    }
 }

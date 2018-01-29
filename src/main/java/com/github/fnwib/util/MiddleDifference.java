@@ -1,8 +1,6 @@
 package com.github.fnwib.util;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import com.google.common.base.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +31,45 @@ public class MiddleDifference {
         return new Between(positiveOffset, flashbackOffSet);
     }
 
-
-    @Getter
-    @AllArgsConstructor
-    @EqualsAndHashCode
     public static class Between {
         private int positiveOffset;
         private int flashbackOffSet;
 
+
+        public Between(int positiveOffset, int flashbackOffSet) {
+            this.positiveOffset = positiveOffset;
+            this.flashbackOffSet = flashbackOffSet;
+        }
+
+        public int getPositiveOffset() {
+            return positiveOffset;
+        }
+
+        public int getFlashbackOffSet() {
+            return flashbackOffSet;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Between between = (Between) o;
+            return positiveOffset == between.positiveOffset &&
+                    flashbackOffSet == between.flashbackOffSet;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(positiveOffset, flashbackOffSet);
+        }
+
+        @Override
+        public String toString() {
+            return "Between{" +
+                    "positiveOffset=" + positiveOffset +
+                    ", flashbackOffSet=" + flashbackOffSet +
+                    '}';
+        }
     }
 
     public Between middleDifference(String value, String object) {
