@@ -67,6 +67,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> List<CellText> getCellText(T element) {
         if (!isMatched()) {
             return emptyCellTexts;

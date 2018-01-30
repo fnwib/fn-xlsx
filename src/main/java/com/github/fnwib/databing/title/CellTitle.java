@@ -1,10 +1,14 @@
 package com.github.fnwib.databing.title;
 
 import com.github.fnwib.write.CellText;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
 public class CellTitle implements Cloneable {
+
+    private static final Logger log = LoggerFactory.getLogger(CellTitle.class);
 
     private static final String EMPTY_TEXT = "";
 
@@ -18,7 +22,7 @@ public class CellTitle implements Cloneable {
 
     private boolean bind;
 
-    public CellTitle(Integer rowNum, Integer cellNum, String text) {
+    CellTitle(Integer rowNum, Integer cellNum, String text) {
         Objects.requireNonNull(rowNum);
         Objects.requireNonNull(cellNum);
         Objects.requireNonNull(text);
@@ -66,12 +70,18 @@ public class CellTitle implements Cloneable {
 
     @Override
     public CellTitle clone() {
+        try {
+            super.clone();
+        } catch (CloneNotSupportedException e) {
+            log.error("-> clone error", e);
+        }
         CellTitle title = new CellTitle(rowNum, cellNum, text);
         title.setPrefix(prefix);
         title.setValue(value);
         title.setSuffix(suffix);
         if (bind) title.bind();
         return title;
+
     }
 
     public Sequence getSequence() {

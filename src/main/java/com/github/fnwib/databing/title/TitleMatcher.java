@@ -22,15 +22,14 @@ public final class TitleMatcher {
     private final String  suffix;
     private final String  exclude;
 
-    public TitleMatcher(AutoMapping mapping) {
+    TitleMatcher(AutoMapping mapping) {
         this.prefix = mapping.prefix();
         this.titlePattern = Pattern.compile(mapping.value().trim());
         this.suffix = mapping.suffix();
         this.exclude = mapping.exclude();
     }
 
-    @Deprecated
-    public TitleMatcher(CellType mapping) {
+    TitleMatcher(CellType mapping) {
         this.prefix = mapping.prefix();
         this.titlePattern = Pattern.compile(mapping.title().trim());
         this.suffix = mapping.suffix();

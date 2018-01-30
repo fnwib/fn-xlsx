@@ -8,6 +8,7 @@ import com.github.fnwib.databing.ser.Serializer;
 import com.github.fnwib.databing.title.CellTitle;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.NotSupportedException;
+import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.CellText;
@@ -35,15 +36,15 @@ public class BeanConverter implements PropertyConverter {
     private final CellText                 emptyCellText;
 
     public BeanConverter(Property property,
-                         CellTitle cellTitle,
-                         Collection<ValueHandler> valueHandlers) {
+                  CellTitle cellTitle,
+                  Collection<ValueHandler> valueHandlers) {
         this(property, property.getJavaType(), cellTitle, valueHandlers);
     }
 
     public BeanConverter(Property property,
-                         JavaType contentType,
-                         CellTitle cellTitle,
-                         Collection<ValueHandler> valueHandlers) {
+                  JavaType contentType,
+                  CellTitle cellTitle,
+                  Collection<ValueHandler> valueHandlers) {
         this.property = property;
         this.cellTitle = cellTitle;
         this.valueHandlers = valueHandlers;
@@ -77,10 +78,12 @@ public class BeanConverter implements PropertyConverter {
                 return Optional.of(deserialize.toString());
             }
         }
-        if (cell == null) return Optional.empty();
+        if (cell == null) {
+            return Optional.empty();
+        }
         switch (cell.getCellTypeEnum()) {
             case BLANK:
-                return null;
+                return Optional.empty();
             case NUMERIC:
                 return Optional.of(cell.getStringCellValue());
             case STRING:
@@ -107,7 +110,7 @@ public class BeanConverter implements PropertyConverter {
                 return Lists.newArrayList(emptyCellText);
             }
             Optional<CellText> optional = getSingleCellText(value);
-            return Lists.newArrayList(optional.get());
+            return Lists.newArrayList(optional.orElseThrow(SettingException::new));
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("invoke error ", e);
             return Collections.emptyList();

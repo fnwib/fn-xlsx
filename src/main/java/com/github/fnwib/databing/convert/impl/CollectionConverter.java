@@ -67,7 +67,9 @@ public class CollectionConverter implements PropertyConverter {
         return Optional.of(list);
     }
 
+
     @Override
+    @SuppressWarnings("unchecked")
     public <T> List<CellText> getCellText(T element) {
         if (!isMatched()) {
             return emptyCellTexts;
@@ -88,9 +90,7 @@ public class CollectionConverter implements PropertyConverter {
             for (Object object : objects) {
                 BeanConverter converter = converters.get(i);
                 Optional<CellText> optional = converter.getSingleCellText(object);
-                if (optional.isPresent()) {
-                    cellTexts.add(optional.get());
-                }
+                optional.ifPresent(c -> cellTexts.add(c));
                 i++;
             }
             return cellTexts;
