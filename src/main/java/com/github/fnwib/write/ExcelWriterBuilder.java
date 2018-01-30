@@ -1,7 +1,7 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.databing.ExcelLineReader;
 import com.github.fnwib.databing.LineReader;
+import com.github.fnwib.databing.LineReaderForExcel;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
@@ -85,9 +85,9 @@ public class ExcelWriterBuilder {
             templateSetting.setSheetName(sheetName);
             LineReader<T> lineReader;
             if (localConfig == null) {
-                lineReader = new ExcelLineReader<>(entityClass);
+                lineReader = new LineReaderForExcel<>(entityClass);
             } else {
-                lineReader = new ExcelLineReader<>(entityClass, localConfig);
+                lineReader = new LineReaderForExcel<>(entityClass, localConfig);
             }
             WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(lineReader, resultFileSetting, templateSetting);
             return new ExcelWriterProcessor<>(workbookConfig);

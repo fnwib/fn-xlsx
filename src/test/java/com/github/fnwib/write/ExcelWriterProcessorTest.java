@@ -1,7 +1,7 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.databing.ExcelLineReader;
 import com.github.fnwib.databing.LineReader;
+import com.github.fnwib.databing.LineReaderForExcel;
 import com.github.fnwib.read.ExcelReader;
 import com.github.fnwib.read.ExcelReaderImpl;
 import com.github.fnwib.write.config.ResultFileSetting;
@@ -31,7 +31,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         List<WriteModel> source = getDataList(6);
         List<WriteModel> target = new ArrayList<>();
 
-        LineReader<WriteModel> lineReader = new ExcelLineReader<>(WriteModel.class);
+        LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
         WorkbookConfig<WriteModel> writeConfig = new WorkbookConfig(lineReader, resultFileSetting, templateSetting);
         ExcelWriter<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
         writerProcessor.write(source);
@@ -75,7 +75,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         templateSetting.setTemplate(tempTemplateFile);
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
 
-        final LineReader<WriteModel> lineReader = new ExcelLineReader<>(WriteModel.class);
+        final LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
         WorkbookConfig writeConfig = new WorkbookConfig(lineReader, resultFileSetting, templateSetting);
         ExcelWriterProcessor<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
 

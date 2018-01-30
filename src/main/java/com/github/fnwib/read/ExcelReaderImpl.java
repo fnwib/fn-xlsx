@@ -2,7 +2,6 @@ package com.github.fnwib.read;
 
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.exception.ExcelException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -11,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
@@ -69,9 +65,6 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             if (num != -1 && row.getRowNum() > num) {
                 break;
             }
-            if (this.isEmpty(row)) {
-                continue;
-            }
             boolean match = parser.match(row);
             if (match) {
                 TITLE = row.getRowNum();
@@ -91,12 +84,12 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
         }
         List<T> list = new ArrayList<>(sheet.getLastRowNum());
         for (Row row : sheet) {
-            if (row.getRowNum() <= TITLE || this.isEmpty(row)) {
+            if (row.getRowNum() <= TITLE) {
                 continue;
             }
-            T t = parser.convert(row);
-            if (t != null) {
-                list.add(t);
+            Optional<T> optional = parser.convert(row);
+            if (optional.isPresent()) {
+                list.add(optional.get());
             }
         }
         try {
@@ -105,15 +98,6 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             log.error("reader workbook  close ", e);
         }
         return list;
-    }
-
-    public boolean isEmpty(Row row) {
-        for (Cell cell : row) {
-            if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

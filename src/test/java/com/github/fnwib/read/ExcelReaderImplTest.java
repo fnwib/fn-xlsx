@@ -1,7 +1,7 @@
 package com.github.fnwib.read;
 
-import com.github.fnwib.databing.ExcelLineReader;
 import com.github.fnwib.databing.LineReader;
+import com.github.fnwib.databing.LineReaderForExcel;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.util.BCConvert;
@@ -35,7 +35,7 @@ public class ExcelReaderImplTest {
         LocalConfig localConfig = new LocalConfig();
         localConfig.registerReadContentValueHandlers(valueHandler, valueHandler2);
         localConfig.registerTitleValueHandlers(valueHandler, valueHandler2);
-        LineReader<AutoMappingModel> parser = new ExcelLineReader<>(AutoMappingModel.class, localConfig);
+        LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.class, localConfig);
         reader = new ExcelReaderImpl<>(parser, workbook, 0);
     }
 
@@ -63,7 +63,7 @@ public class ExcelReaderImplTest {
 
 
     private void check(AutoMappingModel model) {
-        Assert.assertSame("lineNum integer support", 3, model.getLineNum());
+        Assert.assertSame("lineNum integer support", 7, model.getLineNum());
 
         Assert.assertEquals("Text One toSingleByte support", "TEXT", model.getText1());
         Assert.assertEquals("Text Two string support", "Text", model.getText2());

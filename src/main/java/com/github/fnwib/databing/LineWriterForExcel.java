@@ -18,15 +18,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ExcelLineWriter<T> implements LineWriter<T> {
+public class LineWriterForExcel<T> implements LineWriter<T> {
 
-    private static final Logger log = LoggerFactory.getLogger(ExcelLineWriter.class);
+    private static final Logger log = LoggerFactory.getLogger(LineWriterForExcel.class);
 
     private Sheet                  sheet;
     private CellStyle              cellStyle;
     private Set<PropertyConverter> converters;
 
-    public ExcelLineWriter(Set<PropertyConverter> converters) {
+    public LineWriterForExcel(Set<PropertyConverter> converters) {
         this.converters = converters;
     }
 
