@@ -57,10 +57,7 @@ public class MapIntKeyConverter implements PropertyConverter {
         Map<Integer, String> map = Maps.newHashMapWithExpectedSize(converters.size());
         converters.forEach((cellNum, converter) -> {
             if (converter.isMatched()) {
-                Optional<String> value = converter.getValue(row);
-                if (value.isPresent()) {
-                    map.put(cellNum, value.get());
-                }
+                converter.getValue(row).ifPresent(value -> map.put(cellNum, value));
             }
         });
         return Optional.of(map);

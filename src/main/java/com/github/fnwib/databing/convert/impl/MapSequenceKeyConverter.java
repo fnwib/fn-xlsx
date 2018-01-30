@@ -59,10 +59,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
         Map<Sequence, String> map = Maps.newHashMapWithExpectedSize(converters.size());
         converters.forEach((cellTitle, converter) -> {
             if (converter.isMatched()) {
-                Optional<String> optional = converter.getValue(row);
-                if (optional.isPresent()) {
-                    map.put(cellTitle, optional.get());
-                }
+                converter.getValue(row).ifPresent(value -> map.put(cellTitle, value));
             }
         });
         return Optional.of(map);

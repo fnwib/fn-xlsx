@@ -57,10 +57,7 @@ public class MapStringKeyConverter implements PropertyConverter {
         Map<String, String> map = Maps.newHashMapWithExpectedSize(converters.size());
         converters.forEach((titleName, converter) -> {
             if (converter.isMatched()) {
-                Optional<String> optional = converter.getValue(row);
-                if (optional.isPresent()) {
-                    map.put(titleName, optional.get());
-                }
+                converter.getValue(row).ifPresent(value -> map.put(titleName, value));
             }
         });
         return Optional.of(map);
