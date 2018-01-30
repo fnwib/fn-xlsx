@@ -1,5 +1,6 @@
 package com.github.fnwib.databing.convert.impl;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.databing.title.CellTitle;
 import com.github.fnwib.databing.title.Sequence;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MapSequenceKeyConverter implements PropertyConverter {
 
@@ -29,6 +31,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
     public MapSequenceKeyConverter(Property property,
                                    List<CellTitle> titles,
                                    Collection<ValueHandler> valueHandlers) {
+        checkTitle(titles, property.getJavaType());
         this.property = property;
         this.titlesSize = titles.size();
         this.converters = Maps.newHashMapWithExpectedSize(titles.size());
@@ -37,6 +40,16 @@ public class MapSequenceKeyConverter implements PropertyConverter {
             BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
             converters.put(title.getSequence(), converter);
             emptyCellTexts.add(new CellText(title.getCellNum(), ""));
+        }
+    }
+
+    void checkTitle(List<CellTitle> titles, JavaType javaType) {
+        Map<Sequence, List<CellTitle>> titleNames = titles.stream().collect(Collectors.groupingBy(CellTitle::getSequence));
+        titleNames = Maps.filterValues(titleNames, v -> v.size() > 1);
+        if (titleNames.size() > 0) {
+            log.error("-> property is [{}] ,type is [{}]", property.getName(), javaType);
+            titleNames.forEach((titleName, sameNameTitles) -> log.error("-> 存在相同名称的tile[{}]", sameNameTitles));
+            throw new SettingException("Map类型的key是Sequence(title sequence)匹配到title存在相同的名称");
         }
     }
 

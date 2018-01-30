@@ -2,6 +2,7 @@ package com.github.fnwib.databing.convert.impl;
 
 import com.github.fnwib.databing.convert.PropertyConverter;
 import com.github.fnwib.databing.title.CellTitle;
+import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
@@ -23,10 +24,25 @@ public class LineNumberConverter implements PropertyConverter {
     private final Method    readMethod;
     private final CellTitle title;
 
-    public LineNumberConverter(Property property, CellTitle title) {
+    public LineNumberConverter(Property property, List<CellTitle> titles) {
+        check(property);
+        final CellTitle title;
+        if (titles.isEmpty()) {
+            title = null;
+        } else {
+            title = titles.get(0);
+        }
         this.title = title;
         this.name = property.getName();
         this.readMethod = property.getReadMethod();
+    }
+
+    void check(Property property) {
+        if (property.getJavaType().getRawClass() != Integer.class) {
+            String format = String.format("property %s 类型应该是 %s ", property.getName(), Integer.class);
+            log.error("--> error ", format);
+            throw new SettingException(format);
+        }
     }
 
     @Override
