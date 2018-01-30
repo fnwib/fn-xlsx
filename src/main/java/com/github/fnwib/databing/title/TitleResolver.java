@@ -52,10 +52,11 @@ public class TitleResolver {
             if (mapping != null) {
                 PropertyConverter converter = getPropertyConverter(property, cellTitles, mapping, handler);
                 converters.add(converter);
-            }
-            if (cellType != null) {
-                PropertyConverter converter = getPropertyConverter(property, cellTitles, cellType, handler);
-                converters.add(converter);
+            } else {
+                if (cellType != null) {
+                    PropertyConverter converter = getPropertyConverter(property, cellTitles, cellType, handler);
+                    converters.add(converter);
+                }
             }
         }
         int hit = Sets.filter(converters, p -> p.isMatched()).size();

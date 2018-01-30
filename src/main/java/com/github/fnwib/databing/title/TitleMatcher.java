@@ -4,6 +4,7 @@ import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.ValueUtil;
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -54,7 +55,8 @@ public final class TitleMatcher {
                     continue;
                 }
                 if (title.isBind()) {
-                    throw new SettingException("配置错误 ->" + title + "已经被使用");
+                    log.error("->配置 [{}] 与 [{}] 冲突", title, this);
+                    throw new SettingException("配置错误");
                 }
                 log.debug("-->matched -> rownum is [{}],text is [{}] ,middle [{}] ", title.getRowNum(), title.getText(), root.get());
                 title.bind();
@@ -67,5 +69,29 @@ public final class TitleMatcher {
         return result;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TitleMatcher that = (TitleMatcher) o;
+        return Objects.equal(prefix, that.prefix) &&
+                Objects.equal(titlePattern, that.titlePattern) &&
+                Objects.equal(suffix, that.suffix) &&
+                Objects.equal(exclude, that.exclude);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(prefix, titlePattern, suffix, exclude);
+    }
+
+    @Override
+    public String toString() {
+        return "TitleMatcher{" +
+                "prefix='" + prefix + '\'' +
+                ", titlePattern=" + titlePattern +
+                ", suffix='" + suffix + '\'' +
+                ", exclude='" + exclude + '\'' +
+                '}';
+    }
 }
