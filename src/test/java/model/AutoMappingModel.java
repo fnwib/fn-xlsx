@@ -37,8 +37,8 @@ public class AutoMappingModel {
     @CellType(title = "Number Null")
     private Integer intNumNull;
 
-    @CellType(title = "LocalDate null")
-    private LocalDate       localDate;
+    @CellType(prefix = "LocalDate null",title = "\\d")
+    private List<LocalDate> localDateHasNull;
     @CellType(prefix = "LocalDate", title = "\\d+")
     private List<LocalDate> localDateList;
 
@@ -137,12 +137,12 @@ public class AutoMappingModel {
         this.intNumNull = intNumNull;
     }
 
-    public LocalDate getLocalDate() {
-        return localDate;
+    public List<LocalDate> getLocalDateHasNull() {
+        return localDateHasNull;
     }
 
-    public void setLocalDate(LocalDate localDate) {
-        this.localDate = localDate;
+    public void setLocalDateHasNull(List<LocalDate> localDateHasNull) {
+        this.localDateHasNull = localDateHasNull;
     }
 
     public List<LocalDate> getLocalDateList() {
@@ -206,7 +206,7 @@ public class AutoMappingModel {
                 ", doubleNum=" + doubleNum +
                 ", bigDecimal=" + bigDecimal +
                 ", intNumNull=" + intNumNull +
-                ", localDate=" + localDate +
+                ", localDateHasNull=" + localDateHasNull +
                 ", localDateList=" + localDateList +
                 ", intKeyMap=" + intKeyMap +
                 ", stringKeyMap=" + stringKeyMap +

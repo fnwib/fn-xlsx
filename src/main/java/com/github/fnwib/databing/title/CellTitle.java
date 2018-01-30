@@ -1,8 +1,13 @@
 package com.github.fnwib.databing.title;
 
+import com.github.fnwib.write.CellText;
+
 import java.util.Objects;
 
 public class CellTitle implements Cloneable {
+
+    private static final String EMPTY_TEXT = "";
+
     private final Integer rowNum;
     private final Integer cellNum;
     private final String  text;
@@ -21,6 +26,10 @@ public class CellTitle implements Cloneable {
         this.cellNum = cellNum;
         this.text = text;
         this.bind = false;
+    }
+
+    public CellText getEmptyCellText() {
+        return new CellText(cellNum, EMPTY_TEXT);
     }
 
     public Integer getRowNum() {

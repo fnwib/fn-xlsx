@@ -7,14 +7,11 @@ import com.github.fnwib.jackson.Json;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.poi.ss.usermodel.Row;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
 
 public class ExcelLineReader<T> implements LineReader<T> {
-    private static final Logger log = LoggerFactory.getLogger(ExcelLineReader.class);
 
     private final Class<T>               entityClass;
     private final TitleResolver          titleResolver;
@@ -49,15 +46,19 @@ public class ExcelLineReader<T> implements LineReader<T> {
     }
 
     @Override
-    public T read(Row row) {
+    public T convert(Row row) {
+        return Json.Mapper.convertValue(convertToMap(row), entityClass);
+    }
+
+    @Override
+    public Map<String, Object> convertToMap(Row row) {
         Map<String, Object> result = Maps.newHashMapWithExpectedSize(converters.size());
         for (PropertyConverter converter : converters) {
             String mapKey = converter.getKey();
             Object mapValue = converter.getValue(row);
             result.put(mapKey, mapValue);
         }
-        log.debug("source ->[{}] [{}]", row.getRowNum(), result);
-        return Json.Mapper.convertValue(result, entityClass);
+        return result;
     }
 
     @Override

@@ -19,9 +19,10 @@ public class MapIntKeyConverter implements PropertyConverter {
 
     private static final Logger log = LoggerFactory.getLogger(MapIntKeyConverter.class);
 
-    private Property                    property;
-    private int                         titlesSize;
-    private Map<Integer, BeanConverter> converters;
+    private final Property                    property;
+    private final int                         titlesSize;
+    private final Map<Integer, BeanConverter> converters;
+    private final List<CellText>              emptyCellTexts;
 
     public MapIntKeyConverter(Property property,
                               List<CellTitle> titles,
@@ -29,9 +30,11 @@ public class MapIntKeyConverter implements PropertyConverter {
         this.property = property;
         this.titlesSize = titles.size();
         this.converters = Maps.newHashMapWithExpectedSize(titles.size());
+        this.emptyCellTexts = Lists.newArrayListWithCapacity(titles.size());
         for (CellTitle title : titles) {
             BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
             converters.put(title.getCellNum(), converter);
+            emptyCellTexts.add(new CellText(title.getCellNum(), ""));
         }
     }
 
@@ -47,16 +50,20 @@ public class MapIntKeyConverter implements PropertyConverter {
     }
 
     @Override
-    public Map<Integer, String> getValue(Row row) {
+    public Optional<Map<Integer, String>> getValue(Row row) {
         if (!isMatched()) {
-            return Collections.emptyMap();
+            return Optional.of(Collections.emptyMap());
         }
         Map<Integer, String> map = Maps.newHashMapWithExpectedSize(converters.size());
         converters.forEach((cellNum, converter) -> {
-            String value = converter.getValue(row);
-            map.put(cellNum, value);
+            if (converter.isMatched()) {
+                Optional<String> value = converter.getValue(row);
+                if (value.isPresent()) {
+                    map.put(cellNum, value.get());
+                }
+            }
         });
-        return map;
+        return Optional.of(map);
     }
 
     @Override
@@ -67,7 +74,7 @@ public class MapIntKeyConverter implements PropertyConverter {
         try {
             Object value = property.getReadMethod().invoke(element);
             if (value == null) {
-                return Collections.emptyList();
+                return emptyCellTexts;
             }
             Map<Integer, Object> objects = (Map<Integer, Object>) value;
             if (titlesSize < objects.size()) {
@@ -85,7 +92,7 @@ public class MapIntKeyConverter implements PropertyConverter {
             return list;
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("invoke error ", e);
-            return Collections.emptyList();
+            return emptyCellTexts;
         }
     }
 

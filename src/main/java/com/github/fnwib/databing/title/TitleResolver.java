@@ -81,9 +81,12 @@ public class TitleResolver {
             } else {
                 title = match.get(0);
             }
+            if (property.getJavaType().getRawClass() != Integer.class) {
+                String format = String.format("property %s 类型应该是 %s ", property.getName(), Integer.class);
+                log.error("--> error ", format);
+                throw new SettingException(format);
+            }
             return new LineNumberConverter(property, title);
-        } else if (cellType.operation() == Operation.REORDER) {
-            throw new SettingException("不支持类型,请使用@ReadValueHandler 的handler自行实现值处理");
         }
         Collection<ValueHandler> valueHandlers = getReadContentValueHandlers(handler);
         return getPropertyConverter(property, match, valueHandlers);
@@ -104,9 +107,12 @@ public class TitleResolver {
             } else {
                 title = match.get(0);
             }
+            if (property.getJavaType().getRawClass() != Integer.class) {
+                String format = String.format("property %s 类型应该是 %s ", property.getName(), Integer.class);
+                log.error("--> error ", format);
+                throw new SettingException(format);
+            }
             return new LineNumberConverter(property, title);
-        } else if (mapping.operation() == Operation.REORDER) {
-            throw new SettingException("不支持类型,请使用@ReadValueHandler 的handler自行实现值处理");
         }
         Collection<ValueHandler> valueHandlers = getReadContentValueHandlers(handler);
         return getPropertyConverter(property, match, valueHandlers);
@@ -144,9 +150,14 @@ public class TitleResolver {
             }
         } else {
             if (titles.isEmpty()) {
-                converter = new BeanConverter(property, null, valueHandlers);
-            } else {
+                converter = new NoneConverter(property);
+            } else if (titles.size() == 1) {
                 converter = new BeanConverter(property, titles.get(0), valueHandlers);
+            } else {
+                log.error("-> property is [{}] ,type is [{}]", property.getName(), javaType);
+                titles.forEach(title -> log.error("匹配到多个列", title));
+                String format = String.format("property is %s ,type is %s , 匹配到多列", property.getName(), javaType);
+                throw new SettingException(format);
             }
         }
         return converter;

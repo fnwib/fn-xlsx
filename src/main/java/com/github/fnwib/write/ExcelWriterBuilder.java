@@ -1,9 +1,8 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.convert.*;
-import com.github.fnwib.parse.ParseImpl;
-import com.github.fnwib.parse.Parser;
-import com.github.fnwib.write.config.ExportType;
+import com.github.fnwib.databing.ExcelLineReader;
+import com.github.fnwib.databing.LineReader;
+import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
 import com.github.fnwib.write.config.WorkbookConfig;
@@ -23,8 +22,6 @@ public class ExcelWriterBuilder {
 
         private Class<T> entityClass;
 
-        private ExportType exportType;
-
         private String filename;
 
         private File resultFolder;
@@ -35,13 +32,10 @@ public class ExcelWriterBuilder {
 
         private List<String> addLastTitles = new ArrayList<>();
 
+        private LocalConfig localConfig;
+
         public Builder entityClass(Class<T> entityClass) {
             this.entityClass = entityClass;
-            return this;
-        }
-
-        public Builder exportType(ExportType exportType) {
-            this.exportType = exportType;
             return this;
         }
 
@@ -75,6 +69,12 @@ public class ExcelWriterBuilder {
             return this;
         }
 
+
+        public Builder localConfig(LocalConfig localConfig) {
+            this.localConfig = localConfig;
+            return this;
+        }
+
         public ExcelWriter<T> build() {
 
             ResultFileSetting resultFileSetting = new ResultFileSetting(filename, resultFolder);
@@ -83,14 +83,13 @@ public class ExcelWriterBuilder {
             templateSetting.useDefaultCellStyle();
             templateSetting.addLastTitles(addLastTitles);
             templateSetting.setSheetName(sheetName);
-            ExcelGenericConversionService converterRegistry = new ExcelGenericConversionService();
-            converterRegistry.addConverter(new StringExcelConverter());
-            converterRegistry.addConverter(new LocalDateExcelConverter());
-            converterRegistry.addConverter(new TitleDescMapExcelConverter());
-            converterRegistry.addConverterFactory(new NumberExcelConverterFactory());
-            Parser<T> parser = new ParseImpl<>(entityClass, converterRegistry, 0.6);
-
-            WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(parser, ExportType.SingleSheet, resultFileSetting, templateSetting);
+            LineReader<T> lineReader;
+            if (localConfig == null) {
+                lineReader = new ExcelLineReader<>(entityClass);
+            } else {
+                lineReader = new ExcelLineReader<>(entityClass, localConfig);
+            }
+            WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(lineReader, resultFileSetting, templateSetting);
             return new ExcelWriterProcessor<>(workbookConfig);
         }
 

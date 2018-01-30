@@ -1,7 +1,7 @@
 package com.github.fnwib.read;
 
+import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.parse.Parser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Deprecated
 public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ExcelReaderImpl.class);
@@ -27,13 +26,13 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
     //记录TITLE前的数据
     private final Map<Integer, Row> PRE_DATA = new HashMap<>();
 
-    private final Parser<T> parser;
+    private final LineReader<T> parser;
 
     private final Workbook workbook;
 
     private final int sheetNum;
 
-    public ExcelReaderImpl(Parser<T> parser, Workbook workbook, int sheetNum) {
+    public ExcelReaderImpl(LineReader<T> parser, Workbook workbook, int sheetNum) {
         this.parser = parser;
         this.workbook = workbook;
         this.sheetNum = sheetNum;
@@ -70,6 +69,9 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             if (num != -1 && row.getRowNum() > num) {
                 break;
             }
+            if (this.isEmpty(row)) {
+                continue;
+            }
             boolean match = parser.match(row);
             if (match) {
                 TITLE = row.getRowNum();
@@ -88,12 +90,11 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             throw new ExcelException("模版错误");
         }
         List<T> list = new ArrayList<>(sheet.getLastRowNum());
-        ReadParser<T> readParser = parser.createReadParser();
         for (Row row : sheet) {
             if (row.getRowNum() <= TITLE || this.isEmpty(row)) {
                 continue;
             }
-            T t = readParser.convert(row);
+            T t = parser.convert(row);
             if (t != null) {
                 list.add(t);
             }
@@ -114,6 +115,5 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
         }
         return true;
     }
-
 
 }

@@ -21,9 +21,11 @@ public class CollectionConverter implements PropertyConverter {
 
     private static final Logger log = LoggerFactory.getLogger(CollectionConverter.class);
 
-    private Property            property;
-    private int                 titlesSize;
-    private List<BeanConverter> converters;
+    private final Property            property;
+    private final int                 titlesSize;
+    private final List<BeanConverter> converters;
+    private final List<CellText>      emptyCellTexts;
+
 
     public CollectionConverter(Property property,
                                List<CellTitle> titles,
@@ -31,9 +33,11 @@ public class CollectionConverter implements PropertyConverter {
         this.property = property;
         this.titlesSize = titles.size();
         this.converters = Lists.newArrayListWithCapacity(titles.size());
+        this.emptyCellTexts = Lists.newArrayListWithCapacity(titles.size());
         for (CellTitle title : titles) {
             BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
             converters.add(converter);
+            emptyCellTexts.add(new CellText(title.getCellNum(), ""));
         }
     }
 
@@ -49,28 +53,29 @@ public class CollectionConverter implements PropertyConverter {
     }
 
     @Override
-    public Collection<String> getValue(Row row) {
-
+    public Optional<Collection<String>> getValue(Row row) {
         if (!isMatched()) {
-            return Collections.emptyList();
+            return Optional.of(Collections.emptyList());
         }
         Collection<String> list = Lists.newArrayListWithCapacity(converters.size());
         for (BeanConverter converter : converters) {
-            String value = converter.getValue(row);
-            list.add(value);
+            if (converter.isMatched()) {
+                Optional<String> value = converter.getValue(row);
+                list.add(value.orElse(""));
+            }
         }
-        return list;
+        return Optional.of(list);
     }
 
     @Override
     public <T> List<CellText> getCellText(T element) {
         if (!isMatched()) {
-            return Collections.emptyList();
+            return emptyCellTexts;
         }
         try {
             Object value = property.getReadMethod().invoke(element);
             if (value == null) {
-                return Collections.emptyList();
+                return emptyCellTexts;
             }
             Collection<Object> objects = (Collection<Object>) value;
             if (titlesSize < objects.size()) {
@@ -91,7 +96,7 @@ public class CollectionConverter implements PropertyConverter {
             return cellTexts;
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("invoke error ", e);
-            return Collections.emptyList();
+            return emptyCellTexts;
         }
     }
 

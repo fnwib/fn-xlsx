@@ -19,9 +19,10 @@ public class MapStringKeyConverter implements PropertyConverter {
 
     private static final Logger log = LoggerFactory.getLogger(MapStringKeyConverter.class);
 
-    private Property                   property;
-    private int                        titlesSize;
-    private Map<String, BeanConverter> converters;
+    private final Property                   property;
+    private final int                        titlesSize;
+    private final Map<String, BeanConverter> converters;
+    private final List<CellText>             emptyCellTexts;
 
     public MapStringKeyConverter(Property property,
                                  List<CellTitle> titles,
@@ -29,9 +30,11 @@ public class MapStringKeyConverter implements PropertyConverter {
         this.property = property;
         this.titlesSize = titles.size();
         this.converters = Maps.newHashMapWithExpectedSize(titles.size());
+        this.emptyCellTexts = Lists.newArrayListWithCapacity(titles.size());
         for (CellTitle title : titles) {
             BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
             converters.put(title.getText(), converter);
+            emptyCellTexts.add(new CellText(title.getCellNum(), ""));
         }
     }
 
@@ -47,27 +50,31 @@ public class MapStringKeyConverter implements PropertyConverter {
     }
 
     @Override
-    public Map<String, String> getValue(Row row) {
+    public Optional<Map<String, String>> getValue(Row row) {
         if (!isMatched()) {
-            return Collections.emptyMap();
+            return Optional.of(Collections.emptyMap());
         }
         Map<String, String> map = Maps.newHashMapWithExpectedSize(converters.size());
         converters.forEach((titleName, converter) -> {
-            String value = converter.getValue(row);
-            map.put(titleName, value);
+            if (converter.isMatched()) {
+                Optional<String> optional = converter.getValue(row);
+                if (optional.isPresent()) {
+                    map.put(titleName, optional.get());
+                }
+            }
         });
-        return map;
+        return Optional.of(map);
     }
 
     @Override
     public <T> List<CellText> getCellText(T element) {
         if (!isMatched()) {
-            return Collections.emptyList();
+            return emptyCellTexts;
         }
         try {
             Object value = property.getReadMethod().invoke(element);
             if (value == null) {
-                return Collections.emptyList();
+                return emptyCellTexts;
             }
             Map<String, Object> objects = (Map<String, Object>) value;
             if (titlesSize < objects.size()) {
@@ -85,7 +92,7 @@ public class MapStringKeyConverter implements PropertyConverter {
             return list;
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("invoke error ", e);
-            return Collections.emptyList();
+            return emptyCellTexts;
         }
     }
 

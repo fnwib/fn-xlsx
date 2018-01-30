@@ -29,7 +29,7 @@ public class LocalConfig {
         }
     }
 
-    public synchronized void registerContentValueHandlers(ValueHandler... valueHandlers) {
+    public synchronized void registerReadContentValueHandlers(ValueHandler... valueHandlers) {
         for (ValueHandler valueHandler : valueHandlers) {
             registerReadContentValueHandler(valueHandler);
         }

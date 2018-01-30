@@ -21,9 +21,10 @@ public class MapSequenceKeyConverter implements PropertyConverter {
     private static final Logger log = LoggerFactory.getLogger(MapSequenceKeyConverter.class);
 
 
-    private Property                     property;
-    private int                          titlesSize;
-    private Map<Sequence, BeanConverter> converters;
+    private final Property                     property;
+    private final int                          titlesSize;
+    private final Map<Sequence, BeanConverter> converters;
+    private final List<CellText>               emptyCellTexts;
 
     public MapSequenceKeyConverter(Property property,
                                    List<CellTitle> titles,
@@ -31,9 +32,11 @@ public class MapSequenceKeyConverter implements PropertyConverter {
         this.property = property;
         this.titlesSize = titles.size();
         this.converters = Maps.newHashMapWithExpectedSize(titles.size());
+        this.emptyCellTexts = Lists.newArrayListWithCapacity(titles.size());
         for (CellTitle title : titles) {
             BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
             converters.put(title.getSequence(), converter);
+            emptyCellTexts.add(new CellText(title.getCellNum(), ""));
         }
     }
 
@@ -49,27 +52,32 @@ public class MapSequenceKeyConverter implements PropertyConverter {
     }
 
     @Override
-    public Map<Sequence, String> getValue(Row row) {
+    public Optional<Map<Sequence, String>> getValue(Row row) {
         if (!isMatched()) {
-            return Collections.emptyMap();
+            return Optional.of(Collections.emptyMap());
         }
         Map<Sequence, String> map = Maps.newHashMapWithExpectedSize(converters.size());
         converters.forEach((cellTitle, converter) -> {
-            String value = converter.getValue(row);
-            map.put(cellTitle, value);
+            if (converter.isMatched()) {
+                Optional<String> optional = converter.getValue(row);
+                if (optional.isPresent()) {
+                    map.put(cellTitle, optional.get());
+                }
+            }
         });
-        return map;
+        return Optional.of(map);
+
     }
 
     @Override
     public <T> List<CellText> getCellText(T element) {
         if (!isMatched()) {
-            return Collections.emptyList();
+            return emptyCellTexts;
         }
         try {
             Object value = property.getReadMethod().invoke(element);
             if (value == null) {
-                return Collections.emptyList();
+                return emptyCellTexts;
             }
             Map<Sequence, Object> objects = (Map<Sequence, Object>) value;
             if (titlesSize < objects.size()) {
@@ -87,7 +95,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
             return list;
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("invoke error ", e);
-            return Collections.emptyList();
+            return emptyCellTexts;
         }
     }
 

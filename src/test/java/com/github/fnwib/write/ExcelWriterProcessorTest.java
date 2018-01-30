@@ -1,8 +1,9 @@
 package com.github.fnwib.write;
 
+import com.github.fnwib.databing.ExcelLineReader;
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.read.ExcelReader;
-import com.github.fnwib.read.ExcelReaderImpl2;
+import com.github.fnwib.read.ExcelReaderImpl;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
 import com.github.fnwib.write.config.WorkbookConfig;
@@ -29,13 +30,14 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         templateSetting.useDefaultCellStyle();
         List<WriteModel> source = getDataList(6);
         List<WriteModel> target = new ArrayList<>();
-        WorkbookConfig<WriteModel> writeConfig = new WorkbookConfig(WriteModel.class, resultFileSetting, templateSetting);
+
+        LineReader<WriteModel> lineReader = new ExcelLineReader<>(WriteModel.class);
+        WorkbookConfig<WriteModel> writeConfig = new WorkbookConfig(lineReader, resultFileSetting, templateSetting);
         ExcelWriter<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
         writerProcessor.write(source);
         for (File file2 : writerProcessor.getFiles()) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
-            LineReader<WriteModel> lineReader = writeConfig.getLineReader();
-            ExcelReader<WriteModel> excelReader = new ExcelReaderImpl2<>(lineReader, workbook, 0);
+            ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(lineReader, workbook, 0);
             target.addAll(excelReader.getData());
             String preTitle = excelReader.getPreTitle(0, 0);
             Assert.assertEquals("0,0 标题不一致", "标题", preTitle);
@@ -52,11 +54,11 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
             List<String> sourceNumberList = sourceModel.getListNumber();
             List<String> targetNumberList = targetModel.getListNumber();
-            Assert.assertArrayEquals("List number 值不一致",sourceNumberList.toArray(),targetNumberList.toArray());
+            Assert.assertArrayEquals("List number 值不一致", sourceNumberList.toArray(), targetNumberList.toArray());
 
             List<String> sourceStringMap = sourceModel.getListNumber();
             List<String> targetStringMap = targetModel.getListNumber();
-            Assert.assertArrayEquals("List String 值不一致",sourceStringMap.toArray(),targetStringMap.toArray());
+            Assert.assertArrayEquals("List String 值不一致", sourceStringMap.toArray(), targetStringMap.toArray());
 
             Assert.assertEquals("动态添加的列AAA", sourceModel.getAaa(), targetModel.getAaa());
             Assert.assertEquals("enumType", sourceModel.getEnumType(), targetModel.getEnumType());
@@ -73,7 +75,8 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         templateSetting.setTemplate(tempTemplateFile);
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
 
-        WorkbookConfig writeConfig = new WorkbookConfig(WriteModel.class, resultFileSetting, templateSetting);
+        final LineReader<WriteModel> lineReader = new ExcelLineReader<>(WriteModel.class);
+        WorkbookConfig writeConfig = new WorkbookConfig(lineReader, resultFileSetting, templateSetting);
         ExcelWriterProcessor<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
 
         List<WriteModel> source = getDataList(6);
@@ -85,8 +88,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         List<File> files = writerProcessor.getFiles();
         for (File file1 : files) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file1);
-            LineReader<WriteModel> lineReader = writeConfig.getLineReader();
-            ExcelReader<WriteModel> excelReader = new ExcelReaderImpl2<>(lineReader, workbook, 0);
+            ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(lineReader, workbook, 0);
             target.addAll(excelReader.getData());
         }
         Collections.sort(target, Comparator.comparing(WriteModel::getSequence));
@@ -102,11 +104,11 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
             } else {
                 List<String> sourceNumberList = sourceModel.getListNumber();
                 List<String> targetNumberList = targetModel.getListNumber();
-                Assert.assertArrayEquals("List number 值不一致",sourceNumberList.toArray(),targetNumberList.toArray());
+                Assert.assertArrayEquals("List number 值不一致", sourceNumberList.toArray(), targetNumberList.toArray());
 
                 List<String> sourceStringMap = sourceModel.getListNumber();
                 List<String> targetStringMap = targetModel.getListNumber();
-                Assert.assertArrayEquals("List String 值不一致",sourceStringMap.toArray(),targetStringMap.toArray());
+                Assert.assertArrayEquals("List String 值不一致", sourceStringMap.toArray(), targetStringMap.toArray());
                 Assert.assertEquals("动态添加的列AAA", sourceModel.getAaa(), targetModel.getAaa());
             }
 

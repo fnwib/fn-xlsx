@@ -27,15 +27,16 @@ public class ExcelReaderImplTest {
     @Before
     public void initDate() {
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("test-file/test-auto-mapping.xlsx").getFile());
+        File file = new File(classLoader.getResource("test-file/test-read.xlsx").getFile());
         Workbook workbook = StreamingReader.builder()
                 .rowCacheSize(10)
                 .bufferSize(1024)
                 .open(file);
         LocalConfig localConfig = new LocalConfig();
-        localConfig.registerContentValueHandlers(valueHandler,valueHandler2);
-        LineReader<AutoMappingModel> parser = new ExcelLineReader<>(AutoMappingModel.class,localConfig);
-        reader = new ExcelReaderImpl2<>(parser, workbook, 0);
+        localConfig.registerReadContentValueHandlers(valueHandler, valueHandler2);
+        localConfig.registerTitleValueHandlers(valueHandler, valueHandler2);
+        LineReader<AutoMappingModel> parser = new ExcelLineReader<>(AutoMappingModel.class, localConfig);
+        reader = new ExcelReaderImpl<>(parser, workbook, 0);
     }
 
     @Test
@@ -59,8 +60,10 @@ public class ExcelReaderImplTest {
         }
     }
 
+
+
     private void check(AutoMappingModel model) {
-        Assert.assertSame("lineNum integer support", 2, model.getLineNum());
+        Assert.assertSame("lineNum integer support", 3, model.getLineNum());
 
         Assert.assertEquals("Text One toSingleByte support", "TEXT", model.getText1());
         Assert.assertEquals("Text Two string support", "Text", model.getText2());
@@ -74,18 +77,38 @@ public class ExcelReaderImplTest {
 
         Assert.assertEquals("'Number Null' Integer support", null, model.getIntNumNull());
 
-        Assert.assertEquals("LocalDate support data", null, model.getLocalDate());
-        List<LocalDate> localDateList = model.getLocalDateList();
-        Assert.assertSame("'LocalDate size", 6, localDateList.size());
         LocalDate date = LocalDate.of(2017, 1, 1);
+        Assert.assertEquals("LocalDate support data", 2, model.getLocalDateHasNull().size());
+        Assert.assertEquals("LocalDate null 2", date, model.getLocalDateHasNull().get(0));
+        Assert.assertEquals("LocalDate null 1", null, model.getLocalDateHasNull().get(1));
+        List<LocalDate> localDateList = model.getLocalDateList();
+        Assert.assertSame("'LocalDate size", 5, localDateList.size());
+
         for (LocalDate localDate : localDateList) {
             Assert.assertEquals("LocalDate support data", date, localDate);
         }
+
+
+
         Assert.assertSame("'Map \\d+'  support", 4, model.getIntKeyMap().size());
-        Assert.assertSame("'Map [A-Z]' support", 3, model.getStringKeyMap().size());
+        model.getIntKeyMap().forEach((sequence, s) -> {
+            if (sequence.asInt() == 1) {
+                Assert.assertEquals("seq 1", "Map 1", s);
+            }
+            if (sequence.asInt() == 2) {
+                Assert.assertEquals("seq 2", "Map 2", s);
+            }
+            if (sequence.asInt() == 10) {
+                Assert.assertEquals("seq 10", "Map 3", s);
+            }
+            if (sequence.asInt() == 20) {
+                Assert.assertEquals("seq 20", "Map 3", s);
+            }
+        });
+        Assert.assertSame("'Map [A-Z]' 一共三列 值的只有一列 support", 1, model.getStringKeyMap().size());
         Assert.assertSame("'Map 1 (Chinese Name)' support", 2, model.getIntKeyMap2().size());
         Assert.assertSame("'Map \\d+ (Chinese Name)' support", 2, model.getIntKeyMap3().size());
-        Assert.assertNotNull("map no match ", model.getNoMatchMap());
+        Assert.assertSame("map no match ", 0, model.getNoMatchMap().size());
     }
 
 }

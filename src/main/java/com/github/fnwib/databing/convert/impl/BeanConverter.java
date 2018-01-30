@@ -27,20 +27,17 @@ public class BeanConverter implements PropertyConverter {
 
     private static final Logger log = LoggerFactory.getLogger(BeanConverter.class);
 
-    private       Property                 property;
-    private       CellTitle                cellTitle;
-    private       Collection<ValueHandler> valueHandlers;
+    private final Property                 property;
+    private final CellTitle                cellTitle;
+    private final Collection<ValueHandler> valueHandlers;
     private final CellDeserializer<?>      deserializer;
     private final Serializer               serializer;
+    private final CellText                 emptyCellText;
 
     public BeanConverter(Property property,
                          CellTitle cellTitle,
                          Collection<ValueHandler> valueHandlers) {
-        this.property = property;
-        this.cellTitle = cellTitle;
-        this.valueHandlers = valueHandlers;
-        this.deserializer = Context.INSTANCE.findCellDeserializer(property.getJavaType());
-        this.serializer = Context.INSTANCE.findSerializer(property.getJavaType());
+        this(property, property.getJavaType(), cellTitle, valueHandlers);
     }
 
     public BeanConverter(Property property,
@@ -52,6 +49,7 @@ public class BeanConverter implements PropertyConverter {
         this.valueHandlers = valueHandlers;
         this.deserializer = Context.INSTANCE.findCellDeserializer(contentType);
         this.serializer = Context.INSTANCE.findSerializer(contentType);
+        this.emptyCellText = new CellText(cellTitle.getCellNum(), "");
     }
 
     @Override
@@ -64,24 +62,30 @@ public class BeanConverter implements PropertyConverter {
         return property.getName();
     }
 
+
     @Override
-    public String getValue(Row row) {
+    public Optional<String> getValue(Row row) {
         if (!isMatched()) {
-            return null;
+            return Optional.empty();
         }
         Cell cell = row.getCell(cellTitle.getCellNum());
         if (deserializer != null) {
             Object deserialize = deserializer.deserialize(cell);
-            return deserialize != null ? deserialize.toString() : null;
+            if (deserialize == null) {
+                return Optional.empty();
+            } else {
+                return Optional.of(deserialize.toString());
+            }
         }
-        if (cell == null) return null;
+        if (cell == null) return Optional.empty();
         switch (cell.getCellTypeEnum()) {
             case BLANK:
                 return null;
             case NUMERIC:
-                return cell.getStringCellValue();
+                return Optional.of(cell.getStringCellValue());
             case STRING:
-                return ValueUtil.getCellValue(cell, valueHandlers);
+                String cellValue = ValueUtil.getCellValue(cell, valueHandlers);
+                return Optional.of(cellValue);
             case BOOLEAN:
             case FORMULA:
             case _NONE:
@@ -100,7 +104,7 @@ public class BeanConverter implements PropertyConverter {
         try {
             Object value = property.getReadMethod().invoke(element);
             if (value == null) {
-                return Collections.emptyList();
+                return Lists.newArrayList(emptyCellText);
             }
             Optional<CellText> optional = getSingleCellText(value);
             return Lists.newArrayList(optional.get());
@@ -111,10 +115,11 @@ public class BeanConverter implements PropertyConverter {
     }
 
     public Optional<CellText> getSingleCellText(Object value) {
-        String serialize;
         if (value == null) {
-            serialize = null;
-        } else if (serializer != null) {
+            return Optional.of(emptyCellText);
+        }
+        String serialize;
+        if (serializer != null) {
             serialize = serializer.serialize(Optional.of(value));
         } else {
             serialize = value.toString();

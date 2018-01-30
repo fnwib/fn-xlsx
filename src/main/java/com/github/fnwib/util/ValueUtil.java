@@ -1,41 +1,14 @@
 package com.github.fnwib.util;
 
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
-import java.text.Collator;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 
 public class ValueUtil {
-
-    private static final Collator COLLATOR = Collator.getInstance(Locale.CHINA);
-
-    /**
-     * 排序并去空格
-     * 去重复数据
-     *
-     * @param s
-     * @param symbols
-     * @return
-     */
-    @Deprecated
-    public static String sortAndTrim(String s, String symbols) {
-        if (s == null) {
-            return null;
-        }
-        if (s.contains(symbols)) {
-            String[] ps = s.split(symbols);
-            Set<String> set = new TreeSet<>(COLLATOR);
-            for (String p : ps) {
-                set.add(p.trim());
-            }
-            return Joiner.on(symbols).join(set);
-        } else {
-            return s;
-        }
-    }
 
     public static String getCellValue(Cell cell) {
         return getCellValue(cell, Collections.emptyList());

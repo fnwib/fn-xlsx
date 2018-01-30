@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class LineNumberConverter implements PropertyConverter {
 
@@ -39,8 +40,8 @@ public class LineNumberConverter implements PropertyConverter {
     }
 
     @Override
-    public Object getValue(Row row) {
-        return row.getRowNum();
+    public Optional<Integer> getValue(Row row) {
+        return Optional.of(row.getRowNum() + 1);
     }
 
     @Override
@@ -49,9 +50,9 @@ public class LineNumberConverter implements PropertyConverter {
             try {
                 Object value = readMethod.invoke(element);
                 if (value == null) {
-                    return Collections.emptyList();
+                    return Lists.newArrayList(title.getEmptyCellText());
                 }
-                return Lists.newArrayList();
+                return Lists.newArrayList(new CellText(title.getCellNum(), value.toString()));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 log.error("invoke error ", e);
                 return Collections.emptyList();
