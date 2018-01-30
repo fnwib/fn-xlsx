@@ -3,6 +3,7 @@ package model;
 
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
+import com.github.fnwib.annotation.ReadValueHandler;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -33,7 +34,7 @@ public class WriteModel {
     private Map<Integer, String> noMatchMap;
 
     @AutoMapping("AAA")
-    @CellType(title = "AAA")
+    @ReadValueHandler({ToUpperHandler.class,RecordHandler.class})
     private String aaa;
 
     @AutoMapping("enumType")
@@ -126,4 +127,7 @@ public class WriteModel {
     public void setEnumType(EnumType enumType) {
         this.enumType = enumType;
     }
+
+
+
 }

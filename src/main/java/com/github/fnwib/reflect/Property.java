@@ -79,6 +79,9 @@ public class Property {
         return javaType;
     }
 
+    public PropertyDescriptor getPropertyDescriptor() {
+        return propertyDescriptor;
+    }
 
     public JavaType getContentType() {
         return javaType.getContentType();

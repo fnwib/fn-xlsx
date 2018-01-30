@@ -3,16 +3,21 @@ package com.github.fnwib.reflect;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.fnwib.databing.convert.impl.BeanConverter;
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.exception.SettingException;
+import com.github.fnwib.util.ValueUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +26,8 @@ import java.util.stream.Collectors;
 public enum BeanResolver {
 
     INSTANCE;
+
+    private static final Logger log = LoggerFactory.getLogger(BeanConverter.class);
 
     public static final TypeFactory typeFactory = TypeFactory.defaultInstance();
 
@@ -37,9 +44,35 @@ public enum BeanResolver {
         }
     }
 
+    public <T> T format(T param) {
+        try {
+            Class<?> paramClass = param.getClass();
+            Constructor<?> constructor = paramClass.getConstructor();
+            T newInstance = (T) constructor.newInstance();
+            List<Property> properties = getProperties(paramClass);
+            for (Property property : properties) {
+                PropertyDescriptor propertyDescriptor = property.getPropertyDescriptor();
+                Method readMethod = propertyDescriptor.getReadMethod();
+                Collection<ValueHandler> valueHandlers = property.getValueHandlers();
+                Method writeMethod = propertyDescriptor.getWriteMethod();
+                final Object value =  readMethod.invoke(param);
+                if (property.getJavaType().getRawClass() != String.class) {
+                    writeMethod.invoke(newInstance, value);
+                } else {
+                    String newValue = ValueUtil.getStringValue(((String) value), valueHandlers);
+                    writeMethod.invoke(newInstance, newValue);
+                }
+            }
+            return newInstance;
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            log.error("copy value error", e);
+            throw new PropertyException(e);
+        }
+    }
+
 
     private synchronized List<Property> resolve(final Class<?> clazz) {
-        if (clazz ==null){
+        if (clazz == null) {
             throw new IllegalArgumentException("参数不能为null");
         }
         try {
@@ -64,7 +97,7 @@ public enum BeanResolver {
     }
 
     public synchronized List<Property> getProperties(final Class<?> clazz) {
-        if (clazz ==null){
+        if (clazz == null) {
             throw new IllegalArgumentException("参数不能为null");
         }
         if (types.containsKey(clazz)) {
@@ -78,7 +111,7 @@ public enum BeanResolver {
 
 
     public List<Property> getPropertiesWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotationCls) {
-        if (clazz ==null || annotationCls == null){
+        if (clazz == null || annotationCls == null) {
             throw new IllegalArgumentException("参数不能为null");
         }
         List<Property> properties = getProperties(clazz);
