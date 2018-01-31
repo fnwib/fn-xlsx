@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
@@ -25,13 +26,15 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
     private final LineReader<T> parser;
 
     private final Workbook workbook;
-
-    private final int sheetNum;
+    private final Sheet    sheet;
+    private final int      lastRowNum;
+    private       int      currentRowNum;
 
     public ExcelReaderImpl(LineReader<T> parser, Workbook workbook, int sheetNum) {
         this.parser = parser;
         this.workbook = workbook;
-        this.sheetNum = sheetNum;
+        this.sheet = workbook.getSheetAt(Math.max(sheetNum, 0));
+        this.lastRowNum = sheet.getLastRowNum();
     }
 
     @Override
@@ -60,7 +63,6 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
         if (TITLE != -1) {
             return true;
         }
-        Sheet sheet = workbook.getSheetAt(sheetNum);
         for (Row row : sheet) {
             if (num != -1 && row.getRowNum() > num) {
                 break;
@@ -78,26 +80,58 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
     @Override
     public List<T> getData() throws ExcelException {
-        Sheet sheet = workbook.getSheetAt(sheetNum);
+        return readList(sheet.getLastRowNum());
+    }
+
+
+    private List<T> readList(int length) {
         if (TITLE == -1 && !findTitle()) {
             throw new ExcelException("模版错误");
         }
-        List<T> list = new ArrayList<>(sheet.getLastRowNum());
+        AtomicInteger counter = new AtomicInteger();
+        List<T> fetch = new ArrayList<>(length);
         for (Row row : sheet) {
-            if (row.getRowNum() <= TITLE) {
+            currentRowNum = row.getRowNum();
+            if (row.getRowNum() <= TITLE || parser.isEmpty(row)) {
                 continue;
             }
-            Optional<T> optional = parser.convert(row);
-            if (optional.isPresent()) {
-                list.add(optional.get());
+            Optional<T> convert = parser.convert(row);
+            if (convert.isPresent()) {
+                T t = convert.get();
+                counter.addAndGet(1);
+                fetch.add(t);
+            }
+            if (counter.get() == length) {
+                break;
             }
         }
+        if (!hasNext()) {
+            close();
+        }
+        return fetch;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return currentRowNum < lastRowNum;
+    }
+
+    @Override
+    public List fetchData() {
+        return readList(sheet.getLastRowNum());
+    }
+
+    @Override
+    public List<T> fetchData(int length) {
+        return readList(length);
+    }
+
+
+    public void close() {
         try {
             workbook.close();
         } catch (IOException e) {
-            log.error("reader workbook  close ", e);
+            log.error("workbook can not close ", e);
         }
-        return list;
     }
-
 }

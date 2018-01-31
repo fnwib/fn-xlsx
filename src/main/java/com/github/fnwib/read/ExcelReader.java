@@ -26,4 +26,26 @@ public interface ExcelReader<T> {
 
     List<T> getData() throws ExcelException;
 
+    /**
+     * 是否还能读取数据
+     *
+     * @return
+     */
+    boolean hasNext();
+
+    /**
+     * 取所有的数据 忽略空行
+     *
+     * @return
+     */
+    List<T> fetchData();
+
+    /**
+     * 取前n条数据 忽略空格
+     *
+     * @param length
+     * @return
+     */
+    List<T> fetchData(int length);
+
 }
