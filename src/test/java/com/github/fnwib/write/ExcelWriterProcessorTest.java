@@ -35,10 +35,13 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         WorkbookConfig<WriteModel> writeConfig = new WorkbookConfig(lineReader, resultFileSetting, templateSetting);
         ExcelWriter<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
         writerProcessor.write(source);
-        for (File file2 : writerProcessor.getFiles()) {
+        List<File> files = writerProcessor.getFiles();
+        for (File file2 : files) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(lineReader, workbook, 0);
-            target.addAll(excelReader.getData());
+            List<WriteModel> data = excelReader.fetchData();
+            System.out.println(excelReader.hasNext());
+            target.addAll(data);
             String preTitle = excelReader.getPreTitle(0, 0);
             Assert.assertEquals("0,0 标题不一致", "标题", preTitle);
         }

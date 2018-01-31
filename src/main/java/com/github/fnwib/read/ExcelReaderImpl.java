@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
@@ -25,16 +24,14 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
     private final LineReader<T> parser;
 
-    private final Workbook workbook;
-    private final Sheet    sheet;
-    private final int      lastRowNum;
-    private       int      currentRowNum;
+    private final Workbook      workbook;
+    private final Iterator<Row> iterator;
 
     public ExcelReaderImpl(LineReader<T> parser, Workbook workbook, int sheetNum) {
         this.parser = parser;
         this.workbook = workbook;
-        this.sheet = workbook.getSheetAt(Math.max(sheetNum, 0));
-        this.lastRowNum = sheet.getLastRowNum();
+        Sheet sheet = workbook.getSheetAt(Math.max(sheetNum, 0));
+        this.iterator = sheet.iterator();
     }
 
     @Override
@@ -63,7 +60,8 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
         if (TITLE != -1) {
             return true;
         }
-        for (Row row : sheet) {
+        while (iterator.hasNext()) {
+            Row row = iterator.next();
             if (num != -1 && row.getRowNum() > num) {
                 break;
             }
@@ -80,32 +78,31 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
     @Override
     public List<T> getData() throws ExcelException {
-        return readList(sheet.getLastRowNum());
+        return readList(-1);
     }
-
 
     private List<T> readList(int length) {
         if (TITLE == -1 && !findTitle()) {
             throw new ExcelException("模版错误");
         }
-        AtomicInteger counter = new AtomicInteger();
-        List<T> fetch = new ArrayList<>(length);
-        for (Row row : sheet) {
-            currentRowNum = row.getRowNum();
-            if (row.getRowNum() <= TITLE || parser.isEmpty(row)) {
+        int counter = 0;
+        List<T> fetch = new ArrayList<>(Math.max(0, length));
+        while (iterator.hasNext()) {
+            Row row = iterator.next();
+            if (parser.isEmpty(row)) {
                 continue;
             }
             Optional<T> convert = parser.convert(row);
             if (convert.isPresent()) {
                 T t = convert.get();
-                counter.addAndGet(1);
+                counter++;
                 fetch.add(t);
             }
-            if (counter.get() == length) {
+            if (length != -1 && counter == length) {
                 break;
             }
         }
-        if (!hasNext()) {
+        if (!iterator.hasNext()) {
             close();
         }
         return fetch;
@@ -113,12 +110,12 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
     @Override
     public boolean hasNext() {
-        return currentRowNum < lastRowNum;
+        return iterator.hasNext();
     }
 
     @Override
     public List fetchData() {
-        return readList(sheet.getLastRowNum());
+        return readList(-1);
     }
 
     @Override

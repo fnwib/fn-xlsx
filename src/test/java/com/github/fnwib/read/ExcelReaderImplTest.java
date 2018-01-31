@@ -62,6 +62,10 @@ public class ExcelReaderImplTest {
     public void fetchData() {
         while (reader.hasNext()) {
             List<AutoMappingModel> autoMappingModels = reader.fetchData(3);
+            for (AutoMappingModel autoMappingModel : autoMappingModels) {
+                System.out.println(autoMappingModel);
+            }
+            System.out.println(" -   - - - -- - - - - -");
             Assert.assertEquals("fetchData  length 3  ", 3, autoMappingModels.size());
         }
 
