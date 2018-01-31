@@ -41,7 +41,7 @@ public interface ExcelReader<T> {
     List<T> fetchData();
 
     /**
-     * 取前n条数据 忽略空格
+     * 取前n条数据 忽略空行
      *
      * @param length
      * @return
