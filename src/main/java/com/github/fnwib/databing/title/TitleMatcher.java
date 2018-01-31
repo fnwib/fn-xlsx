@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
 
 public final class TitleMatcher {
     private static final Logger log = LoggerFactory.getLogger(TitleMatcher.class);
-    private final Pattern   titlePattern;
+    private final Pattern titlePattern;
 
     private final Operation operation;
     private final String    prefix;
@@ -57,6 +58,9 @@ public final class TitleMatcher {
     }
 
     public List<CellTitle> match(List<CellTitle> titles) {
+        if (StringUtils.isBlank(prefix) && StringUtils.isBlank(sequence) && StringUtils.isBlank(suffix)) {
+            return Collections.emptyList();
+        }
         List<CellTitle> result = Lists.newArrayList();
         log.debug("annotation -> title is [{}] , prefix is [{}] , suffix is [{}] ,exclude is [{}]",
                 titlePattern.toString(),

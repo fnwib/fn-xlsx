@@ -15,6 +15,5 @@ public interface LineReader<T> {
 
     Map<String, Object> convertToMap(Row row);
 
-
     LineWriter<T> getLineWriter();
 }

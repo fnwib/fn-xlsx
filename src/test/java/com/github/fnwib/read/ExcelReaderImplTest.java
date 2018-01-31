@@ -41,7 +41,7 @@ public class ExcelReaderImplTest {
 
     @Test
     public void getPreTitle() {
-        String preTitle = reader.getPreTitle(0, 0);
+        String preTitle = reader.getPreTitle(0, 1);
         Assert.assertEquals("标题", "标题", preTitle);
     }
 
