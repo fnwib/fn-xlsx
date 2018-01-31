@@ -29,8 +29,11 @@ public class LineNumberConverter implements PropertyConverter {
         final CellTitle title;
         if (titles.isEmpty()) {
             title = null;
-        } else {
+        } else if (titles.size() == 1) {
             title = titles.get(0);
+        } else {
+            String format = String.format("line number 匹配到多列");
+            throw new SettingException(format);
         }
         this.title = title;
         this.name = property.getName();
