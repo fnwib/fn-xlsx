@@ -1,8 +1,6 @@
 package com.github.fnwib.read;
 
 
-import com.github.fnwib.exception.ExcelException;
-
 import java.util.List;
 
 /**
@@ -24,7 +22,7 @@ public interface ExcelReader<T> {
      */
     boolean findTitle(int num);
 
-    List<T> getData() throws ExcelException;
+    List<T> getData();
 
     /**
      * 是否还能读取数据
@@ -38,7 +36,7 @@ public interface ExcelReader<T> {
      *
      * @return
      */
-    List<T> fetchData();
+    List<T> fetchAllData();
 
     /**
      * 取前n条数据 忽略空行

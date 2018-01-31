@@ -7,6 +7,7 @@ import com.github.fnwib.databing.deser.CellDeserializer;
 import com.github.fnwib.databing.ser.Serializer;
 import com.github.fnwib.databing.title.CellTitle;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.reflect.Property;
@@ -89,17 +90,22 @@ public class BeanConverter implements PropertyConverter {
             case STRING:
                 String cellValue = ValueUtil.getCellValue(cell, valueHandlers);
                 return Optional.of(cellValue);
+            case ERROR:
+                String format = String.format("坐标[%s][%s]值为[%s],类型是[%s]",
+                        row.getRowNum() + 1,
+                        cell.getColumnIndex() + 1,
+                        cell.getStringCellValue(),
+                        cell.getCellTypeEnum().name());
+                throw new ExcelException(format);
             case BOOLEAN:
             case FORMULA:
             case _NONE:
-            case ERROR:
             default:
                 log.error("-> cell title  [{}]", cellTitle);
                 log.error("-> row num [{}]", row.getRowNum());
                 log.error("-> cell string value [{}]", cell.getStringCellValue());
                 log.error("-> cell type  [{}]", cell.getCellTypeEnum().name());
                 throw new NotSupportedException(" [" + cell.getStringCellValue() + "] unknown type");
-
         }
     }
 

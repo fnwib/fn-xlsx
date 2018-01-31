@@ -2,6 +2,7 @@ package com.github.fnwib.read;
 
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.exception.NotSupportedException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,11 +27,13 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
     private final Workbook      workbook;
     private final Iterator<Row> iterator;
+    private final int           max;
 
     public ExcelReaderImpl(LineReader<T> parser, Workbook workbook, int sheetNum) {
         this.parser = parser;
         this.workbook = workbook;
         Sheet sheet = workbook.getSheetAt(Math.max(sheetNum, 0));
+        this.max = sheet.getLastRowNum();
         this.iterator = sheet.iterator();
     }
 
@@ -77,7 +80,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
     }
 
     @Override
-    public List<T> getData() throws ExcelException {
+    public List<T> getData() {
         return readList(-1);
     }
 
@@ -86,7 +89,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             throw new ExcelException("模版错误");
         }
         int counter = 0;
-        List<T> fetch = new ArrayList<>(Math.max(0, length));
+        List<T> fetch = new ArrayList<>(length > 0 ? length : max);
         while (iterator.hasNext()) {
             Row row = iterator.next();
             if (parser.isEmpty(row)) {
@@ -98,7 +101,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
                 counter++;
                 fetch.add(t);
             }
-            if (length != -1 && counter == length) {
+            if (length < 0 && counter == length) {
                 break;
             }
         }
@@ -114,12 +117,15 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
     }
 
     @Override
-    public List fetchData() {
+    public List fetchAllData() {
         return readList(-1);
     }
 
     @Override
     public List<T> fetchData(int length) {
+        if (length <= 0) {
+            throw new NotSupportedException("返回值集合长度应该是一个大于0的数");
+        }
         return readList(length);
     }
 
