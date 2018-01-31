@@ -36,15 +36,15 @@ public class BeanConverter implements PropertyConverter {
     private final CellText                 emptyCellText;
 
     public BeanConverter(Property property,
-                  CellTitle cellTitle,
-                  Collection<ValueHandler> valueHandlers) {
+                         CellTitle cellTitle,
+                         Collection<ValueHandler> valueHandlers) {
         this(property, property.getJavaType(), cellTitle, valueHandlers);
     }
 
     public BeanConverter(Property property,
-                  JavaType contentType,
-                  CellTitle cellTitle,
-                  Collection<ValueHandler> valueHandlers) {
+                         JavaType contentType,
+                         CellTitle cellTitle,
+                         Collection<ValueHandler> valueHandlers) {
         this.property = property;
         this.cellTitle = cellTitle;
         this.valueHandlers = valueHandlers;
@@ -94,6 +94,10 @@ public class BeanConverter implements PropertyConverter {
             case _NONE:
             case ERROR:
             default:
+                log.error("-> cell title  [{}]", cellTitle);
+                log.error("-> row num [{}]", row.getRowNum());
+                log.error("-> cell string value [{}]", cell.getStringCellValue());
+                log.error("-> cell type  [{}]", cell.getCellTypeEnum().name());
                 throw new NotSupportedException(" [" + cell.getStringCellValue() + "] unknown type");
 
         }
