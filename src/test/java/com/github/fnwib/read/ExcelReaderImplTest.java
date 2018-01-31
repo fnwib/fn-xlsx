@@ -54,13 +54,18 @@ public class ExcelReaderImplTest {
     @Test
     public void getData() {
         List<AutoMappingModel> data = reader.getData();
-        Assert.assertEquals("data size ", 1, data.size());
-        for (AutoMappingModel datum : data) {
-            check(datum);
-        }
+        Assert.assertEquals("data size ", 9, data.size());
+        check(data.get(0));
     }
 
+    @Test
+    public void fetchData() {
+        while (reader.hasNext()) {
+            List<AutoMappingModel> autoMappingModels = reader.fetchData(3);
+            Assert.assertEquals("fetchData  length 3  ", 3, autoMappingModels.size());
+        }
 
+    }
 
     private void check(AutoMappingModel model) {
         Assert.assertSame("lineNum integer support", 7, model.getLineNum());
@@ -87,7 +92,6 @@ public class ExcelReaderImplTest {
         for (LocalDate localDate : localDateList) {
             Assert.assertEquals("LocalDate support data", date, localDate);
         }
-
 
 
         Assert.assertSame("'Map \\d+'  support", 4, model.getIntKeyMap().size());
