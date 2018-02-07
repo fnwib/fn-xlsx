@@ -50,7 +50,7 @@ public class AutoMappingModel {
 ```
 
 #### 3. 读取数据
-```java
+```
 File file = new File("file");
 Workbook workbook = new XSSFWorkbook(file);
 ```
@@ -58,7 +58,7 @@ Workbook workbook = new XSSFWorkbook(file);
 [excel-streaming-reader](https://github.com/monitorjbl/excel-streaming-reader) 
 
 *  简单使用
-```java
+```
 LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.class);
 Workbook workbook = null;
 boolean matched = false;
@@ -80,7 +80,7 @@ for (Sheet sheet : workbook) {
 }
 ```
 * 使用ExcelReader读取
-```java
+```
 LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.class);
 ExcelReader<AutoMappingModel> reader = new ExcelReaderImpl<>(parser, workbook, 0);
 while (reader.hasNext()){
