@@ -123,8 +123,8 @@ public class ToUpperHandler implements ValueHandler {
 @ToString //lombok
 @Getter  //lombok
 @Setter  //lombok
-public class AutoMappingModel {
-	@ReadValueHandler({ToUpperHandler.class})
+public class AutoMappingModel { 
+    @ReadValueHandler({ToUpperHandler.class})
     @AutoMapping("Text One")    
     private String                text1;
   
