@@ -41,7 +41,7 @@ public class TitleResolver {
             Optional<TitleMatcher> matcher = property.getTitleMatcher();
             if (matcher.isPresent()) {
                 TitleMatcher titleMatcher = matcher.get();
-                List<CellTitle> matched = titleMatcher.match(cellTitles);
+                List<CellTitle> matched = titleMatcher.match(cellTitles,titleValueHandlers);
                 PropertyConverter converter = getPropertyConverter(property, titleMatcher.getOperation(), matched);
                 converters.add(converter);
             }
@@ -91,7 +91,7 @@ public class TitleResolver {
     private List<CellTitle> getCellTitles(Row row) {
         List<CellTitle> titles = new ArrayList<>(row.getLastCellNum());
         for (Cell cell : row) {
-            String value = ValueUtil.getCellValue(cell, titleValueHandlers);
+            String value = ValueUtil.getCellValue(cell);
             CellTitle title = new CellTitle(row.getRowNum(), cell.getColumnIndex(), value);
             titles.add(title);
         }
