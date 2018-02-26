@@ -101,7 +101,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
                 counter++;
                 fetch.add(t);
             }
-            if (length < 0 && counter == length) {
+            if (length > 0 && counter == length) {
                 break;
             }
         }

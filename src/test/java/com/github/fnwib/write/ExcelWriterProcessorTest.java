@@ -39,7 +39,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         for (File file2 : files) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(lineReader, workbook, 0);
-            List<WriteModel> data = excelReader.fetchData();
+            List<WriteModel> data = excelReader.fetchAllData();
             System.out.println(excelReader.hasNext());
             target.addAll(data);
             String preTitle = excelReader.getPreTitle(0, 0);
