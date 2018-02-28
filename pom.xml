@@ -6,7 +6,7 @@
 
     <groupId>com.github.fnwib</groupId>
     <artifactId>fn-xlsx</artifactId>
-    <version>1.1.4-SNAPSHOT</version>
+    <version>1.1.5-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <properties>
@@ -14,10 +14,20 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <lombok.version>1.16.18</lombok.version>
-        <jackson.version>2.9.3</jackson.version>
+        <jackson.version>2.9.4</jackson.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.monitorjbl</groupId>
+            <artifactId>xlsx-streamer</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-parameter-names</artifactId>
@@ -42,11 +52,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.monitorjbl</groupId>
-            <artifactId>xlsx-streamer</artifactId>
-            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -101,4 +106,18 @@
             </plugin>
         </plugins>
     </build>
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>ali-maven</id>-->
+            <!--<name>aliyun maven</name>-->
+            <!--<url>http://maven.aliyun.com/nexus/content/groups/public/</url>-->
+            <!--<layout>default</layout>-->
+            <!--<releases>-->
+                <!--<enabled>true</enabled>-->
+            <!--</releases>-->
+            <!--<snapshots>-->
+                <!--<enabled>false</enabled>-->
+            <!--</snapshots>-->
+        <!--</repository>-->
+    <!--</repositories>-->
 </project>

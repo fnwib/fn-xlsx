@@ -5,12 +5,11 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-
 public class ValueUtilTest {
 
     @Test
     public void getCellValue() {
+
     }
 
     @Test
