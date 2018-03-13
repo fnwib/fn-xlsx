@@ -91,15 +91,15 @@ public class BeanConverter implements PropertyConverter {
                 String cellValue = ValueUtil.getCellValue(cell, valueHandlers);
                 return Optional.of(cellValue);
             case ERROR:
+            case BOOLEAN:
+            case FORMULA:
+            case _NONE:
                 String format = String.format("坐标[%s][%s]值为[%s],类型是[%s]",
                         row.getRowNum() + 1,
                         cell.getColumnIndex() + 1,
                         cell.getStringCellValue(),
                         cell.getCellTypeEnum().name());
                 throw new ExcelException(format);
-            case BOOLEAN:
-            case FORMULA:
-            case _NONE:
             default:
                 log.error("-> cell title  [{}]", cellTitle);
                 log.error("-> row num [{}]", row.getRowNum());
