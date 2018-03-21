@@ -6,7 +6,7 @@
 
     <groupId>com.github.fnwib</groupId>
     <artifactId>fn-xlsx</artifactId>
-    <version>1.1.6</version>
+    <version>1.1.7</version>
 
     <packaging>jar</packaging>
     <properties>

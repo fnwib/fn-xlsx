@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.ReadValueHandler;
-import com.github.fnwib.databing.title.TitleMatcher;
+import com.github.fnwib.databing.title.match.TitleMatcher;
+import com.github.fnwib.databing.title.match.TitleMatcherImpl;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.google.common.collect.Lists;
@@ -39,10 +40,10 @@ public class Property {
         CellType cellType = field.getAnnotation(CellType.class);
         AutoMapping mapping = field.getAnnotation(AutoMapping.class);
         if (mapping != null) {
-            return Optional.of(new TitleMatcher(mapping));
+            return Optional.of(new TitleMatcherImpl(mapping));
         } else {
             if (cellType != null) {
-                return Optional.of(new TitleMatcher(cellType));
+                return Optional.of(new TitleMatcherImpl(cellType));
             }
         }
         return Optional.empty();
@@ -98,7 +99,6 @@ public class Property {
     public Method getReadMethod() {
         return propertyDescriptor.getReadMethod();
     }
-
 
 
 }

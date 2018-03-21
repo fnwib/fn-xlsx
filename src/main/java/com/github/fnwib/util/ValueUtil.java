@@ -37,6 +37,18 @@ public class ValueUtil {
         if (text == null || prefix == null || suffix == null) {
             return Optional.empty();
         }
+        return substringBetweenNotNull(text, prefix, suffix);
+    }
+
+    public static Optional<String> substringBetweenIgnoreCase(final String text, final String prefix, final String suffix) {
+        if (text == null || prefix == null || suffix == null) {
+            return Optional.empty();
+        }
+        return substringBetweenNotNull(text.toLowerCase(), prefix.toLowerCase(), suffix.toLowerCase());
+    }
+
+
+    private static Optional<String> substringBetweenNotNull(final String text, final String prefix, final String suffix) {
         if (text.startsWith(prefix) && text.endsWith(suffix)) {
             final String root;
             if (prefix.equals("") && suffix.equals("")) {

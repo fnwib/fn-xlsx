@@ -1,8 +1,9 @@
-package com.github.fnwib.databing.title;
+package com.github.fnwib.databing.title.match;
 
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
+import com.github.fnwib.databing.title.CellTitle;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.ValueUtil;
 import com.google.common.base.Objects;
@@ -17,7 +18,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class TitleMatcher {
+public class TitleMatcherImpl implements TitleMatcher {
+
     private static final Logger log = LoggerFactory.getLogger(TitleMatcher.class);
     private final Pattern titlePattern;
 
@@ -27,7 +29,7 @@ public final class TitleMatcher {
     private final String    suffix;
     private final String    exclude;
 
-    public TitleMatcher(AutoMapping mapping) {
+    public TitleMatcherImpl(AutoMapping mapping) {
         this.titlePattern = Pattern.compile(mapping.value().trim());
         this.operation = mapping.operation();
         this.prefix = mapping.prefix();
@@ -36,7 +38,7 @@ public final class TitleMatcher {
         this.exclude = mapping.exclude();
     }
 
-    public TitleMatcher(CellType mapping) {
+    public TitleMatcherImpl(CellType mapping) {
         this.titlePattern = Pattern.compile(mapping.title().trim());
         this.operation = mapping.operation();
         this.prefix = mapping.prefix();
@@ -57,6 +59,7 @@ public final class TitleMatcher {
         return suffix;
     }
 
+    @Override
     public List<CellTitle> match(List<CellTitle> titles) {
         if (StringUtils.isBlank(prefix) && StringUtils.isBlank(sequence) && StringUtils.isBlank(suffix)) {
             return Collections.emptyList();
@@ -68,7 +71,7 @@ public final class TitleMatcher {
                 suffix,
                 exclude);
         for (CellTitle title : titles) {
-            Optional<String> root = ValueUtil.substringBetween(title.getText(), prefix, suffix);
+            Optional<String> root = ValueUtil.substringBetweenIgnoreCase(title.getText(), prefix, suffix);
             if (!root.isPresent()) {
                 continue;
             }
@@ -92,6 +95,7 @@ public final class TitleMatcher {
         return result;
     }
 
+    @Override
     public Operation getOperation() {
         return operation;
     }
@@ -100,8 +104,10 @@ public final class TitleMatcher {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TitleMatcher that = (TitleMatcher) o;
-        return Objects.equal(prefix, that.prefix) &&
+        TitleMatcherImpl that = (TitleMatcherImpl) o;
+        return Objects.equal(titlePattern, that.titlePattern) &&
+                operation == that.operation &&
+                Objects.equal(prefix, that.prefix) &&
                 Objects.equal(sequence, that.sequence) &&
                 Objects.equal(suffix, that.suffix) &&
                 Objects.equal(exclude, that.exclude);
@@ -109,16 +115,6 @@ public final class TitleMatcher {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(prefix, sequence, suffix, exclude);
-    }
-
-    @Override
-    public String toString() {
-        return "TitleMatcher{" +
-                "prefix='" + prefix + '\'' +
-                ", sequence=" + sequence +
-                ", suffix='" + suffix + '\'' +
-                ", exclude='" + exclude + '\'' +
-                '}';
+        return Objects.hashCode(titlePattern, operation, prefix, sequence, suffix, exclude);
     }
 }
