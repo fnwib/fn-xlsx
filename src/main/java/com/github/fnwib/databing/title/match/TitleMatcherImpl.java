@@ -30,7 +30,7 @@ public class TitleMatcherImpl implements TitleMatcher {
     private final String    exclude;
 
     public TitleMatcherImpl(AutoMapping mapping) {
-        this.titlePattern = Pattern.compile(mapping.value().trim());
+        this.titlePattern = Pattern.compile(mapping.value().trim(),Pattern.CASE_INSENSITIVE);
         this.operation = mapping.operation();
         this.prefix = mapping.prefix();
         this.sequence = mapping.value().trim();
@@ -39,7 +39,7 @@ public class TitleMatcherImpl implements TitleMatcher {
     }
 
     public TitleMatcherImpl(CellType mapping) {
-        this.titlePattern = Pattern.compile(mapping.title().trim());
+        this.titlePattern = Pattern.compile(mapping.title().trim(),Pattern.CASE_INSENSITIVE);
         this.operation = mapping.operation();
         this.prefix = mapping.prefix();
         this.sequence = mapping.title().trim();
@@ -65,9 +65,9 @@ public class TitleMatcherImpl implements TitleMatcher {
             return Collections.emptyList();
         }
         List<CellTitle> result = Lists.newArrayList();
-        log.debug("annotation -> title is [{}] , prefix is [{}] , suffix is [{}] ,exclude is [{}]",
-                titlePattern.toString(),
+        log.debug("annotation ->  prefix is [{}] ,value is [{}] , suffix is [{}] ,exclude is [{}]",
                 prefix,
+                sequence,
                 suffix,
                 exclude);
         for (CellTitle title : titles) {

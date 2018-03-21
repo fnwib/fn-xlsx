@@ -33,13 +33,6 @@ public class ValueUtil {
         return temp;
     }
 
-    public static Optional<String> substringBetween(final String text, final String prefix, final String suffix) {
-        if (text == null || prefix == null || suffix == null) {
-            return Optional.empty();
-        }
-        return substringBetweenNotNull(text, prefix, suffix);
-    }
-
     public static Optional<String> substringBetweenIgnoreCase(final String text, final String prefix, final String suffix) {
         if (text == null || prefix == null || suffix == null) {
             return Optional.empty();
