@@ -30,7 +30,7 @@ public class TitleMatcherImpl implements TitleMatcher {
     private final String    exclude;
 
     public TitleMatcherImpl(AutoMapping mapping) {
-        this.titlePattern = Pattern.compile(mapping.value().trim(),Pattern.CASE_INSENSITIVE);
+        this.titlePattern = Pattern.compile(mapping.value().trim(), Pattern.CASE_INSENSITIVE);
         this.operation = mapping.operation();
         this.prefix = mapping.prefix();
         this.sequence = mapping.value().trim();
@@ -39,7 +39,7 @@ public class TitleMatcherImpl implements TitleMatcher {
     }
 
     public TitleMatcherImpl(CellType mapping) {
-        this.titlePattern = Pattern.compile(mapping.title().trim(),Pattern.CASE_INSENSITIVE);
+        this.titlePattern = Pattern.compile(mapping.title().trim(), Pattern.CASE_INSENSITIVE);
         this.operation = mapping.operation();
         this.prefix = mapping.prefix();
         this.sequence = mapping.title().trim();
@@ -116,5 +116,17 @@ public class TitleMatcherImpl implements TitleMatcher {
     @Override
     public int hashCode() {
         return Objects.hashCode(titlePattern, operation, prefix, sequence, suffix, exclude);
+    }
+
+
+    @Override
+    public String toString() {
+        return "TitleMatcherImpl{" +
+                "operation=" + operation +
+                ", prefix='" + prefix + '\'' +
+                ", sequence='" + sequence + '\'' +
+                ", suffix='" + suffix + '\'' +
+                ", exclude='" + exclude + '\'' +
+                '}';
     }
 }
