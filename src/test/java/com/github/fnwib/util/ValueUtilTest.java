@@ -45,22 +45,22 @@ public class ValueUtilTest {
 
 
         Optional<String> root21 = ValueUtil.substringBetweenIgnoreCase("Text", "", "");
-        Assert.assertEquals("21 --> {[text]['']['']} -> [Text]", "text", root2.get());
+        Assert.assertEquals("21 --> {[text]['']['']} -> [Text]", "text", root21.get());
 
         Optional<String> root31 = ValueUtil.substringBetweenIgnoreCase("Text", "", "t");
-        Assert.assertEquals("31 --> {[text]['']['t']} -> [tex]", "tex", root3.get());
+        Assert.assertEquals("31 --> {[text]['']['t']} -> [tex]", "tex", root31.get());
 
         Optional<String> root41 = ValueUtil.substringBetweenIgnoreCase("Text", "t", "");
-        Assert.assertEquals("41 --> {[text]['t']['']} -> [ext]", "ext", root4.get());
+        Assert.assertEquals("41 --> {[text]['t']['']} -> [ext]", "ext", root41.get());
 
         Optional<String> root51 = ValueUtil.substringBetweenIgnoreCase("Text", "t", "t");
-        Assert.assertEquals("51 --> {[text]['']['']} -> [ex]", "ex", root5.get());
+        Assert.assertEquals("51 --> {[text]['']['']} -> [ex]", "ex", root51.get());
 
         Optional<String> root61 = ValueUtil.substringBetweenIgnoreCase("Text", "ta", "tt");
-        Assert.assertFalse("61 --> {[text]['']['']} -> null", root6.isPresent());
+        Assert.assertFalse("61 --> {[text]['']['']} -> null", root61.isPresent());
 
         Optional<String> root71 = ValueUtil.substringBetweenIgnoreCase("Text", " ", "");
-        Assert.assertFalse("71 --> {[text][' ']['']} -> null", root7.isPresent());
+        Assert.assertFalse("71 --> {[text][' ']['']} -> null", root71.isPresent());
 
     }
 }

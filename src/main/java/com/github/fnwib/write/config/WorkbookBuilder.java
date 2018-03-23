@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public class WorkbookWrap<T> {
+public class WorkbookBuilder<T> {
 
-    private static final Logger log = LoggerFactory.getLogger(WorkbookWrap.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkbookBuilder.class);
 
     private static final int defaultSheetIndex = 0;
 
@@ -36,7 +36,7 @@ public class WorkbookWrap<T> {
 
     private boolean written;
 
-    WorkbookWrap(WorkbookConfig<T> workbookConfig, int titleRowNum) {
+    WorkbookBuilder(WorkbookConfig<T> workbookConfig, int titleRowNum) {
         this.workbookConfig = workbookConfig;
         this.lineWriter = workbookConfig.getLineReader().getLineWriter();
         this.resultFileSetting = workbookConfig.getResultFileSetting();
@@ -139,43 +139,4 @@ public class WorkbookWrap<T> {
         }
     }
 
-    public static int getDefaultSheetIndex() {
-        return defaultSheetIndex;
-    }
-
-    public LineWriter<T> getLineWriter() {
-        return lineWriter;
-    }
-
-    public File getTemplateFile() {
-        return templateFile;
-    }
-
-    public XSSFWorkbook getTemplateWorkbook() {
-        return templateWorkbook;
-    }
-
-    public SXSSFWorkbook getWriteWorkbooks() {
-        return writeWorkbooks;
-    }
-
-    public ResultFileSetting getResultFileSetting() {
-        return resultFileSetting;
-    }
-
-    public TemplateSetting getTemplateSetting() {
-        return templateSetting;
-    }
-
-    public WorkbookConfig<T> getWorkbookConfig() {
-        return workbookConfig;
-    }
-
-    public int getTitleRowNum() {
-        return titleRowNum;
-    }
-
-    public boolean isWritten() {
-        return written;
-    }
 }

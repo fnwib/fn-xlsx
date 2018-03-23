@@ -2,7 +2,7 @@ package com.github.fnwib.write;
 
 import com.google.common.base.Objects;
 
-public class CellText implements Cloneable {
+public class CellText {
     private int    rowNum;
     private int    cellNum;
     private String text;

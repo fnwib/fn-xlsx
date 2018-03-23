@@ -2,9 +2,8 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.write.config.WorkbookBuilder;
 import com.github.fnwib.write.config.WorkbookConfig;
-import com.github.fnwib.write.config.WorkbookWrap;
-import com.github.fnwib.write.config.WorkbookWrapFactory;
 import com.google.common.collect.Queues;
 
 import java.io.File;
@@ -21,14 +20,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
     private final WorkbookConfig<T>      workbookConfig;
-    private final WorkbookWrapFactory<T> workbookWrapFactory;
-    private final Queue<WorkbookWrap>    workbookWraps;
+    private final Queue<WorkbookBuilder> workbookWraps;
     private final AtomicInteger currentRowNum = new AtomicInteger();
     private LineWriter<T> lineWriter;
     private boolean closed = false;
 
     public ExcelWriterProcessor(WorkbookConfig<T> workbookConfig) {
-        this.workbookWrapFactory = new WorkbookWrapFactory<>(workbookConfig);
         this.workbookConfig = workbookConfig;
         this.workbookWraps = Queues.newArrayDeque();
         useNextSheet();
@@ -38,10 +35,10 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         if (!workbookWraps.isEmpty()) {
             workbookWraps.poll().write();
         }
-        workbookWraps.add(workbookWrapFactory.createWorkbookWrap());
-        WorkbookWrap workbookWrap = workbookWraps.peek();
+        workbookWraps.add(workbookConfig.createWorkbookWrap());
+        WorkbookBuilder workbookWrap = workbookWraps.peek();
         this.lineWriter = workbookWrap.getWriteParser();
-        currentRowNum.set(workbookWrapFactory.getTitleRowNum() + 1);
+        currentRowNum.set(workbookConfig.getTitleRowNum() + 1);
     }
 
     private void checkState() {
@@ -56,7 +53,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         if (workbookConfig.getResultFileSetting().gt(currentRowNum)) {
             useNextSheet();
         }
-        lineWriter.convert(currentRowNum.getAndAdd(1), element);
+        lineWriter.convert(currentRowNum.getAndIncrement(), element);
     }
 
     @Override
