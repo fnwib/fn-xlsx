@@ -3,7 +3,6 @@ package com.github.fnwib.write.template;
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.write.CellText;
-import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,19 +22,18 @@ public class EmptyTemplate<T> extends Template<T> {
 
     private static final Logger log = LoggerFactory.getLogger(EmptyTemplate.class);
 
-    private File file;
-    private int  titleRowNum;
+    private int titleRowNum;
 
     public EmptyTemplate(LineReader<T> lineReader,
                          TemplateSetting templateSetting,
-                         ResultFileSetting resultFileSetting) {
-        super(lineReader, templateSetting, resultFileSetting);
-        file = buildWorkbook();
+                         File emptyFile) {
+        super(lineReader, templateSetting, emptyFile);
+        buildWorkbook();
     }
 
     @Override
     public SXSSFWorkbook getWriteWorkbook() throws IOException {
-        FileInputStream inputStream = FileUtils.openInputStream(file);
+        FileInputStream inputStream = FileUtils.openInputStream(super.emptyFile);
         this.workbook = new XSSFWorkbook(inputStream);
         return new SXSSFWorkbook(workbook);
     }
@@ -45,14 +43,12 @@ public class EmptyTemplate<T> extends Template<T> {
         return titleRowNum;
     }
 
-    private File buildWorkbook() {
+    private void buildWorkbook() {
         try {
             Workbook workbook = new XSSFWorkbook();
             workbook.createSheet();
             buildSheet(workbook, 0);
-            File emptyFile = resultFileSetting.getEmptyFile();
             workbook.write(FileUtils.openOutputStream(emptyFile));
-            return emptyFile;
         } catch (IOException e) {
             log.error("open workbook error ", e);
             throw new ExcelException("模版错误");
@@ -81,7 +77,7 @@ public class EmptyTemplate<T> extends Template<T> {
             titleRowNum = nextRowNum;
             Row row = getRow(sheet, nextRowNum);
             int cellNum = row.getLastCellNum();
-            Optional<CellStyle> cellStyle = createTitleCellStype(workbook);
+            Optional<CellStyle> cellStyle = createTitleCellStyle(workbook);
             for (String title : templateSetting.getAddLastTitles()) {
                 cellNum++;
                 Cell cell = row.createCell(cellNum);
@@ -93,7 +89,7 @@ public class EmptyTemplate<T> extends Template<T> {
     }
 
 
-    private Optional<CellStyle> createTitleCellStype(Workbook workbook) {
+    private Optional<CellStyle> createTitleCellStyle(Workbook workbook) {
         Optional<CellStyle> style = CellStyleBuilder.builder()
                 .workbook(workbook)
                 .fillBackgroundColor(IndexedColors.GREEN)

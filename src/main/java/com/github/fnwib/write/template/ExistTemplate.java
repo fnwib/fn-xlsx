@@ -4,7 +4,6 @@ import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.write.CellText;
-import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,19 +21,18 @@ import java.util.List;
 public class ExistTemplate<T> extends Template<T> {
     private static final Logger log = LoggerFactory.getLogger(ExistTemplate.class);
 
-    private File template;
     private int  titleRowNum;
 
     public ExistTemplate(LineReader<T> lineReader,
                          TemplateSetting templateSetting,
-                         ResultFileSetting resultFileSetting) {
-        super(lineReader, templateSetting, resultFileSetting);
-        this.template = buildWorkbook();
+                         File templateFile) {
+        super(lineReader, templateSetting, templateFile);
+        buildWorkbook();
     }
 
     @Override
     public SXSSFWorkbook getWriteWorkbook() throws IOException {
-        FileInputStream inputStream = FileUtils.openInputStream(template);
+        FileInputStream inputStream = FileUtils.openInputStream(emptyFile);
         this.workbook = new XSSFWorkbook(inputStream);
         return new SXSSFWorkbook(workbook);
     }
@@ -49,7 +47,7 @@ public class ExistTemplate<T> extends Template<T> {
             for (Row row : rows) {
                 boolean matched = lineReader.match(row);
                 if (matched) {
-                    if (row.getRowNum() >= resultFileSetting.getMaxRowsCanWrite()) {
+                    if (row.getRowNum() >= templateSetting.getMaxRowsCanWrite()) {
                         throw new SettingException("sheet可写最大行小于title所在行");
                     }
                     titleRowNum = row.getRowNum();
@@ -67,8 +65,6 @@ public class ExistTemplate<T> extends Template<T> {
             Workbook workbook = new XSSFWorkbook(FileUtils.openInputStream(template));
             Integer title = findTitle(workbook);
             buildSheet(workbook, 0, title);
-
-            File emptyFile = resultFileSetting.getEmptyFile();
             workbook.write(FileUtils.openOutputStream(emptyFile));
             return emptyFile;
         } catch (IOException e) {

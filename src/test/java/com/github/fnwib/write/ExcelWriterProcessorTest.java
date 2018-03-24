@@ -25,13 +25,13 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
      */
     @Test
     public void dynamicTemplateWrite() {
-        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
-        TemplateSetting templateSetting = new TemplateSetting();
+        ResultFileSetting resultFileSetting = new ResultFileSetting("aaaa2zs2", exportFolder);
+        TemplateSetting templateSetting = new TemplateSetting(4);
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
         templateSetting.addCellText(new CellText(0, 0, "标题"));
         templateSetting.useDefaultCellStyle();
         LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
-        WorkbookConfig writeConfig = new WorkbookBuilder<>(lineReader,resultFileSetting, templateSetting);
+        WorkbookConfig writeConfig = new WorkbookBuilder<>(lineReader, resultFileSetting, templateSetting);
         List<WriteModel> source = getDataList(6);
 
         List<WriteModel> target = writeAndRead(writeConfig);
@@ -68,9 +68,9 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
     @Test
     public void write() {
-        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
+        ResultFileSetting resultFileSetting = new ResultFileSetting("aaaa2zs2", exportFolder);
 
-        TemplateSetting templateSetting = new TemplateSetting();
+        TemplateSetting templateSetting = new TemplateSetting(4);
         templateSetting.setTemplate(tempTemplateFile);
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
         templateSetting.addCellText(new CellText(0, 0, "标题"));
@@ -108,9 +108,9 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
     @Test
     public void writeMergedRegion() {
-        ResultFileSetting resultFileSetting = new ResultFileSetting(2, "aaaa2zs2.xlsx", exportFolder);
+        ResultFileSetting resultFileSetting = new ResultFileSetting("aaaa2zs2.xlsx", exportFolder);
 
-        TemplateSetting templateSetting = new TemplateSetting();
+        TemplateSetting templateSetting = new TemplateSetting(4);
         templateSetting.setTemplate(tempTemplateFile);
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
 

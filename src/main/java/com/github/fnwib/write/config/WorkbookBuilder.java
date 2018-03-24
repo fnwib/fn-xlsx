@@ -18,9 +18,9 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
-public class WorkbookBuilder<T> implements WorkbookConfig{
+public class WorkbookBuilder<T> implements WorkbookConfig {
 
-    private static final int    defaultSheetIndex = 0;
+    private static final int defaultSheetIndex = 0;
 
     private final ResultFileSetting resultFileSetting;
 
@@ -30,20 +30,20 @@ public class WorkbookBuilder<T> implements WorkbookConfig{
     private boolean       written;
 
     public WorkbookBuilder(LineReader<T> lineReader,
-                          ResultFileSetting resultFileSetting,
-                          TemplateSetting templateSetting) {
+                           ResultFileSetting resultFileSetting,
+                           TemplateSetting templateSetting) {
         this.resultFileSetting = resultFileSetting;
-        this.template = getTemplate(lineReader, templateSetting);
+        this.template = getTemplate(lineReader, templateSetting, resultFileSetting.getEmptyFile());
         this.written = false;
     }
 
-    private Template<T> getTemplate(LineReader<T> lineReader, TemplateSetting templateSetting) {
+    private Template<T> getTemplate(LineReader<T> lineReader, TemplateSetting templateSetting, File file) {
         File template = templateSetting.getTemplate();
 
         if (template == null) {
             if (templateSetting.changed()) {
 
-                return new EmptyTemplate<>(lineReader, templateSetting, resultFileSetting);
+                return new EmptyTemplate<>(lineReader, templateSetting, file);
             } else {
                 throw new SettingException("模版没有配置");
             }
@@ -51,17 +51,19 @@ public class WorkbookBuilder<T> implements WorkbookConfig{
         if (!template.exists()) {
             throw new SettingException("模版" + template.getAbsolutePath() + "不存在");
         }
-        return new ExistTemplate<>(lineReader, templateSetting, resultFileSetting);
+        return new ExistTemplate<>(lineReader, templateSetting, file);
     }
 
     @Override
     public boolean isWritten() {
         return written;
     }
+
     @Override
     public int getTitleRowNum() {
         return template.getTiltRowNum();
     }
+
     @Override
     public LineWriter<T> getWriteParser() {
         if (written) {
@@ -77,11 +79,13 @@ public class WorkbookBuilder<T> implements WorkbookConfig{
             throw new ExcelException(e);
         }
     }
+
     @Override
     public Sheet getNextSheet() {
         written = true;
         return writeWorkbooks.getSheetAt(defaultSheetIndex);
     }
+
     @Override
     public void write() {
         try (OutputStream outputStream = new FileOutputStream(resultFileSetting.getNextResultFile())) {
@@ -92,9 +96,10 @@ public class WorkbookBuilder<T> implements WorkbookConfig{
             throw new ExcelException(e);
         }
     }
+
     @Override
     public boolean canWrite(int rowNum) {
-        return resultFileSetting.gt(rowNum);
+        return template.gt(rowNum);
     }
 
     @Override
