@@ -1,13 +1,12 @@
 package com.github.fnwib.write.config;
 
-import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
 
 import java.io.File;
 import java.util.List;
 
-public class TemplateSetting {
+public class TemplateSetting<T> {
 
     private File           template;
     private String         sheetName;
@@ -20,14 +19,7 @@ public class TemplateSetting {
         this.cellTexts = Lists.newArrayList();
     }
 
-
     public File getTemplate() {
-        if (template == null) {
-            throw new SettingException("模版没有配置");
-        }
-        if (!template.exists()) {
-            throw new SettingException("模版" + template.getAbsolutePath() + "不存在");
-        }
         return template;
     }
 

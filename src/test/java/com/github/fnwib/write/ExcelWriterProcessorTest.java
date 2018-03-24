@@ -19,18 +19,33 @@ import java.io.File;
 import java.util.*;
 
 public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
-
+    /**
+     * 动态模版
+     */
     @Test
-    public void write() {
-        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
+    public void dynamicTemplateWrite() {
         TemplateSetting templateSetting = new TemplateSetting();
-        templateSetting.setTemplate(tempTemplateFile);
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
         templateSetting.addCellText(new CellText(0, 0, "标题"));
         templateSetting.useDefaultCellStyle();
         List<WriteModel> source = getDataList(6);
-        List<WriteModel> target = new ArrayList<>();
 
+        List<WriteModel> target = writeAndRead(templateSetting);
+
+        Assert.assertSame("集合长度不一致", source.size(), target.size());
+        for (int i = 0; i < source.size(); i++) {
+            WriteModel sourceModel = source.get(i);
+            WriteModel targetModel = target.get(i);
+            Assert.assertEquals("动态添加的列 AAA", sourceModel.getAaa(), targetModel.getAaa());
+            Assert.assertEquals("动态添加的列 序号", sourceModel.getSequence(), targetModel.getSequence());
+        }
+
+    }
+
+    private List<WriteModel> writeAndRead(TemplateSetting templateSetting) {
+        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
+        List<WriteModel> source = getDataList(6);
+        List<WriteModel> target = new ArrayList<>();
         LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
         WorkbookConfig<WriteModel> writeConfig = new WorkbookConfig(lineReader, resultFileSetting, templateSetting);
         ExcelWriter<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
@@ -46,6 +61,19 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
             Assert.assertEquals("0,0 标题不一致", "标题", preTitle);
         }
         Collections.sort(target, Comparator.comparing(WriteModel::getSequence));
+        return target;
+    }
+
+    @Test
+    public void write() {
+        TemplateSetting templateSetting = new TemplateSetting();
+        templateSetting.setTemplate(tempTemplateFile);
+        templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
+        templateSetting.addCellText(new CellText(0, 0, "标题"));
+        templateSetting.useDefaultCellStyle();
+        List<WriteModel> source = getDataList(6);
+
+        List<WriteModel> target = writeAndRead(templateSetting);
         Assert.assertSame("集合长度不一致", source.size(), target.size());
         for (int i = 0; i < source.size(); i++) {
             WriteModel sourceModel = source.get(i);

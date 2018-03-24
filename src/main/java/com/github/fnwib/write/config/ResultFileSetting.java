@@ -78,6 +78,9 @@ public class ResultFileSetting {
     }
 
     public File copyFile(File source) {
+        if (!source.exists()){
+            throw new SettingException("文件不存在" +source.getAbsolutePath());
+        }
         String template = resultFolder.getAbsolutePath() + File.separator + UUIDUtils.getId() + EXTENSION;
         File target = new File(template);
         try {
@@ -90,12 +93,17 @@ public class ResultFileSetting {
     }
 
 
-    public boolean gt(AtomicInteger rowNum) {
-        return rowNum.get() > maxRowsCanWrite;
+    public boolean gt(int rowNum) {
+        return rowNum > maxRowsCanWrite;
     }
 
     public File getResultFolder() {
         return resultFolder;
+    }
+
+    public File getEmptyFile() {
+        String fileName = resultFolder + File.separator + UUIDUtils.getId() + EXTENSION;
+        return new File(fileName);
     }
 
     public int getMaxRowsCanWrite() {
