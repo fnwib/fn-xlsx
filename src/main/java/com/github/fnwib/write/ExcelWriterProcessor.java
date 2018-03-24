@@ -26,7 +26,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         useNextSheet();
     }
 
-    private synchronized void useNextSheet() {
+    private void useNextSheet() {
         if (workbookConfig.isWritten()) {
             workbookConfig.write();
         }
