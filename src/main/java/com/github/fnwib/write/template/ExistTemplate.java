@@ -26,7 +26,7 @@ public class ExistTemplate<T> extends Template<T> {
     private int  titleRowNum;
 
     public ExistTemplate(LineReader<T> lineReader,
-                         TemplateSetting<T> templateSetting,
+                         TemplateSetting templateSetting,
                          ResultFileSetting resultFileSetting) {
         super(lineReader, templateSetting, resultFileSetting);
         this.template = buildWorkbook();

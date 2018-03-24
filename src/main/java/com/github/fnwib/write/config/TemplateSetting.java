@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.List;
 
-public class TemplateSetting<T> {
+public class TemplateSetting {
 
     private File           template;
     private String         sheetName;

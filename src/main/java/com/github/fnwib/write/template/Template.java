@@ -11,12 +11,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.IOException;
 
 public abstract class Template<T> {
-    LineReader<T>      lineReader;
-    TemplateSetting<T> templateSetting;
-    ResultFileSetting  resultFileSetting;
-    XSSFWorkbook       workbook;
+    LineReader<T>     lineReader;
+    TemplateSetting   templateSetting;
+    ResultFileSetting resultFileSetting;
+    XSSFWorkbook      workbook;
 
-    public Template(LineReader<T> lineReader, TemplateSetting<T> templateSetting, ResultFileSetting resultFileSetting) {
+    public Template(LineReader<T> lineReader,
+                    TemplateSetting templateSetting,
+                    ResultFileSetting resultFileSetting) {
         this.lineReader = lineReader;
         this.templateSetting = templateSetting;
         this.resultFileSetting = resultFileSetting;

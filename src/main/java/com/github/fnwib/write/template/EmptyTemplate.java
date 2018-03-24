@@ -28,7 +28,8 @@ public class EmptyTemplate<T> extends Template<T> {
     private File file;
     private int  titleRowNum;
 
-    public EmptyTemplate(LineReader<T> lineReader, TemplateSetting<T> templateSetting,
+    public EmptyTemplate(LineReader<T> lineReader,
+                         TemplateSetting templateSetting,
                          ResultFileSetting resultFileSetting) {
         super(lineReader, templateSetting, resultFileSetting);
         file = buildWorkbook();
