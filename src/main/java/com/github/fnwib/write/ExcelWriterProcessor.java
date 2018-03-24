@@ -2,7 +2,6 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.write.config.WorkbookBuilder;
 import com.github.fnwib.write.config.WorkbookConfig;
 
 import java.io.File;
@@ -17,22 +16,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
-    private final WorkbookBuilder<T> workbookBuilder;
+    private final WorkbookConfig workbookConfig;
     private final AtomicInteger currentRowNum = new AtomicInteger();
     private LineWriter<T> lineWriter;
     private boolean closed = false;
 
-    public ExcelWriterProcessor(WorkbookConfig<T> workbookConfig) {
-        this.workbookBuilder = new WorkbookBuilder<>(workbookConfig);
+    public ExcelWriterProcessor(WorkbookConfig workbookConfig) {
+        this.workbookConfig = workbookConfig;
         useNextSheet();
     }
 
     private synchronized void useNextSheet() {
-        if (workbookBuilder.isWritten()) {
-            workbookBuilder.write();
+        if (workbookConfig.isWritten()) {
+            workbookConfig.write();
         }
-        this.lineWriter = workbookBuilder.getWriteParser();
-        currentRowNum.set(workbookBuilder.getTitleRowNum() + 1);
+        this.lineWriter = workbookConfig.getWriteParser();
+        currentRowNum.set(workbookConfig.getTitleRowNum() + 1);
     }
 
     private void checkState() {
@@ -44,7 +43,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
     @Override
     public void write(T element) {
         checkState();
-        if (workbookBuilder.canWrite(currentRowNum.get())) {
+        if (workbookConfig.canWrite(currentRowNum.get())) {
             useNextSheet();
         }
         lineWriter.convert(currentRowNum.getAndIncrement(), element);
@@ -66,7 +65,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         if (elements.size() == 1) {
             this.write(elements);
         } else {
-            if (workbookBuilder.canWrite(currentRowNum.get())) {
+            if (workbookConfig.canWrite(currentRowNum.get())) {
                 useNextSheet();
             }
             lineWriter.convert(currentRowNum.getAndAdd(elements.size()), elements, mergedRangeIndexes);
@@ -79,7 +78,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
             return;
         }
         closed = true;
-        workbookBuilder.write();
+        workbookConfig.write();
 
     }
 
@@ -88,7 +87,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
         if (!closed) {
             flush();
         }
-        return workbookBuilder.getResultFiles();
+        return workbookConfig.getResultFiles();
     }
 }
 

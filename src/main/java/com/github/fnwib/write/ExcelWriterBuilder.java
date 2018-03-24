@@ -5,6 +5,7 @@ import com.github.fnwib.databing.LineReaderForExcel;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
+import com.github.fnwib.write.config.WorkbookBuilder;
 import com.github.fnwib.write.config.WorkbookConfig;
 
 import java.io.File;
@@ -89,7 +90,7 @@ public class ExcelWriterBuilder {
             } else {
                 lineReader = new LineReaderForExcel<>(entityClass, localConfig);
             }
-            WorkbookConfig<T> workbookConfig = new WorkbookConfig<>(lineReader, resultFileSetting, templateSetting);
+            WorkbookConfig workbookConfig = new WorkbookBuilder<>(lineReader, resultFileSetting, templateSetting);
             return new ExcelWriterProcessor<>(workbookConfig);
         }
 

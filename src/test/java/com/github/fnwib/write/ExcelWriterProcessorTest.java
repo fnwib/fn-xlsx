@@ -6,6 +6,7 @@ import com.github.fnwib.read.ExcelReader;
 import com.github.fnwib.read.ExcelReaderImpl;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
+import com.github.fnwib.write.config.WorkbookBuilder;
 import com.github.fnwib.write.config.WorkbookConfig;
 import com.google.common.collect.Lists;
 import com.monitorjbl.xlsx.StreamingReader;
@@ -24,13 +25,16 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
      */
     @Test
     public void dynamicTemplateWrite() {
+        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
         TemplateSetting templateSetting = new TemplateSetting();
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
         templateSetting.addCellText(new CellText(0, 0, "标题"));
         templateSetting.useDefaultCellStyle();
+        LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
+        WorkbookConfig writeConfig = new WorkbookBuilder<>(lineReader,resultFileSetting, templateSetting);
         List<WriteModel> source = getDataList(6);
 
-        List<WriteModel> target = writeAndRead(templateSetting);
+        List<WriteModel> target = writeAndRead(writeConfig);
 
         Assert.assertSame("集合长度不一致", source.size(), target.size());
         for (int i = 0; i < source.size(); i++) {
@@ -42,15 +46,13 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
     }
 
-    private List<WriteModel> writeAndRead(TemplateSetting templateSetting) {
-        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
+    private List<WriteModel> writeAndRead(WorkbookConfig writeConfig) {
         List<WriteModel> source = getDataList(6);
         List<WriteModel> target = new ArrayList<>();
-        LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
-        WorkbookConfig<WriteModel> writeConfig = new WorkbookConfig(lineReader, resultFileSetting, templateSetting);
         ExcelWriter<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
         writerProcessor.write(source);
         List<File> files = writerProcessor.getFiles();
+        LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
         for (File file2 : files) {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(lineReader, workbook, 0);
@@ -66,14 +68,20 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
     @Test
     public void write() {
+        ResultFileSetting resultFileSetting = new ResultFileSetting(4, "aaaa2zs2", exportFolder);
+
         TemplateSetting templateSetting = new TemplateSetting();
         templateSetting.setTemplate(tempTemplateFile);
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
         templateSetting.addCellText(new CellText(0, 0, "标题"));
         templateSetting.useDefaultCellStyle();
+
+        LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
+        WorkbookConfig writeConfig = new WorkbookBuilder<>(lineReader, resultFileSetting, templateSetting);
+
+        List<WriteModel> target = writeAndRead(writeConfig);
         List<WriteModel> source = getDataList(6);
 
-        List<WriteModel> target = writeAndRead(templateSetting);
         Assert.assertSame("集合长度不一致", source.size(), target.size());
         for (int i = 0; i < source.size(); i++) {
             WriteModel sourceModel = source.get(i);
@@ -107,7 +115,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
         templateSetting.addLastTitles(Lists.newArrayList("AAA", "序号"));
 
         final LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
-        WorkbookConfig writeConfig = new WorkbookConfig(lineReader, resultFileSetting, templateSetting);
+        WorkbookConfig writeConfig = new WorkbookBuilder<>(lineReader, resultFileSetting, templateSetting);
         ExcelWriterProcessor<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
 
         List<WriteModel> source = getDataList(6);

@@ -7,10 +7,7 @@ import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -20,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class EmptyTemplate<T> extends Template<T> {
 
@@ -52,7 +50,6 @@ public class EmptyTemplate<T> extends Template<T> {
             Workbook workbook = new XSSFWorkbook();
             workbook.createSheet();
             buildSheet(workbook, 0);
-
             File emptyFile = resultFileSetting.getEmptyFile();
             workbook.write(FileUtils.openOutputStream(emptyFile));
             return emptyFile;
@@ -84,17 +81,32 @@ public class EmptyTemplate<T> extends Template<T> {
             titleRowNum = nextRowNum;
             Row row = getRow(sheet, nextRowNum);
             int cellNum = row.getLastCellNum();
-            System.out.printf("cellNum %d /n", cellNum);
-//            CellStyle cellStyle = row.getCell(cellNum - 1).getCellStyle();
+            Optional<CellStyle> cellStyle = createTitleCellStype(workbook);
             for (String title : templateSetting.getAddLastTitles()) {
                 cellNum++;
                 Cell cell = row.createCell(cellNum);
-//                cell.setCellStyle(cellStyle);
+                cellStyle.ifPresent((style) -> cell.setCellStyle(style));
                 cell.setCellValue(title);
             }
             lineReader.match(row);
         }
     }
 
+
+    private Optional<CellStyle> createTitleCellStype(Workbook workbook) {
+        Optional<CellStyle> style = CellStyleBuilder.builder()
+                .workbook(workbook)
+                .fillBackgroundColor(IndexedColors.GREEN)
+                .fillForegroundColor(IndexedColors.BRIGHT_GREEN)
+                .fillPattern(FillPatternType.SOLID_FOREGROUND)
+                .build();
+        style.ifPresent((s) -> FontBuilder.builder()
+                .workbook(workbook)
+                .fontName("黑体")
+                .height(((short) 14))
+                .build()
+                .ifPresent((font -> s.setFont(font))));
+        return style;
+    }
 
 }

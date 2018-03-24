@@ -1,7 +1,11 @@
 package com.github.fnwib.write.config;
 
+import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.exception.SettingException;
+import com.github.fnwib.write.template.EmptyTemplate;
+import com.github.fnwib.write.template.ExistTemplate;
 import com.github.fnwib.write.template.Template;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -16,32 +20,52 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
-public class WorkbookBuilder<T> {
+public class WorkbookBuilder<T> implements WorkbookConfig{
 
-    private static final Logger log = LoggerFactory.getLogger(WorkbookBuilder.class);
+    private static final Logger log               = LoggerFactory.getLogger(WorkbookConfig.class);
+    private static final int    defaultSheetIndex = 0;
 
-    private static final int defaultSheetIndex = 0;
+    private final ResultFileSetting resultFileSetting;
+
     private final Template template;
 
-    private SXSSFWorkbook     writeWorkbooks;
-    private ResultFileSetting resultFileSetting;
+    private SXSSFWorkbook writeWorkbooks;
+    private boolean       written;
 
-    private boolean written;
-
-    public WorkbookBuilder(WorkbookConfig workbookConfig) {
-        this.template = workbookConfig.getTemplate();
-        this.resultFileSetting = template.getResultFileSetting();
+    public WorkbookBuilder(LineReader<T> lineReader,
+                          ResultFileSetting resultFileSetting,
+                          TemplateSetting templateSetting) {
+        this.resultFileSetting = resultFileSetting;
+        this.template = getTemplate(lineReader, templateSetting);
         this.written = false;
     }
 
+    private Template<T> getTemplate(LineReader<T> lineReader, TemplateSetting templateSetting) {
+        File template = templateSetting.getTemplate();
+
+        if (template == null) {
+            if (templateSetting.changed()) {
+
+                return new EmptyTemplate<>(lineReader, templateSetting, resultFileSetting);
+            } else {
+                throw new SettingException("模版没有配置");
+            }
+        }
+        if (!template.exists()) {
+            throw new SettingException("模版" + template.getAbsolutePath() + "不存在");
+        }
+        return new ExistTemplate<>(lineReader, templateSetting, resultFileSetting);
+    }
+
+    @Override
     public boolean isWritten() {
         return written;
     }
-
+    @Override
     public int getTitleRowNum() {
         return template.getTiltRowNum();
     }
-
+    @Override
     public LineWriter<T> getWriteParser() {
         if (written) {
             throw new ExcelException("excel已经写入文件");
@@ -56,12 +80,12 @@ public class WorkbookBuilder<T> {
             throw new ExcelException(e);
         }
     }
-
-    private Sheet getNextSheet() {
+    @Override
+    public Sheet getNextSheet() {
         written = true;
         return writeWorkbooks.getSheetAt(defaultSheetIndex);
     }
-
+    @Override
     public void write() {
         try (OutputStream outputStream = new FileOutputStream(resultFileSetting.getNextResultFile())) {
             writeWorkbooks.write(outputStream);
@@ -71,16 +95,16 @@ public class WorkbookBuilder<T> {
             throw new ExcelException(e);
         }
     }
-
+    @Override
     public boolean canWrite(int rowNum) {
         return resultFileSetting.gt(rowNum);
     }
 
+    @Override
     public List<File> getResultFiles() {
         File resultFolder = resultFileSetting.getResultFolder();
         File[] files = resultFolder.listFiles();
         if (files == null) return Collections.emptyList();
         return Lists.newArrayList(files);
     }
-
 }
