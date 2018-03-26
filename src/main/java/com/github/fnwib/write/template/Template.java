@@ -67,5 +67,9 @@ public abstract class Template<T> {
     public boolean gt(int rowNum) {
         return templateSetting.gt(rowNum);
     }
+
+    public void deleteTemplateFile() {
+        emptyFile.delete();
+    }
 }
 

@@ -28,7 +28,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
     private void useNextSheet() {
         if (workbookConfig.isWritten()) {
-            workbookConfig.write();
+            workbookConfig.write(false);
         }
         this.lineWriter = workbookConfig.getWriteParser();
         currentRowNum.set(workbookConfig.getTitleRowNum() + 1);
@@ -78,7 +78,7 @@ public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
             return;
         }
         closed = true;
-        workbookConfig.write();
+        workbookConfig.write(true);
 
     }
 

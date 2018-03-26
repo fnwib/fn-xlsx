@@ -16,7 +16,7 @@ public interface WorkbookConfig {
 
     Sheet getNextSheet();
 
-    void write();
+    void write(boolean deleteTemplateFile);
 
     boolean canWrite(int rowNum);
 

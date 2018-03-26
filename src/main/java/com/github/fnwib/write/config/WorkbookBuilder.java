@@ -42,7 +42,6 @@ public class WorkbookBuilder<T> implements WorkbookConfig {
 
         if (template == null) {
             if (templateSetting.changed()) {
-
                 return new EmptyTemplate<>(lineReader, templateSetting, file);
             } else {
                 throw new SettingException("模版没有配置");
@@ -87,11 +86,14 @@ public class WorkbookBuilder<T> implements WorkbookConfig {
     }
 
     @Override
-    public void write() {
+    public void write(boolean deleteTemplateFile) {
         try (OutputStream outputStream = new FileOutputStream(resultFileSetting.getNextResultFile())) {
             writeWorkbooks.write(outputStream);
             writeWorkbooks.close();
             written = false;
+            if (deleteTemplateFile) {
+                template.deleteTemplateFile();
+            }
         } catch (IOException e) {
             throw new ExcelException(e);
         }
