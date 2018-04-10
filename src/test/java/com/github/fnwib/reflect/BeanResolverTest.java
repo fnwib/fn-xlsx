@@ -18,6 +18,5 @@ public class BeanResolverTest {
         Assert.assertEquals("copy value use @ReadValueHandler", Integer.valueOf(1), format.getSequence());
         Assert.assertEquals("copy value use @ReadValueHandler", "a", format.getString());
 
-
     }
 }
