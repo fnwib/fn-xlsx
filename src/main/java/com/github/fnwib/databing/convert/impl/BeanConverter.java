@@ -11,6 +11,7 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.reflect.Property;
+import com.github.fnwib.util.ExcelUtil;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
@@ -96,13 +97,14 @@ public class BeanConverter implements PropertyConverter {
             case _NONE:
                 String format = String.format("坐标[%s][%s]值为[%s],类型是[%s]",
                         row.getRowNum() + 1,
-                        cell.getColumnIndex() + 1,
+                        ExcelUtil.num2Column(cell.getColumnIndex() + 1),
                         cell.getStringCellValue(),
                         cell.getCellTypeEnum().name());
                 throw new ExcelException(format);
             default:
                 log.error("-> cell title  [{}]", cellTitle);
                 log.error("-> row num [{}]", row.getRowNum());
+                log.error("-> cell column name [{}]", ExcelUtil.num2Column(cell.getColumnIndex() + 1));
                 log.error("-> cell string value [{}]", cell.getStringCellValue());
                 log.error("-> cell type  [{}]", cell.getCellTypeEnum().name());
                 throw new NotSupportedException(" [" + cell.getStringCellValue() + "] unknown type");
