@@ -83,9 +83,7 @@ public class MapIntKeyConverter implements PropertyConverter {
             List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);
             objects.forEach((cellNum, obj) -> {
                 Optional<CellText> optional = converters.get(cellNum).getSingleCellText(obj);
-                if (optional.isPresent()) {
-                    list.add(optional.get());
-                }
+                optional.ifPresent(cellText -> list.add(cellText));
             });
             return list;
         } catch (IllegalAccessException | InvocationTargetException e) {

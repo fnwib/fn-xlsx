@@ -43,7 +43,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
         }
     }
 
-    void checkTitle(List<CellTitle> titles, JavaType javaType) {
+    private void checkTitle(List<CellTitle> titles, JavaType javaType) {
         Map<Sequence, List<CellTitle>> titleNames = titles.stream().collect(Collectors.groupingBy(CellTitle::getSequence));
         titleNames = Maps.filterValues(titleNames, v -> v.size() > 1);
         if (titleNames.size() > 0) {
@@ -99,9 +99,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
             List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);
             objects.forEach((sequence, obj) -> {
                 Optional<CellText> optional = converters.get(sequence).getSingleCellText(obj);
-                if (optional.isPresent()) {
-                    list.add(optional.get());
-                }
+                optional.ifPresent(cellText -> list.add(cellText));
             });
             return list;
         } catch (IllegalAccessException | InvocationTargetException e) {

@@ -41,7 +41,7 @@ public class MapStringKeyConverter implements PropertyConverter {
         }
     }
 
-    void checkTitle(List<CellTitle> titles, JavaType javaType) {
+    private void checkTitle(List<CellTitle> titles, JavaType javaType) {
         Map<String, List<CellTitle>> titleNames = titles.stream().collect(Collectors.groupingBy(CellTitle::getText));
         titleNames = Maps.filterValues(titleNames, v -> v.size() > 1);
         if (titleNames.size() > 0) {
@@ -96,9 +96,7 @@ public class MapStringKeyConverter implements PropertyConverter {
             List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);
             objects.forEach((titleName, obj) -> {
                 Optional<CellText> optional = converters.get(titleName).getSingleCellText(obj);
-                if (optional.isPresent()) {
-                    list.add(optional.get());
-                }
+                optional.ifPresent(cellText -> list.add(cellText));
             });
             return list;
         } catch (IllegalAccessException | InvocationTargetException e) {

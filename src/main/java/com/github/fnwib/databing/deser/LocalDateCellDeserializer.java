@@ -68,7 +68,7 @@ public class LocalDateCellDeserializer implements CellDeserializer<LocalDate> {
         }
     }
 
-    public DateTimeFormatter getDateTimeFormatter(String value) {
+    private DateTimeFormatter getDateTimeFormatter(String value) {
         if (SHORT_DATE_PATTERN_LINE.matcher(value).matches()) {
             return DateTimeFormatter.ofPattern("yyyy-MM-dd");
         } else if (SHORT_DATE_PATTERN_SLASH.matcher(value).matches()) {

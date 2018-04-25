@@ -2,7 +2,9 @@ package com.github.fnwib.write.template;
 
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.databing.LineWriter;
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.write.config.TemplateSetting;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -69,7 +71,11 @@ public abstract class Template<T> {
     }
 
     public void deleteTemplateFile() {
-        emptyFile.delete();
+        try {
+            FileUtils.forceDelete(emptyFile);
+        } catch (IOException e) {
+            throw new ExcelException(e);
+        }
     }
 }
 

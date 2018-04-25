@@ -47,7 +47,7 @@ public class TitleResolver {
                 converters.add(converter);
             }
         }
-        int hit = Sets.filter(converters, p -> p.isMatched()).size();
+        int hit = Sets.filter(converters, PropertyConverter::isMatched).size();
         if (hit == 0) {
             return Collections.emptySet();
         }

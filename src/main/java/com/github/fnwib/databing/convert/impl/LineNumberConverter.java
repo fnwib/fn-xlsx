@@ -32,15 +32,14 @@ public class LineNumberConverter implements PropertyConverter {
         } else if (titles.size() == 1) {
             title = titles.get(0);
         } else {
-            String format = String.format("line number 匹配到多列");
-            throw new SettingException(format);
+            throw new SettingException("line number 匹配到多列");
         }
         this.title = title;
         this.name = property.getName();
         this.readMethod = property.getReadMethod();
     }
 
-    void check(Property property) {
+    private void check(Property property) {
         if (property.getJavaType().getRawClass() != Integer.class) {
             String format = String.format("property %s 类型应该是 %s ", property.getName(), Integer.class);
             log.error("--> error ", format);
