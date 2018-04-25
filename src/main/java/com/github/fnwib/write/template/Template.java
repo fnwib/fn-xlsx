@@ -34,7 +34,7 @@ public abstract class Template<T> {
 
     public abstract SXSSFWorkbook getWriteWorkbook() throws IOException;
 
-    public LineWriter getLineWriter() {
+    public LineWriter<T> getLineWriter() {
         LineWriter<T> lineWriter = lineReader.getLineWriter();
         if (templateSetting.isUseDefaultCellStyle()) {
             createCellStyle().ifPresent((style) -> lineWriter.setCellStyle(style));

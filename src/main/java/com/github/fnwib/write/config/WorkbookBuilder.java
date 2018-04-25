@@ -71,7 +71,7 @@ public class WorkbookBuilder<T> implements WorkbookConfig {
         try {
             writeWorkbooks = this.template.getWriteWorkbook();
             Sheet sheet = getNextSheet();
-            LineWriter lineWriter = this.template.getLineWriter();
+            LineWriter<T> lineWriter = this.template.getLineWriter();
             lineWriter.setSheet(sheet);
             return lineWriter;
         } catch (IOException e) {
