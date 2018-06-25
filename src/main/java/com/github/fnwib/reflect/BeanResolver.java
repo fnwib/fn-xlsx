@@ -58,8 +58,10 @@ public enum BeanResolver {
                 if (property.getJavaType().getRawClass() != String.class) {
                     writeMethod.invoke(newInstance, value);
                 } else {
-                    String newValue = ValueUtil.getStringValue(((String) value), valueHandlers);
-                    writeMethod.invoke(newInstance, newValue);
+                    Optional<String> newValue = ValueUtil.getStringValue(((String) value), valueHandlers);
+                    if (newValue.isPresent()) {
+                        writeMethod.invoke(newInstance, newValue.get());
+                    }
                 }
             }
             return newInstance;

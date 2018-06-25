@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class LocalDateCellDeserializer implements CellDeserializer<LocalDate> {
@@ -39,7 +40,11 @@ public class LocalDateCellDeserializer implements CellDeserializer<LocalDate> {
                 Instant instant = date.toInstant();
                 return instant.atZone(ZoneId.systemDefault()).toLocalDate();
             case STRING:
-                String value = ValueUtil.getCellValue(cell);
+                Optional<String> optional = ValueUtil.getCellValue(cell);
+                if (!optional.isPresent()) {
+                    return null;
+                }
+                String value = optional.get();
                 try {
                     if (dateTimeFormatter == null) {
                         DateTimeFormatter formatter = getDateTimeFormatter(value);

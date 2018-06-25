@@ -89,8 +89,7 @@ public class BeanConverter implements PropertyConverter {
             case NUMERIC:
                 return Optional.of(cell.getStringCellValue());
             case STRING:
-                String cellValue = ValueUtil.getCellValue(cell, valueHandlers);
-                return Optional.of(cellValue);
+                return ValueUtil.getCellValue(cell, valueHandlers);
             case ERROR:
             case BOOLEAN:
             case FORMULA:

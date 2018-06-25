@@ -10,27 +10,27 @@ import java.util.Optional;
 
 public class ValueUtil {
 
-    public static String getCellValue(Cell cell) {
+    public static Optional<String> getCellValue(Cell cell) {
         return getCellValue(cell, Collections.emptyList());
     }
 
-    public static String getCellValue(Cell cell, Collection<ValueHandler> valueHandlers) {
+    public static Optional<String> getCellValue(Cell cell, Collection<ValueHandler> valueHandlers) {
         if (cell == null) {
-            return "";
+            return Optional.empty();
         }
         final String value = cell.getStringCellValue();
         return getStringValue(value, valueHandlers);
     }
 
-    public static String getStringValue(final String value, Collection<ValueHandler> valueHandlers) {
+    public static Optional<String> getStringValue(final String value, Collection<ValueHandler> valueHandlers) {
         if (StringUtils.isBlank(value)) {
-            return "";
+            return Optional.empty();
         }
         String temp = value;
         for (ValueHandler valueHandler : valueHandlers) {
             temp = valueHandler.convert(temp);
         }
-        return temp;
+        return Optional.ofNullable(temp);
     }
 
     public static Optional<String> substringBetweenIgnoreCase(final String text, final String prefix, final String suffix) {

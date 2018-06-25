@@ -92,9 +92,11 @@ public class TitleResolver {
     private List<CellTitle> getCellTitles(Row row) {
         List<CellTitle> titles = new ArrayList<>(row.getLastCellNum());
         for (Cell cell : row) {
-            String value = ValueUtil.getCellValue(cell, titleValueHandlers);
-            CellTitle title = new CellTitle(row.getRowNum(), cell.getColumnIndex(), value);
-            titles.add(title);
+            Optional<String> value = ValueUtil.getCellValue(cell, titleValueHandlers);
+            if (value.isPresent()) {
+                CellTitle title = new CellTitle(row.getRowNum(), cell.getColumnIndex(), value.get());
+                titles.add(title);
+            }
         }
         return titles;
     }
