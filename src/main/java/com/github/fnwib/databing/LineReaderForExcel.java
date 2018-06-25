@@ -80,8 +80,10 @@ public class LineReaderForExcel<T> implements LineReader<T> {
         Map<String, Object> result = Maps.newHashMapWithExpectedSize(converters.size());
         for (PropertyConverter converter : converters) {
             String mapKey = converter.getKey();
-            Object mapValue = converter.getValue(row);
-            result.put(mapKey, mapValue);
+            Optional<?> mapValue = converter.getValue(row);
+            if (mapValue.isPresent()) {
+                result.put(mapKey, mapValue.get());
+            }
         }
         return result;
     }
