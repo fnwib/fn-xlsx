@@ -14,7 +14,7 @@ mvn clean install
   <dependency>
     <groupId>com.github.fnwib</groupId>
     <artifactId>fn-xlsx</artifactId>
-    <version>1.1.10</version>
+    <version>1.1.11</version>
   </dependency>
 </dependencies> 
 ```
