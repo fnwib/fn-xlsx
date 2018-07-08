@@ -2,5 +2,14 @@ package com.github.fnwib.databing.convert;
 
 public interface PropertyConverter extends WriteConverter, ReadConverter {
 
-    boolean isMatched();
+	boolean isMatched();
+
+	/**
+	 * 绑定的列
+	 *
+	 * @return
+	 */
+	default int num() {
+		return 1;
+	}
 }

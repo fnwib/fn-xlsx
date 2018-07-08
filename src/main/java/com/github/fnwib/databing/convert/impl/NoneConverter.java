@@ -23,6 +23,11 @@ public class NoneConverter implements PropertyConverter {
     }
 
     @Override
+    public int num() {
+        return 0;
+    }
+
+    @Override
     public String getKey() {
         return property.getName();
     }

@@ -58,6 +58,10 @@ public class MapSequenceKeyConverter implements PropertyConverter {
         return titlesSize > 0;
     }
 
+    @Override
+    public int num() {
+        return converters.size();
+    }
 
     @Override
     public String getKey() {

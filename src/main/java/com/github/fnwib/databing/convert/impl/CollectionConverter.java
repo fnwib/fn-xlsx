@@ -46,6 +46,10 @@ public class CollectionConverter implements PropertyConverter {
         return titlesSize > 0;
     }
 
+    @Override
+    public int num() {
+        return emptyCellTexts.size();
+    }
 
     @Override
     public String getKey() {
