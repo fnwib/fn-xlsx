@@ -35,7 +35,7 @@ public class MapStringKeyConverter implements PropertyConverter {
         this.converters = Maps.newHashMapWithExpectedSize(titles.size());
         this.emptyCellTexts = Lists.newArrayListWithCapacity(titles.size());
         for (CellTitle title : titles) {
-            BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
+            BeanConverter converter = new BeanConverter(property, property.getContentType(), title.getCellNum(), valueHandlers);
             converters.put(title.getText(), converter);
             emptyCellTexts.add(new CellText(title.getCellNum(), ""));
         }

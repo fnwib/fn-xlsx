@@ -1,7 +1,6 @@
 package com.github.fnwib.databing.convert.impl;
 
 import com.github.fnwib.databing.convert.PropertyConverter;
-import com.github.fnwib.databing.title.CellTitle;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.reflect.Property;
@@ -17,83 +16,81 @@ import java.util.*;
 
 public class MapIntKeyConverter implements PropertyConverter {
 
-    private static final Logger log = LoggerFactory.getLogger(MapIntKeyConverter.class);
+	private static final Logger log = LoggerFactory.getLogger(MapIntKeyConverter.class);
 
-    private final Property                    property;
-    private final int                         titlesSize;
-    private final Map<Integer, BeanConverter> converters;
-    private final List<CellText>              emptyCellTexts;
+	private final Property property;
+	private final Map<Integer, BeanConverter> converters;
+	private final List<CellText> emptyCellTexts;
 
-    public MapIntKeyConverter(Property property,
-                              List<CellTitle> titles,
-                              Collection<ValueHandler> valueHandlers) {
-        this.property = property;
-        this.titlesSize = titles.size();
-        this.converters = Maps.newHashMapWithExpectedSize(titles.size());
-        this.emptyCellTexts = Lists.newArrayListWithCapacity(titles.size());
-        for (CellTitle title : titles) {
-            BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
-            converters.put(title.getCellNum(), converter);
-            emptyCellTexts.add(new CellText(title.getCellNum(), ""));
-        }
-    }
+	public MapIntKeyConverter(Property property,
+							  List<Integer> bindColumns,
+							  Collection<ValueHandler> valueHandlers) {
+		this.property = property;
+		this.converters = Maps.newHashMapWithExpectedSize(bindColumns.size());
+		this.emptyCellTexts = Lists.newArrayListWithCapacity(bindColumns.size());
+		for (Integer column : bindColumns) {
+			BeanConverter converter = new BeanConverter(property, property.getContentType(), column, valueHandlers);
+			converters.put(column, converter);
+			emptyCellTexts.add(new CellText(column, ""));
+		}
+	}
 
-    @Override
-    public boolean isMatched() {
-        return titlesSize > 0;
-    }
+	@Override
+	public boolean isMatched() {
+		return converters.size() > 0;
+	}
 
-    @Override
-    public int num() {
-        return converters.size();
-    }
+	@Override
+	public int num() {
+		return converters.size();
+	}
 
-    @Override
-    public String getKey() {
-        return property.getName();
-    }
+	@Override
+	public String getKey() {
+		return property.getName();
+	}
 
-    @Override
-    public Optional<Map<Integer, String>> getValue(Row row) {
-        if (!isMatched()) {
-            return Optional.of(Collections.emptyMap());
-        }
-        Map<Integer, String> map = Maps.newHashMapWithExpectedSize(converters.size());
-        converters.forEach((cellNum, converter) -> {
-            if (converter.isMatched()) {
-                converter.getValue(row).ifPresent(value -> map.put(cellNum, value));
-            }
-        });
-        return Optional.of(map);
-    }
+	@Override
+	public Optional<Map<Integer, String>> getValue(Row row) {
+		if (!isMatched()) {
+			return Optional.of(Collections.emptyMap());
+		}
+		Map<Integer, String> map = Maps.newHashMapWithExpectedSize(converters.size());
+		converters.forEach((cellNum, converter) -> {
+			if (converter.isMatched()) {
+				converter.getValue(row).ifPresent(value -> map.put(cellNum, value));
+			}
+		});
+		return Optional.of(map);
+	}
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> List<CellText> getCellText(T element) {
-        if (!isMatched()) {
-            return Collections.emptyList();
-        }
-        try {
-            Object value = property.getReadMethod().invoke(element);
-            if (value == null) {
-                return emptyCellTexts;
-            }
-            Map<Integer, Object> objects = (Map<Integer, Object>) value;
-            if (titlesSize < objects.size()) {
-                log.error("-->property name is {} , matched tile size is [{}] , value is [{}]",
-                        property.getName(), titlesSize, element);
-                throw new SettingException("参数长度大于可写入数据长度");
-            }
-            List<CellText> list = Lists.newArrayListWithCapacity(titlesSize);
-            objects.forEach((cellNum, obj) -> {
-                Optional<CellText> optional = converters.get(cellNum).getSingleCellText(obj);
-                optional.ifPresent(cellText -> list.add(cellText));
-            });
-            return list;
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            log.error("invoke error ", e);
-            return emptyCellTexts;
-        }
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> List<CellText> getCellText(T element) {
+		if (!isMatched()) {
+			return Collections.emptyList();
+		}
+		try {
+			Object value = property.getReadMethod().invoke(element);
+			if (value == null) {
+				return emptyCellTexts;
+			}
+			Map<Integer, Object> objects = (Map<Integer, Object>) value;
+			if (converters.size() < objects.size()) {
+				log.error("-->property name is {} , matched tile size is [{}] , value is [{}]",
+						property.getName(), converters.size(), element);
+				throw new SettingException("参数长度大于可写入数据长度");
+			}
+			List<CellText> list = Lists.newArrayListWithCapacity(converters.size());
+			objects.forEach((cellNum, obj) -> {
+				Optional<CellText> optional = converters.get(cellNum).getSingleCellText(obj);
+				optional.ifPresent(cellText -> list.add(cellText));
+			});
+			return list;
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			log.error("invoke error ", e);
+			return emptyCellTexts;
+		}
+	}
 
 }

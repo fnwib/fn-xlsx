@@ -37,7 +37,7 @@ public class MapSequenceKeyConverter implements PropertyConverter {
         this.converters = Maps.newHashMapWithExpectedSize(titles.size());
         this.emptyCellTexts = Lists.newArrayListWithCapacity(titles.size());
         for (CellTitle title : titles) {
-            BeanConverter converter = new BeanConverter(property, property.getContentType(), title, valueHandlers);
+            BeanConverter converter = new BeanConverter(property, property.getContentType(), title.getCellNum(), valueHandlers);
             converters.put(title.getSequence(), converter);
             emptyCellTexts.add(new CellText(title.getCellNum(), ""));
         }
@@ -74,9 +74,9 @@ public class MapSequenceKeyConverter implements PropertyConverter {
             return Optional.of(Collections.emptyMap());
         }
         Map<Sequence, String> map = Maps.newHashMapWithExpectedSize(converters.size());
-        converters.forEach((cellTitle, converter) -> {
+        converters.forEach((sequence, converter) -> {
             if (converter.isMatched()) {
-                converter.getValue(row).ifPresent(value -> map.put(cellTitle, value));
+                converter.getValue(row).ifPresent(value -> map.put(sequence, value));
             }
         });
         return Optional.of(map);
