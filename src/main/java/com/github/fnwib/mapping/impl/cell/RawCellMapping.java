@@ -10,20 +10,9 @@ import java.util.Optional;
 
 public class RawCellMapping implements CellMapping {
 
-	private Integer column;
-
-	public RawCellMapping(Integer column) {
-		this.column = column;
-	}
-
 	@Override
-	public Integer getColumn() {
-		return column;
-	}
-
-	@Override
-	public Optional<Cell> getValue(Row row) {
-		return Optional.of(row.getCell(column));
+	public Optional<Cell> getValue(int indexColumn, Row row) {
+		return Optional.of(row.getCell(indexColumn));
 	}
 
 	/**
@@ -33,7 +22,7 @@ public class RawCellMapping implements CellMapping {
 	 * @param row
 	 */
 	@Override
-	public void setValueToRow(Object value, Row row) {
+	public void setValueToRow(Object value, int indexColumn, Row row) {
 		throw new NotSupportedException();
 	}
 }

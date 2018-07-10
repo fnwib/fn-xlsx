@@ -16,19 +16,18 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Optional;
 
-public class SimpleMapping extends CellStringMapping {
+public class SimpleMapping extends AbstractCellStringMapping {
 
 	private final CellDeserializer<?> deserializer;
 
 
-	public SimpleMapping(JavaType contentType, Integer bindColumn) {
-		super(bindColumn);
+	public SimpleMapping(JavaType contentType) {
 		this.deserializer = Context.INSTANCE.findCellDeserializer(contentType);
 	}
 
 	@Override
-	public Optional<String> getValue(Row row) {
-		Cell cell = row.getCell(bindColumn);
+	public Optional<String> getValue(int indexColumn, Row row) {
+		Cell cell = row.getCell(indexColumn);
 		if (cell == null) {
 			return Optional.empty();
 		}

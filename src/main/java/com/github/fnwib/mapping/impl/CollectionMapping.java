@@ -2,54 +2,41 @@ package com.github.fnwib.mapping.impl;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapping.BindColumn;
+import com.github.fnwib.mapping.Mappings;
 import com.github.fnwib.mapping.impl.cell.*;
-import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class CollectionMapping implements BindMapping {
 
-	private List<CellStringMapping> cellMappings;
+	private AbstractCellStringMapping mapping;
+	private List<BindColumn> columns;
 
 	public CollectionMapping(JavaType contentType, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
-		List<CellStringMapping> bindMappings;
-		Class<?> rawClass = contentType.getRawClass();
-		if (String.class == rawClass) {
-			bindMappings = columns.stream().map(BindColumn::getIndex).map(c -> new StringMapping(c, valueHandlers)).collect(Collectors.toList());
-		} else if (Number.class.isAssignableFrom(rawClass)) {
-			bindMappings = columns.stream().map(BindColumn::getIndex).map(NumberMapping::new).collect(Collectors.toList());
-		} else {
-			bindMappings = columns.stream().map(BindColumn::getIndex).map(c -> new SimpleMapping(contentType, c)).collect(Collectors.toList());
-		}
-		this.cellMappings = bindMappings;
+		this.mapping = Mappings.createSimpleMapping(contentType,valueHandlers);
+		this.columns = columns;
 	}
 
 	@Override
-	public List<CellMapping> getCellMappings() {
-		List<CellMapping> cs = Lists.newArrayListWithCapacity(cellMappings.size());
-		for (CellStringMapping cellMapping : cellMappings) {
-			cs.add(cellMapping);
-		}
-		return cs;
+	public List<BindColumn> getColumns() {
+		return columns;
 	}
 
 	@Override
 	public Optional<Collection<String>> getValue(Row row) {
-		if (cellMappings.isEmpty()) {
+		if (columns.isEmpty()) {
 			return Optional.empty();
 		}
-		Collection<String> result = Lists.newArrayListWithCapacity(cellMappings.size());
-		for (CellStringMapping mapping : cellMappings) {
-			Optional<String> value = mapping.getValue(row);
+		Collection<String> result = Lists.newArrayListWithCapacity(columns.size());
+		for (BindColumn column : columns) {
+			Optional<String> value = mapping.getValue(column.getIndex(), row);
 			result.add(value.orElse(StringUtils.EMPTY));
 		}
 		return Optional.of(result);
@@ -57,8 +44,19 @@ public class CollectionMapping implements BindMapping {
 
 	@Override
 	public void setValueToRow(Object value, Row row) {
-		for (CellMapping cellMapping : cellMappings) {
-
+		if (value == null) {
+			return;
+		}
+		List<Object> objects = (List<Object>) value;
+		if (objects.size() > columns.size()) {
+			String format = String.format("当前集合数量'%s'大于允许写入数量'%s'", objects.size(), columns.size());
+			throw new ExcelException(format);
+		}
+		int i = 0;
+		for (Object object : objects) {
+			BindColumn column = columns.get(i);
+			mapping.setValueToRow(object, column.getIndex(), row);
+			i++;
 		}
 	}
 }

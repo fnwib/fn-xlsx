@@ -12,15 +12,11 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Optional;
 
-public class NumberMapping extends CellStringMapping {
-
-	public NumberMapping(Integer bindColumn) {
-		super(bindColumn);
-	}
+public class NumberMapping extends AbstractCellStringMapping {
 
 	@Override
-	public Optional<String> getValue(Row row) {
-		Cell cell = row.getCell(bindColumn);
+	public Optional<String> getValue(int indexColumn,Row row) {
+		Cell cell = row.getCell(indexColumn);
 		if (cell == null) {
 			return Optional.empty();
 		}

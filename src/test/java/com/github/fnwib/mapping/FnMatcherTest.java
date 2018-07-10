@@ -17,38 +17,38 @@ public class FnMatcherTest {
 	@Test
 	public void match() {
 		LocalConfig localConfig = Context.INSTANCE.getContextConfig();
-		BindParam param = BindParam.builder().prefix("aa(").title("a").build();
+		BindProperty param = BindProperty.builder().prefix("aa(").title("a").build();
 		FnMatcher fnMatcher = new FnMatcher(param, localConfig);
 		Map<Integer, String> row = Maps.newHashMap();
 		row.put(1, "aaa");
 		row.put(2, "aa(a");
-		List<Integer> match = fnMatcher.match(row);
+		List<BindColumn> match = fnMatcher.match(row);
 		Assert.assertEquals("", 1, match.size());
-		Assert.assertEquals("", Integer.valueOf(2), match.get(0));
+		Assert.assertEquals("", Integer.valueOf(2), match.get(0).getIndex());
 	}
 
 	@Test
 	public void match1() {
 		LocalConfig localConfig = Context.INSTANCE.getContextConfig();
-		BindParam param = BindParam.builder().prefix("aa").title("a").build();
+		BindProperty param = BindProperty.builder().prefix("aa").title("a").build();
 		FnMatcher fnMatcher = new FnMatcher(param, localConfig);
 		Map<Integer, String> row = Maps.newHashMap();
 		row.put(1, "aaa");
 		row.put(2, "aa(a");
-		List<Integer> match = fnMatcher.match(row);
+		List<BindColumn> match = fnMatcher.match(row);
 		Assert.assertEquals("", 1, match.size());
-		Assert.assertEquals("", Integer.valueOf(1), match.get(0));
+		Assert.assertEquals("", Integer.valueOf(1), match.get(0).getIndex());
 	}
 
 	@Test
 	public void match2() {
 		LocalConfig localConfig = Context.INSTANCE.getContextConfig();
-		BindParam param = BindParam.builder().prefix("aa ").title("a").build();
+		BindProperty param = BindProperty.builder().prefix("aa ").title("a").build();
 		FnMatcher fnMatcher = new FnMatcher(param, localConfig);
 		Map<Integer, String> row = Maps.newHashMap();
 		row.put(1, "aaa");
 		row.put(2, "aa(a");
-		List<Integer> match = fnMatcher.match(row);
+		List<BindColumn> match = fnMatcher.match(row);
 		Assert.assertEquals("", 0, match.size());
 	}
 }

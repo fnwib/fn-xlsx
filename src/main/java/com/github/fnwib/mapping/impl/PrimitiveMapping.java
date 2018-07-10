@@ -18,25 +18,32 @@ public class PrimitiveMapping implements BindMapping {
 
 
 	private CellMapping cellMapping;
+	private BindColumn column;
 
 	public PrimitiveMapping(JavaType javaType, BindColumn column, Collection<ValueHandler> valueHandlers) {
 		Class<?> rawClass = javaType.getRawClass();
 		if (String.class == rawClass) {
-			cellMapping = new StringMapping(column.getIndex(), valueHandlers);
+			cellMapping = new StringMapping(valueHandlers);
 		} else if (Number.class.isAssignableFrom(rawClass)) {
-			cellMapping = new NumberMapping(column.getIndex());
+			cellMapping = new NumberMapping();
 		} else {
-			cellMapping = new SimpleMapping(javaType, column.getIndex());
+			cellMapping = new SimpleMapping(javaType);
 		}
+		this.column = column;
 	}
 
 	@Override
-	public List<CellMapping> getCellMappings() {
-		return Lists.newArrayList(cellMapping);
+	public List<BindColumn> getColumns() {
+		return Lists.newArrayList(column);
 	}
 
 	@Override
 	public Optional<?> getValue(Row row) {
-		return cellMapping.getValue(row);
+		return cellMapping.getValue(column.getIndex(), row);
+	}
+
+	@Override
+	public void setValueToRow(Object value, Row row) {
+		cellMapping.setValueToRow(value, column.getIndex(), row);
 	}
 }

@@ -14,33 +14,27 @@ import java.util.*;
 
 public class CollectionCellMapping implements BindMapping {
 
-	private List<RawCellMapping> mappings;
+	private RawCellMapping mapping;
+	private List<BindColumn> columns;
 
 	public CollectionCellMapping(List<BindColumn> columns) {
-		List<RawCellMapping> mappings = Lists.newArrayListWithCapacity(columns.size());
-		for (BindColumn column : columns) {
-			mappings.add(new RawCellMapping(column.getIndex()));
-		}
-		this.mappings = mappings;
+		this.mapping = new RawCellMapping();
+		this.columns = columns;
 	}
 
 	@Override
-	public List<CellMapping> getCellMappings() {
-		List<CellMapping> cs = Lists.newArrayListWithCapacity(mappings.size());
-		for (RawCellMapping mapping : mappings) {
-			cs.add(mapping);
-		}
-		return cs;
+	public List<BindColumn> getColumns() {
+		return columns;
 	}
 
 	@Override
 	public Optional<List<Cell>> getValue(Row row) {
-		if (mappings.isEmpty()) {
+		if (columns.isEmpty()) {
 			return Optional.empty();
 		}
-		List<Cell> result = Lists.newArrayListWithCapacity(mappings.size());
-		for (RawCellMapping mapping : mappings) {
-			Optional<Cell> value = mapping.getValue(row);
+		List<Cell> result = Lists.newArrayListWithCapacity(columns.size());
+		for (BindColumn column : columns) {
+			Optional<Cell> value = mapping.getValue(column.getIndex(), row);
 			value.ifPresent(v -> result.add(v));
 		}
 		return Optional.of(result);

@@ -13,18 +13,17 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.Collection;
 import java.util.Optional;
 
-public class StringMapping extends CellStringMapping {
+public class StringMapping extends AbstractCellStringMapping {
 
 	private final Collection<ValueHandler> valueHandlers;
 
-	public StringMapping(Integer bindColumn, Collection<ValueHandler> valueHandlers) {
-		super(bindColumn);
+	public StringMapping(Collection<ValueHandler> valueHandlers) {
 		this.valueHandlers = valueHandlers;
 	}
 
 	@Override
-	public Optional<String> getValue(Row row) {
-		Cell cell = row.getCell(bindColumn);
+	public Optional<String> getValue(int indexColumn, Row row) {
+		Cell cell = row.getCell(indexColumn);
 		if (cell == null) {
 			return Optional.empty();
 		}

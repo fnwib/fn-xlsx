@@ -9,7 +9,6 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapping.impl.*;
-import com.github.fnwib.mapping.impl.cell.CellMapping;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.google.common.collect.Lists;
@@ -70,9 +69,9 @@ public class RowMappingImpl implements RowMapping {
 			this.handlers.forEach((_type, properties) -> {
 				List<Integer> columns = properties.stream()
 						.map(BindProperty::getBindMapping)
-						.map(BindMapping::getCellMappings)
+						.map(BindMapping::getColumns)
 						.flatMap(List::stream)
-						.map(CellMapping::getColumn)
+						.map(BindColumn::getIndex)
 						.collect(Collectors.toList());
 				ignoreColumns.addAll(columns);
 			});
@@ -187,29 +186,22 @@ public class RowMappingImpl implements RowMapping {
 		bound.forEach((bindParam, columns) -> {
 			BindMapping mapping;
 			if (bindParam.getOperation() == Operation.LINE_NUM) {
-				mapping = new LineNumMapping();
+				mapping = new LineNumMapping(columns);
 			} else {
 				Collection<ValueHandler> valueHandlers = localConfig.getContentValueHandlers();
 				valueHandlers.addAll(bindParam.getValueHandlers());
 				JavaType type = bindParam.getType();
 				if (type.isMapLikeType()) {
-					mapping = new MapMapping(type.getKeyType(), type.getContentType(), columns, valueHandlers);
+					mapping = Mappings.createMapMapping(type, columns, valueHandlers);
 				} else if (type.isCollectionLikeType()) {
-					if (Cell.class.isAssignableFrom(type.getContentType().getRawClass())) {
-						mapping = new CollectionCellMapping(columns);
-					} else {
-						mapping = new CollectionMapping(type.getContentType(), columns, valueHandlers);
-					}
+					mapping = Mappings.createCollectionMapping(type, columns, valueHandlers);
 				} else {
-					if (columns.isEmpty()) {
-						return;
-					} else if (columns.size() == 1) {
-						mapping = new PrimitiveMapping(type, columns.get(0), valueHandlers);
-					} else {
+					Optional<PrimitiveMapping> primitiveMapping = Mappings.cratePrimitiveMapping(type, columns, valueHandlers);
+					mapping = primitiveMapping.orElseThrow(() -> {
 						log.error("-> property is [{}] ,type is [{}] , 匹配到多列 index {}", bindParam.getName(), type, columns);
 						String format = String.format("property is %s ,type is %s , 匹配到多列", bindParam.getName(), type);
 						throw new SettingException(format);
-					}
+					});
 				}
 			}
 			bindParam.setBindMapping(mapping);

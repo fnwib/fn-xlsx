@@ -6,10 +6,8 @@ import java.util.Optional;
 
 public interface CellMapping {
 
-	Integer getColumn();
+	Optional<?> getValue(int indexColumn, Row row);
 
-	Optional<?> getValue(Row row);
-
-	void setValueToRow(Object value, Row row);
+	void setValueToRow(Object value, int indexColumn, Row row);
 
 }
