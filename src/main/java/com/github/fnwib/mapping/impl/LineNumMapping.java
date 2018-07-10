@@ -21,4 +21,9 @@ public class LineNumMapping implements BindMapping {
 		return Optional.of(s + StringUtils.EMPTY);
 	}
 
+	@Override
+	public void setValueToRow(Object value, Row row) {
+		
+	}
+
 }

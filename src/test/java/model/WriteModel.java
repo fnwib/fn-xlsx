@@ -3,131 +3,141 @@ package model;
 
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
+import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public class WriteModel extends BaseModel{
-    @AutoMapping("序号")
-    private Integer      sequence;
-    @AutoMapping("字符串")
-    private String       string;
-    @AutoMapping("数字Int")
-    private Integer      intNum;
-    @AutoMapping("数字Long")
-    private Long         longNum;
-    @AutoMapping("日期")
-    private LocalDate    localDate;
-    @AutoMapping(value = "MAP \\d+")
-    private List<String> listNumber;
-    @CellType(title = "MAP [A-Z]")
-    private List<String> listString;
+public class WriteModel {
+	@CellType(operation = Operation.LINE_NUM)
+	private Integer lineNum;
+	@AutoMapping("序号")
+	private Integer sequence;
+	@AutoMapping("字符串")
+	private String string;
+	@AutoMapping("数字Int")
+	private Integer intNum;
+	@AutoMapping("数字Long")
+	private Long longNum;
+	@AutoMapping("日期")
+	private LocalDate localDate;
+	@AutoMapping(value = "MAP \\d+")
+	private List<String> listNumber;
+	@CellType(title = "MAP [A-Z]")
+	private List<String> listString;
 
-    @AutoMapping("MAP [A-Z] null")
-    @CellType(title = "MAP [A-Z] null")
-    private Map<Integer, String> mapNull;
+	@AutoMapping("MAP [A-Z] null")
+	@CellType(title = "MAP [A-Z] null")
+	private Map<Integer, String> mapNull;
 
-    @AutoMapping("Excel no match")
-    @CellType(title = "Excel no match")
-    private Map<Integer, String> noMatchMap;
+	@AutoMapping("Excel no match")
+	@CellType(title = "Excel no match")
+	private Map<Integer, String> noMatchMap;
 
-    @AutoMapping("AAA")
-    @ReadValueHandler({ToUpperHandler.class,RecordHandler.class})
-    private String aaa;
+	@AutoMapping("AAA")
+	@ReadValueHandler({ToUpperHandler.class, RecordHandler.class})
+	private String aaa;
 
-    @AutoMapping("enumType")
-    private EnumType enumType;
+	@AutoMapping("enumType")
+	private EnumType enumType;
 
-    public Integer getSequence() {
-        return sequence;
-    }
+	public Integer getLineNum() {
+		return lineNum;
+	}
 
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
-    }
+	public void setLineNum(Integer lineNum) {
+		this.lineNum = lineNum;
+	}
 
-    public String getString() {
-        return string;
-    }
+	public Integer getSequence() {
+		return sequence;
+	}
 
-    public void setString(String string) {
-        this.string = string;
-    }
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 
-    public Integer getIntNum() {
-        return intNum;
-    }
+	public String getString() {
+		return string;
+	}
 
-    public void setIntNum(Integer intNum) {
-        this.intNum = intNum;
-    }
+	public void setString(String string) {
+		this.string = string;
+	}
 
-    public Long getLongNum() {
-        return longNum;
-    }
+	public Integer getIntNum() {
+		return intNum;
+	}
 
-    public void setLongNum(Long longNum) {
-        this.longNum = longNum;
-    }
+	public void setIntNum(Integer intNum) {
+		this.intNum = intNum;
+	}
 
-    public LocalDate getLocalDate() {
-        return localDate;
-    }
+	public Long getLongNum() {
+		return longNum;
+	}
 
-    public void setLocalDate(LocalDate localDate) {
-        this.localDate = localDate;
-    }
+	public void setLongNum(Long longNum) {
+		this.longNum = longNum;
+	}
 
-    public List<String> getListNumber() {
-        return listNumber;
-    }
+	public LocalDate getLocalDate() {
+		return localDate;
+	}
 
-    public void setListNumber(List<String> listNumber) {
-        this.listNumber = listNumber;
-    }
+	public void setLocalDate(LocalDate localDate) {
+		this.localDate = localDate;
+	}
 
-    public List<String> getListString() {
-        return listString;
-    }
+	public List<String> getListNumber() {
+		return listNumber;
+	}
 
-    public void setListString(List<String> listString) {
-        this.listString = listString;
-    }
+	public void setListNumber(List<String> listNumber) {
+		this.listNumber = listNumber;
+	}
 
-    public Map<Integer, String> getMapNull() {
-        return mapNull;
-    }
+	public List<String> getListString() {
+		return listString;
+	}
 
-    public void setMapNull(Map<Integer, String> mapNull) {
-        this.mapNull = mapNull;
-    }
+	public void setListString(List<String> listString) {
+		this.listString = listString;
+	}
 
-    public Map<Integer, String> getNoMatchMap() {
-        return noMatchMap;
-    }
+	public Map<Integer, String> getMapNull() {
+		return mapNull;
+	}
 
-    public void setNoMatchMap(Map<Integer, String> noMatchMap) {
-        this.noMatchMap = noMatchMap;
-    }
+	public void setMapNull(Map<Integer, String> mapNull) {
+		this.mapNull = mapNull;
+	}
 
-    public String getAaa() {
-        return aaa;
-    }
+	public Map<Integer, String> getNoMatchMap() {
+		return noMatchMap;
+	}
 
-    public void setAaa(String aaa) {
-        this.aaa = aaa;
-    }
+	public void setNoMatchMap(Map<Integer, String> noMatchMap) {
+		this.noMatchMap = noMatchMap;
+	}
 
-    public EnumType getEnumType() {
-        return enumType;
-    }
+	public String getAaa() {
+		return aaa;
+	}
 
-    public void setEnumType(EnumType enumType) {
-        this.enumType = enumType;
-    }
+	public void setAaa(String aaa) {
+		this.aaa = aaa;
+	}
 
+	public EnumType getEnumType() {
+		return enumType;
+	}
+
+	public void setEnumType(EnumType enumType) {
+		this.enumType = enumType;
+	}
 
 
 }

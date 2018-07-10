@@ -5,6 +5,7 @@ import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapping.impl.*;
@@ -13,16 +14,18 @@ import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class RowMappingImpl implements RowMapping {
 
@@ -30,8 +33,8 @@ public class RowMappingImpl implements RowMapping {
 
 	private final LocalConfig localConfig;
 
-	private Map<BindParam, BindMapping> handlers;
-	private int count;
+	private Map<Class<?>, List<BindProperty>> handlers;
+	private LongAdder count;
 
 	public RowMappingImpl() {
 		this(Context.INSTANCE.getContextConfig());
@@ -39,6 +42,8 @@ public class RowMappingImpl implements RowMapping {
 
 	public RowMappingImpl(LocalConfig localConfig) {
 		this.localConfig = localConfig;
+		this.count = new LongAdder();
+		this.handlers = Maps.newHashMap();
 	}
 
 	@Override
@@ -55,105 +60,168 @@ public class RowMappingImpl implements RowMapping {
 	}
 
 	@Override
-	public <T> boolean match(Class<T> bindClass, Row row) {
-		Collection<BindParam> bindParams = Lists.newArrayList();
-		List<Property> properties = BeanResolver.INSTANCE.getProperties(bindClass);
-		for (Property property : properties) {
-			property.toBindParam().ifPresent(p -> bindParams.add(p));
+	public <T> boolean match(Row fromValue, Class<T> type, boolean ignore) {
+		List<BindProperty> repeat = this.handlers.getOrDefault(type, Collections.emptyList());
+		if (!repeat.isEmpty()) {
+			this.handlers.remove(type);
 		}
-		Map<BindParam, List<Integer>> match = bind(bindParams, row);
+		Set<Integer> ignoreColumns = Sets.newHashSet();
+		if (ignore) {
+			this.handlers.forEach((_type, properties) -> {
+				List<Integer> columns = properties.stream()
+						.map(BindProperty::getBindMapping)
+						.map(BindMapping::getCellMappings)
+						.flatMap(List::stream)
+						.map(CellMapping::getColumn)
+						.collect(Collectors.toList());
+				ignoreColumns.addAll(columns);
+			});
+		}
+		List<BindProperty> bindProperties = BeanResolver.INSTANCE.getProperties(type)
+				.stream()
+				.map(Property::toBindParam)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(Collectors.toList());
+
+		Map<BindProperty, List<BindColumn>> match = bind(bindProperties, fromValue, ignoreColumns);
 		LongAdder count = new LongAdder();
 		match.forEach((_ignore, columns) -> count.add(columns.size()));
 		if (count.intValue() > 0) {
-			this.count = count.intValue();
-			this.handlers = resolve(match);
+			this.count.add(count.intValue());
+			List<BindProperty> properties = resolve(match);
+			this.handlers.put(type, properties);
 			return true;
 		}
 		return false;
 	}
 
-
 	@Override
-	public <T> Optional<T> convert(Class<T> bindClass, Row row) {
-		if (isEmpty(row)) {
+	public <T> Optional<T> readValue(Row fromValue, Class<T> type) {
+		if (isEmpty(fromValue)) {
 			return Optional.empty();
 		}
-		Map<String, Object> formValue = Maps.newHashMapWithExpectedSize(count);
-		handlers.forEach((bindParam, mapping) -> {
-			Optional<?> value = mapping.getValue(row);
-			value.ifPresent(v -> formValue.put(bindParam.getName(), v));
-		});
-		T t = Json.Mapper.convertValue(formValue, bindClass);
+		List<BindProperty> cellHandlers = Lists.newArrayList();
+		Map<String, Object> formValue = Maps.newHashMapWithExpectedSize(count.intValue());
+		List<BindProperty> handlers = this.handlers.getOrDefault(type, Collections.emptyList());
+		for (BindProperty property : handlers) {
+			if (!property.isRegion(type)) {
+				continue;
+			}
+			String name = property.getName();
+			BindMapping mapping = property.getBindMapping();
+			if (CollectionCellMapping.class == mapping.getClass()) {
+				cellHandlers.add(property);
+			} else {
+				Optional<?> value = mapping.getValue(fromValue);
+				value.ifPresent(v -> formValue.put(name, v));
+			}
+		}
+		if (formValue.isEmpty() && cellHandlers.isEmpty()) {
+			return Optional.empty();
+		}
+		T t = Json.Mapper.convertValue(formValue, type);
+		setValue(cellHandlers, fromValue, t);
 		return Optional.of(t);
 	}
 
-	private Map<BindParam, BindMapping> resolve(Map<BindParam, List<Integer>> bound) {
-		if (bound.isEmpty()) {
+	private <T> void setValue(List<BindProperty> properties, Row row, T toValue) {
+		try {
+			for (BindProperty property : properties) {
+				BindMapping bindMapping = property.getBindMapping();
+				CollectionCellMapping mapping = (CollectionCellMapping) bindMapping;
+				Optional<List<Cell>> value = mapping.getValue(row);
+				if (value.isPresent()) {
+					Method writeMethod = property.getWriteMethod();
+					writeMethod.invoke(toValue, value.get());
+				}
+			}
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			log.error("{} set value error {}", toValue.getClass(), e);
+			throw new ExcelException(e);
+		}
+	}
+
+
+	@Override
+	public <T> boolean writeValue(T fromValue, Row toValue) {
+		List<BindProperty> properties = this.handlers.getOrDefault(fromValue, Collections.emptyList());
+		try {
+			for (BindProperty property : properties) {
+				Method readMethod = property.getReadMethod();
+				Object value = readMethod.invoke(fromValue);
+				BindMapping bindMapping = property.getBindMapping();
+				bindMapping.setValueToRow(value, toValue);
+			}
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			log.error("write value error {}", e);
+			throw new ExcelException(e);
+		}
+		return false;
+	}
+
+	/**
+	 * 规则与title通过匹配进行绑定
+	 *
+	 * @param bindParams 规则
+	 * @param row        poi Row
+	 */
+	private Map<BindProperty, List<BindColumn>> bind(Collection<BindProperty> bindParams, Row row, Set<Integer> ignoreColumns) {
+		if (isEmpty(row)) {
 			return Collections.emptyMap();
 		}
-		Map<BindParam, BindMapping> result = Maps.newHashMapWithExpectedSize(bound.size());
+		Map<BindProperty, List<BindColumn>> map = Maps.newHashMapWithExpectedSize(bindParams.size());
+		for (BindProperty bindParam : bindParams) {
+			FnMatcher fnMatcher = new FnMatcher(bindParam, localConfig);
+			List<BindColumn> columns = fnMatcher.match(row, ignoreColumns);
+			map.put(bindParam, columns);
+		}
+		return map;
+	}
+
+	private List<BindProperty> resolve(Map<BindProperty, List<BindColumn>> bound) {
+		if (bound.isEmpty()) {
+			return Collections.emptyList();
+		}
+		List<BindProperty> result = Lists.newArrayListWithCapacity(bound.size());
 		bound.forEach((bindParam, columns) -> {
 			BindMapping mapping;
 			if (bindParam.getOperation() == Operation.LINE_NUM) {
 				mapping = new LineNumMapping();
 			} else {
 				Collection<ValueHandler> valueHandlers = localConfig.getContentValueHandlers();
-				bindParam.getValueHandlers().forEach(valueHandler -> valueHandlers.add(valueHandler));
+				valueHandlers.addAll(bindParam.getValueHandlers());
 				JavaType type = bindParam.getType();
 				if (type.isMapLikeType()) {
-					mapping = new MapIndexKeyMapping(type.getKeyType(), type.getContentType(), columns, valueHandlers);
+					mapping = new MapMapping(type.getKeyType(), type.getContentType(), columns, valueHandlers);
 				} else if (type.isCollectionLikeType()) {
-					mapping = new CollectionMapping(type.getContentType(), columns, valueHandlers);
+					if (Cell.class.isAssignableFrom(type.getContentType().getRawClass())) {
+						mapping = new CollectionCellMapping(columns);
+					} else {
+						mapping = new CollectionMapping(type.getContentType(), columns, valueHandlers);
+					}
 				} else {
 					if (columns.isEmpty()) {
 						return;
 					} else if (columns.size() == 1) {
 						mapping = new PrimitiveMapping(type, columns.get(0), valueHandlers);
 					} else {
-						log.error("-> property is [{}] ,type is [{}]", bindParam.getName(), type);
-						String format = String.format("property is %s ,type is %s , 匹配到多列 index {}", bindParam.getName(), type, columns);
+						log.error("-> property is [{}] ,type is [{}] , 匹配到多列 index {}", bindParam.getName(), type, columns);
+						String format = String.format("property is %s ,type is %s , 匹配到多列", bindParam.getName(), type);
 						throw new SettingException(format);
 					}
 				}
 			}
-			result.put(bindParam, mapping);
+			bindParam.setBindMapping(mapping);
+			result.add(bindParam);
 		});
 		return result;
 	}
 
-	private Map<BindParam, List<Integer>> bind(Collection<BindParam> bindParams, Row row) {
-		if (isEmpty(row)) {
-			return Collections.emptyMap();
-		}
-		Map<BindParam, List<Integer>> map = Maps.newHashMapWithExpectedSize(bindParams.size());
-		for (BindParam bindParam : bindParams) {
-			FnMatcher fnMatcher = new FnMatcher(bindParam, localConfig);
-			List<Integer> columns = fnMatcher.match(row);
-			map.put(bindParam, columns);
-		}
-		return map;
-	}
-
-	/**
-	 * 当前row是否与规则匹配
-	 *
-	 * @param row
-	 * @return
-	 */
 	@Override
-	public Map<BindParam, List<CellMapping>> match(Collection<BindParam> bindParams, Row row) {
-		if (isEmpty(row)) {
-			return Collections.emptyMap();
+	public void close() {
+		if (handlers != null) {
+			handlers.clear();
 		}
-		Map<BindParam, List<Integer>> bind = bind(bindParams, row);
-		Map<BindParam, BindMapping> resolve = resolve(bind);
-		if (bind.isEmpty()) {
-			return Collections.emptyMap();
-		}
-		Map<BindParam, List<CellMapping>> result = Maps.newHashMapWithExpectedSize(bind.size());
-		resolve.forEach((bindParam, mapping) -> result.put(bindParam, mapping.getCellMappings()));
-		return result;
 	}
-
-
 }

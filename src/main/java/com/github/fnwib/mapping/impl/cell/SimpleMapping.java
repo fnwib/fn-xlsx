@@ -11,28 +11,19 @@ import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.CellText;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Optional;
 
-public class SimpleMapping implements CellMapping {
+public class SimpleMapping extends CellStringMapping {
 
 	private final CellDeserializer<?> deserializer;
-	private final Serializer serializer;
-	private final Integer bindColumn;
-	private final CellText EMPTY;
 
 
 	public SimpleMapping(JavaType contentType, Integer bindColumn) {
-		this.bindColumn = bindColumn;
+		super(bindColumn);
 		this.deserializer = Context.INSTANCE.findCellDeserializer(contentType);
-		this.serializer = Context.INSTANCE.findSerializer(contentType);
-		this.EMPTY = new CellText(bindColumn, StringUtils.EMPTY);
-	}
-
-	@Override
-	public Integer getColumn() {
-		return bindColumn;
 	}
 
 	@Override
@@ -70,14 +61,5 @@ public class SimpleMapping implements CellMapping {
 				throw new NotSupportedException(" [" + cell.getStringCellValue() + "] unknown type");
 		}
 
-	}
-
-	@Override
-	public Optional<CellText> createCellText(Object value) {
-		if (value == null) {
-			return Optional.of(EMPTY);
-		}
-		CellText cellText = new CellText(bindColumn, value.toString());
-		return Optional.of(cellText);
 	}
 }

@@ -23,4 +23,10 @@ public interface BindMapping {
 	 */
 	Optional<?> getValue(Row row);
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	void setValueToRow(Object value, Row row);
+
 }

@@ -7,24 +7,15 @@ import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.CellText;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Optional;
 
-public class NumberMapping implements CellMapping {
-
-	private final Integer bindColumn;
-	private final CellText EMPTY;
-
+public class NumberMapping extends CellStringMapping {
 
 	public NumberMapping(Integer bindColumn) {
-		this.bindColumn = bindColumn;
-		this.EMPTY = new CellText(bindColumn, StringUtils.EMPTY);
-	}
-
-	@Override
-	public Integer getColumn() {
-		return bindColumn;
+		super(bindColumn);
 	}
 
 	@Override
@@ -56,12 +47,5 @@ public class NumberMapping implements CellMapping {
 
 	}
 
-	@Override
-	public Optional<CellText> createCellText(Object value) {
-		if (value == null) {
-			return Optional.of(EMPTY);
-		}
-		CellText cellText = new CellText(bindColumn, value.toString());
-		return Optional.of(cellText);
-	}
+
 }

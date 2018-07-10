@@ -24,29 +24,32 @@ public class FnMatcher {
 	private final String exclude;
 	private final Collection<ValueHandler> valueHandlers;
 
-	public FnMatcher(BindParam bindParam, LocalConfig localConfig) {
-		this.titlePattern = Pattern.compile(bindParam.getTitle(), Pattern.CASE_INSENSITIVE);
-		this.prefix = bindParam.getPrefix();
-		this.sequence = bindParam.getTitle();
-		this.suffix = bindParam.getSuffix();
-		this.exclude = bindParam.getExclude();
+	public FnMatcher(BindProperty bindProperty, LocalConfig localConfig) {
+		this.titlePattern = Pattern.compile(bindProperty.getTitle(), Pattern.CASE_INSENSITIVE);
+		this.prefix = bindProperty.getPrefix();
+		this.sequence = bindProperty.getTitle();
+		this.suffix = bindProperty.getSuffix();
+		this.exclude = bindProperty.getExclude();
 		this.valueHandlers = localConfig.getTitleValueHandlers();
 	}
 
-	public List<Integer> match(Row row) {
+	public List<BindColumn> match(Row row, Set<Integer> ignoreColumns) {
 		Map<Integer, String> cells = Maps.newHashMapWithExpectedSize(row.getLastCellNum() + 1);
 		for (Cell cell : row) {
+			if (ignoreColumns.contains(cell.getColumnIndex())) {
+				continue;
+			}
 			Optional<String> cellValue = ValueUtil.getCellValue(cell, valueHandlers);
 			cellValue.ifPresent(v -> cells.put(cell.getColumnIndex(), v));
 		}
 		return match(cells);
 	}
 
-	public List<Integer> match(Map<Integer, String> row) {
+	public List<BindColumn> match(Map<Integer, String> row) {
 		if (StringUtils.isBlank(prefix) && StringUtils.isBlank(sequence) && StringUtils.isBlank(suffix)) {
 			return Collections.emptyList();
 		}
-		List<Integer> bindColumns = new ArrayList<>();
+		List<BindColumn> bindColumns = new ArrayList<>();
 		row.forEach((columnIndex, value) -> {
 			Optional<String> root = ValueUtil.substringBetweenIgnoreCase(value, prefix, suffix);
 			if (!root.isPresent()) {
@@ -58,7 +61,7 @@ public class FnMatcher {
 				if (StringUtils.isNotBlank(exclude) && Pattern.matches(exclude, root.get().trim())) {
 					return;
 				}
-				bindColumns.add(columnIndex);
+				bindColumns.add(new BindColumn(columnIndex, value, mid));
 			}
 		});
 		return bindColumns;

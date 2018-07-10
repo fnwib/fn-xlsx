@@ -13,22 +13,13 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.Collection;
 import java.util.Optional;
 
-public class StringMapping implements CellMapping {
+public class StringMapping extends CellStringMapping {
 
 	private final Collection<ValueHandler> valueHandlers;
-	private final Integer bindColumn;
-	private final CellText EMPTY;
-
 
 	public StringMapping(Integer bindColumn, Collection<ValueHandler> valueHandlers) {
+		super(bindColumn);
 		this.valueHandlers = valueHandlers;
-		this.bindColumn = bindColumn;
-		this.EMPTY = new CellText(bindColumn, StringUtils.EMPTY);
-	}
-
-	@Override
-	public Integer getColumn() {
-		return bindColumn;
 	}
 
 	@Override
@@ -59,12 +50,4 @@ public class StringMapping implements CellMapping {
 
 	}
 
-	@Override
-	public Optional<CellText> createCellText(Object value) {
-		if (value == null) {
-			return Optional.of(EMPTY);
-		}
-		CellText cellText = new CellText(bindColumn, value.toString());
-		return Optional.of(cellText);
-	}
 }

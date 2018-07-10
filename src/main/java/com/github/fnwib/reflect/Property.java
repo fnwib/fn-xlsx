@@ -8,7 +8,7 @@ import com.github.fnwib.databing.title.match.TitleMatcher;
 import com.github.fnwib.databing.title.match.TitleMatcherImpl;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.BindParam;
+import com.github.fnwib.mapping.BindProperty;
 import com.google.common.collect.Lists;
 
 import java.beans.PropertyDescriptor;
@@ -23,18 +23,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Property {
-
+	private final Class<?> region;
 	private final Field field;
 	private final JavaType javaType;
 	private final PropertyDescriptor propertyDescriptor;
 
-	public Property(Field field, JavaType javaType, PropertyDescriptor propertyDescriptor) {
-		Objects.requireNonNull(field);
-		Objects.requireNonNull(javaType);
-		Objects.requireNonNull(propertyDescriptor);
-		this.field = field;
-		this.javaType = javaType;
-		this.propertyDescriptor = propertyDescriptor;
+	public Property(Class<?> region, Field field, JavaType javaType, PropertyDescriptor propertyDescriptor) {
+		this.region = Objects.requireNonNull(region);
+		this.field = Objects.requireNonNull(field);
+		this.javaType = Objects.requireNonNull(javaType);
+		this.propertyDescriptor = Objects.requireNonNull(propertyDescriptor);
 	}
 
 	public Optional<TitleMatcher> getTitleMatcher() {
@@ -50,10 +48,11 @@ public class Property {
 		return Optional.empty();
 	}
 
-	public Optional<BindParam> toBindParam() {
+	public Optional<BindProperty> toBindParam() {
 		CellType cellType = getAnnotation(CellType.class);
 		if (cellType != null) {
-			BindParam param = BindParam.builder()
+			BindProperty param = BindProperty.builder()
+					.region(region)
 					.name(getName())
 					.type(getJavaType())
 					.valueHandlers(getValueHandlers())
@@ -67,7 +66,8 @@ public class Property {
 		}
 		AutoMapping mapping = field.getAnnotation(AutoMapping.class);
 		if (mapping != null) {
-			BindParam param = BindParam.builder()
+			BindProperty param = BindProperty.builder()
+					.region(region)
 					.name(getName())
 					.type(getJavaType())
 					.valueHandlers(getValueHandlers())

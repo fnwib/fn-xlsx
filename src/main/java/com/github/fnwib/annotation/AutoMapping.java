@@ -9,7 +9,6 @@ import java.lang.annotation.*;
  * 3  suffix
  * 拼接结果
  */
-@Deprecated
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
