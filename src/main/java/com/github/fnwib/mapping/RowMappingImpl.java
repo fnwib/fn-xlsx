@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Stream;
 
 public class RowMappingImpl implements RowMapping {
 
@@ -86,19 +87,6 @@ public class RowMappingImpl implements RowMapping {
 		return Optional.of(t);
 	}
 
-	@Override
-	public Map<String, Object> convertToMap(Row row) {
-		if (isEmpty(row)) {
-			return Collections.emptyMap();
-		}
-		Map<String, Object> formValue = Maps.newHashMapWithExpectedSize(count);
-		handlers.forEach((bindParam, mapping) -> {
-			Optional<?> value = mapping.getValue(row);
-			value.ifPresent(v -> formValue.put(bindParam.getName(), v));
-		});
-		return formValue;
-	}
-
 	private Map<BindParam, BindMapping> resolve(Map<BindParam, List<Integer>> bound) {
 		if (bound.isEmpty()) {
 			return Collections.emptyMap();
@@ -158,13 +146,13 @@ public class RowMappingImpl implements RowMapping {
 			return Collections.emptyMap();
 		}
 		Map<BindParam, List<Integer>> bind = bind(bindParams, row);
+		Map<BindParam, BindMapping> resolve = resolve(bind);
 		if (bind.isEmpty()) {
 			return Collections.emptyMap();
 		}
-		bind.forEach((bindParam, columns) -> {
-
-		});
-		return Collections.emptyMap();
+		Map<BindParam, List<CellMapping>> result = Maps.newHashMapWithExpectedSize(bind.size());
+		resolve.forEach((bindParam, mapping) -> result.put(bindParam, mapping.getCellMappings()));
+		return result;
 	}
 
 

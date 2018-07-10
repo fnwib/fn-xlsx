@@ -27,8 +27,6 @@ public interface RowMapping {
 
 	<T> Optional<T> convert(Class<T> bindClass, Row row);
 
-	Map<String, Object> convertToMap(Row row);
-
 	/**
 	 * 当前row是否与规则匹配
 	 *
