@@ -10,7 +10,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public class AutoMappingModel extends BaseModel {
+public class AutoMappingModel {
+	@CellType(operation = Operation.LINE_NUM)
+	private Integer lineNum;
+
 	@ReadValueHandler({ToUpperHandler.class})
 	@CellType(title = "Text One")
 	private String text1;
@@ -54,6 +57,14 @@ public class AutoMappingModel extends BaseModel {
 
 	@CellType(title = "Excel no match")
 	private Map<Integer, String> noMatchMap;
+
+	public Integer getLineNum() {
+		return lineNum;
+	}
+
+	public void setLineNum(Integer lineNum) {
+		this.lineNum = lineNum;
+	}
 
 	public String getText1() {
 		return text1;

@@ -1,33 +1,38 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.impl.cell;
 
-import com.github.fnwib.databing.convert.impl.BeanConverter;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.fasterxml.jackson.databind.JavaType;
+import com.github.fnwib.databing.Context;
+import com.github.fnwib.databing.deser.CellDeserializer;
+import com.github.fnwib.databing.ser.Serializer;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.mapping.BindMapping;
 import com.github.fnwib.util.ExcelUtil;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.CellText;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.Optional;
 
-public class NumberMapping implements BindMapping {
+public class SimpleMapping implements CellMapping {
 
-	private static final Logger log = LoggerFactory.getLogger(BeanConverter.class);
-
+	private final CellDeserializer<?> deserializer;
+	private final Serializer serializer;
 	private final Integer bindColumn;
 	private final CellText EMPTY;
 
 
-	public NumberMapping(Integer bindColumn) {
+	public SimpleMapping(JavaType contentType, Integer bindColumn) {
 		this.bindColumn = bindColumn;
+		this.deserializer = Context.INSTANCE.findCellDeserializer(contentType);
+		this.serializer = Context.INSTANCE.findSerializer(contentType);
 		this.EMPTY = new CellText(bindColumn, StringUtils.EMPTY);
+	}
+
+	@Override
+	public Integer getColumn() {
+		return bindColumn;
 	}
 
 	@Override
@@ -36,11 +41,19 @@ public class NumberMapping implements BindMapping {
 		if (cell == null) {
 			return Optional.empty();
 		}
+		if (deserializer != null) {
+			Object deserialize = deserializer.deserialize(cell);
+			if (deserialize == null) {
+				return Optional.empty();
+			} else {
+				return Optional.of(deserialize.toString());
+			}
+		}
 		switch (cell.getCellTypeEnum()) {
 			case BLANK:
 				return Optional.empty();
 			case NUMERIC:
-				return Optional.of(cell.getNumericCellValue() + "");
+				return Optional.of(cell.getStringCellValue());
 			case STRING:
 				return ValueUtil.getCellValue(cell);
 			case ERROR:

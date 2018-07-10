@@ -1,11 +1,11 @@
 package com.github.fnwib.mapping;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 public class BindParam {
@@ -13,6 +13,8 @@ public class BindParam {
 	private JavaType type;
 
 	private String name;
+
+	private Operation operation;
 
 	private Collection<ValueHandler> valueHandlers;
 
@@ -34,6 +36,10 @@ public class BindParam {
 
 	public String getName() {
 		return name;
+	}
+
+	public Operation getOperation() {
+		return operation;
 	}
 
 	public Collection<ValueHandler> getValueHandlers() {
@@ -63,6 +69,7 @@ public class BindParam {
 	private BindParam(Builder builder) {
 		type = builder.type;
 		name = builder.name;
+		operation =builder.operation;
 		valueHandlers = builder.valueHandlers;
 		prefix = Objects.isNull(builder.prefix) ? StringUtils.EMPTY : builder.prefix;
 		title = Objects.isNull(builder.title) ? StringUtils.EMPTY : builder.title;
@@ -74,6 +81,7 @@ public class BindParam {
 	public static final class Builder {
 		private JavaType type;
 		private String name;
+		private Operation operation;
 		private Collection<ValueHandler> valueHandlers;
 		private String prefix;
 		private String title;
@@ -90,6 +98,11 @@ public class BindParam {
 
 		public Builder name(String val) {
 			name = val;
+			return this;
+		}
+
+		public Builder operation(Operation val) {
+			operation = val;
 			return this;
 		}
 
