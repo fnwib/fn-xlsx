@@ -10,8 +10,6 @@ import com.github.fnwib.mapping.impl.cell.NumberMapping;
 import com.github.fnwib.mapping.impl.cell.SimpleMapping;
 import com.github.fnwib.mapping.impl.cell.StringMapping;
 import org.apache.poi.ss.usermodel.Cell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,8 +20,6 @@ public class Mappings {
 
 	private Mappings() {
 	}
-
-	private static final Logger log = LoggerFactory.getLogger(Mappings.class);
 
 	public static AbstractCellStringMapping createSimpleMapping(JavaType type, Collection<ValueHandler> valueHandlers) {
 		AbstractCellStringMapping mapping;
