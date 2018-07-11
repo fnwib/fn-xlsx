@@ -1,6 +1,6 @@
 package com.github.fnwib.mapping.impl;
 
-import com.github.fnwib.mapping.BindColumn;
+import com.github.fnwib.mapping.model.BindColumn;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;

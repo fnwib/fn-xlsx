@@ -1,5 +1,7 @@
 package com.github.fnwib.mapping;
 
+import com.fasterxml.jackson.databind.JavaType;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Optional;
@@ -18,14 +20,15 @@ public interface RowMapping extends AutoCloseable {
 
 	/**
 	 * 检查row是否与规则匹配
+	 * <p>
+	 * BFS 绑定
 	 *
 	 * @param fromValue poi row
 	 * @param type      type
-	 * @param ignore    是否忽略已经绑定的列
 	 * @param <T>
 	 * @return
 	 */
-	<T> boolean match(Row fromValue, Class<T> type, boolean ignore);
+	<T> boolean match(Row fromValue, Class<T> type);
 
 	/**
 	 * row convert to T

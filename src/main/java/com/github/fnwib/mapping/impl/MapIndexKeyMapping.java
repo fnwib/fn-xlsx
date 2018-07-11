@@ -3,7 +3,7 @@ package com.github.fnwib.mapping.impl;
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.mapping.BindColumn;
+import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.Mappings;
 import com.github.fnwib.mapping.impl.cell.*;
 import com.google.common.collect.Maps;
@@ -41,8 +41,7 @@ public class MapIndexKeyMapping extends AbstractMapMapping {
 		}
 		Map<Integer, String> values = (Map<Integer, String>) value;
 		if (values.size() > columns.size()) {
-			String format = String.format("当前集合数量'%s'大于允许写入数量'%s'", values.size(), columns.size());
-			throw new ExcelException(format);
+			throw new ExcelException("当前集合数量'%s'大于允许写入数量'%s'", values.size(), columns.size());
 		}
 		values.forEach((index, val) -> mapping.setValueToRow(val, index, row));
 	}

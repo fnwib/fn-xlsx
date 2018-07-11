@@ -2,8 +2,9 @@ package com.github.fnwib.mapping;
 
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.mapping.model.BindColumn;
+import com.github.fnwib.mapping.model.Rule;
 import com.github.fnwib.util.ValueUtil;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,12 +25,12 @@ public class FnMatcher {
 	private final String exclude;
 	private final Collection<ValueHandler> valueHandlers;
 
-	public FnMatcher(BindProperty bindProperty, LocalConfig localConfig) {
-		this.titlePattern = Pattern.compile(bindProperty.getTitle(), Pattern.CASE_INSENSITIVE);
-		this.prefix = bindProperty.getPrefix();
-		this.sequence = bindProperty.getTitle();
-		this.suffix = bindProperty.getSuffix();
-		this.exclude = bindProperty.getExclude();
+	public FnMatcher(Rule rule, LocalConfig localConfig) {
+		this.titlePattern = Pattern.compile(rule.getTitle(), Pattern.CASE_INSENSITIVE);
+		this.prefix = rule.getPrefix();
+		this.sequence = rule.getTitle();
+		this.suffix = rule.getSuffix();
+		this.exclude = rule.getExclude();
 		this.valueHandlers = localConfig.getTitleValueHandlers();
 	}
 

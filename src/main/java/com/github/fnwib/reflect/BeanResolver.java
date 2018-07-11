@@ -3,10 +3,13 @@ package com.github.fnwib.reflect;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.fnwib.annotation.AutoMapping;
+import com.github.fnwib.annotation.Complex;
 import com.github.fnwib.databing.convert.impl.BeanConverter;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.PropertyException;
 import com.github.fnwib.exception.SettingException;
+import com.github.fnwib.mapping.RowMappingImpl;
 import com.github.fnwib.util.ValueUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -20,19 +23,20 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
 public enum BeanResolver {
 
 	INSTANCE;
-
-	private static final Logger log = LoggerFactory.getLogger(BeanConverter.class);
-
+	private static final Logger log = LoggerFactory.getLogger(BeanResolver.class);
+	@Deprecated
 	public static final TypeFactory typeFactory = TypeFactory.defaultInstance();
 
 	private final Map<Class<?>, List<Property>> types = new ConcurrentHashMap<>();
 
 	public static JavaType getInterfaceGenericType(Class<?> clazz) {
+		TypeFactory typeFactory = TypeFactory.defaultInstance();
 		Type type = clazz.getGenericInterfaces()[0];
 		TypeBindings bindings = typeFactory.constructType(type).getBindings();
 		JavaType boundType = bindings.getBoundType(0);
@@ -128,14 +132,13 @@ public enum BeanResolver {
 		}
 	}
 
-
-	public List<Property> getPropertiesWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotationCls) {
-		if (clazz == null || annotationCls == null) {
+	public List<Property> getPropertiesWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotationType) {
+		if (clazz == null || annotationType == null) {
 			throw new IllegalArgumentException("参数不能为null");
 		}
 		List<Property> properties = getProperties(clazz);
 		return properties.stream()
-				.filter(property -> property.getField().getAnnotation(annotationCls) != null).collect(Collectors.toList());
+				.filter(property -> property.getField().getAnnotation(annotationType) != null).collect(Collectors.toList());
 
 	}
 

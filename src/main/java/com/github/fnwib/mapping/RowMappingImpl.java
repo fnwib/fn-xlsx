@@ -1,6 +1,8 @@
 package com.github.fnwib.mapping;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.github.fnwib.annotation.BindType;
+import com.github.fnwib.annotation.Complex;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.LocalConfig;
@@ -8,7 +10,12 @@ import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
-import com.github.fnwib.mapping.impl.*;
+import com.github.fnwib.mapping.impl.BindMapping;
+import com.github.fnwib.mapping.impl.CollectionCellMapping;
+import com.github.fnwib.mapping.impl.LineNumMapping;
+import com.github.fnwib.mapping.impl.PrimitiveMapping;
+import com.github.fnwib.mapping.model.BindColumn;
+import com.github.fnwib.mapping.model.BindProperty;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.google.common.collect.Lists;
@@ -24,7 +31,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.stream.Collectors;
 
 public class RowMappingImpl implements RowMapping {
 
@@ -32,7 +38,7 @@ public class RowMappingImpl implements RowMapping {
 
 	private final LocalConfig localConfig;
 
-	private Map<Class<?>, List<BindProperty>> handlers;
+	private List<BindProperty> handlers;
 	private LongAdder count;
 
 	public RowMappingImpl() {
@@ -42,7 +48,6 @@ public class RowMappingImpl implements RowMapping {
 	public RowMappingImpl(LocalConfig localConfig) {
 		this.localConfig = localConfig;
 		this.count = new LongAdder();
-		this.handlers = Maps.newHashMap();
 	}
 
 	@Override
@@ -59,40 +64,74 @@ public class RowMappingImpl implements RowMapping {
 	}
 
 	@Override
-	public <T> boolean match(Row fromValue, Class<T> type, boolean ignore) {
-		List<BindProperty> repeat = this.handlers.getOrDefault(type, Collections.emptyList());
-		if (!repeat.isEmpty()) {
-			this.handlers.remove(type);
+	public <T> boolean match(Row fromValue, Class<T> type) {
+		handlers.clear();
+		LongAdder level = new LongAdder();
+		LongAdder bindColumnCount = new LongAdder();
+		List<BindProperty> bindProperties = getBindProperties(type, level);
+		if (level.intValue() >= 3) {
+			throw new SettingException("'%s'嵌套层数超过两层", type);
 		}
 		Set<Integer> ignoreColumns = Sets.newHashSet();
-		if (ignore) {
-			this.handlers.forEach((_type, properties) -> {
-				List<Integer> columns = properties.stream()
-						.map(BindProperty::getBindMapping)
-						.map(BindMapping::getColumns)
-						.flatMap(List::stream)
-						.map(BindColumn::getIndex)
-						.collect(Collectors.toList());
-				ignoreColumns.addAll(columns);
-			});
-		}
-		List<BindProperty> bindProperties = BeanResolver.INSTANCE.getProperties(type)
-				.stream()
-				.map(Property::toBindParam)
-				.filter(Optional::isPresent)
-				.map(Optional::get)
-				.collect(Collectors.toList());
-
-		Map<BindProperty, List<BindColumn>> match = bind(bindProperties, fromValue, ignoreColumns);
-		LongAdder count = new LongAdder();
-		match.forEach((_ignore, columns) -> count.add(columns.size()));
-		if (count.intValue() > 0) {
-			this.count.add(count.intValue());
-			List<BindProperty> properties = resolve(match);
-			this.handlers.put(type, properties);
+		bind(fromValue, bindProperties, ignoreColumns, bindColumnCount);
+		if (bindColumnCount.intValue() > 0) {
+			resolve(bindProperties);
+			this.handlers = bindProperties;
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 绑定
+	 *
+	 * @param fromValue       poi row
+	 * @param bindProperties  规则
+	 * @param ignoreColumns   不匹配的列 取决于是否配置了独占模式
+	 * @param bindColumnCount 规则的有效匹配数量的计数器
+	 */
+	private void bind(Row fromValue, List<BindProperty> bindProperties, Set<Integer> ignoreColumns, LongAdder bindColumnCount) {
+		for (BindProperty property : bindProperties) {
+			if (property.getComplex() == Complex.Y) {
+				bind(fromValue, property.getSubBindProperties(), ignoreColumns, bindColumnCount);
+				continue;
+			}
+			FnMatcher fnMatcher = new FnMatcher(property.getRule(), localConfig);
+			List<BindColumn> columns = fnMatcher.match(fromValue, ignoreColumns);
+			if (columns.isEmpty()) {
+				continue;
+			}
+			bindColumnCount.increment();
+			if (property.getBindType() == BindType.Exclusive) {
+				columns.forEach(i -> ignoreColumns.add(i.getIndex()));
+			}
+			property.setBindColumns(columns);
+		}
+	}
+
+	/**
+	 * 将类型转成规则
+	 *
+	 * @param type  类型
+	 * @param level 嵌套层级
+	 * @return
+	 */
+	private List<BindProperty> getBindProperties(final Class<?> type, LongAdder level) {
+		level.increment();
+		List<BindProperty> result = new ArrayList<>();
+		for (Property property : BeanResolver.INSTANCE.getProperties(type)) {
+			Optional<BindProperty> optional = property.toBindParam();
+			if (!optional.isPresent()) {
+				continue;
+			}
+			BindProperty bind = optional.get();
+			if (bind.getComplex() == Complex.Y) {
+				List<BindProperty> sub = getBindProperties(property.getFieldType().getRawClass(), level);
+				bind.setSubBindProperties(sub);
+			}
+			result.add(bind);
+		}
+		return result;
 	}
 
 	@Override
@@ -102,12 +141,13 @@ public class RowMappingImpl implements RowMapping {
 		}
 		List<BindProperty> cellHandlers = Lists.newArrayList();
 		Map<String, Object> formValue = Maps.newHashMapWithExpectedSize(count.intValue());
-		List<BindProperty> handlers = this.handlers.getOrDefault(type, Collections.emptyList());
+
+		List<BindProperty> handlers = this.handlers;
 		for (BindProperty property : handlers) {
 			if (!property.isRegion(type)) {
 				continue;
 			}
-			String name = property.getName();
+			String name = property.getPropertyName();
 			BindMapping mapping = property.getBindMapping();
 			if (CollectionCellMapping.class == mapping.getClass()) {
 				cellHandlers.add(property);
@@ -144,7 +184,7 @@ public class RowMappingImpl implements RowMapping {
 
 	@Override
 	public <T> boolean writeValue(T fromValue, Row toValue) {
-		List<BindProperty> properties = this.handlers.getOrDefault(fromValue, Collections.emptyList());
+		List<BindProperty> properties = this.handlers;
 		try {
 			for (BindProperty property : properties) {
 				Method readMethod = property.getReadMethod();
@@ -160,54 +200,36 @@ public class RowMappingImpl implements RowMapping {
 	}
 
 	/**
-	 * 规则与title通过匹配进行绑定
+	 * setBindMapping
 	 *
-	 * @param bindParams 规则
-	 * @param row        poi Row
+	 * @param bindProperties
 	 */
-	private Map<BindProperty, List<BindColumn>> bind(Collection<BindProperty> bindParams, Row row, Set<Integer> ignoreColumns) {
-		if (isEmpty(row)) {
-			return Collections.emptyMap();
-		}
-		Map<BindProperty, List<BindColumn>> map = Maps.newHashMapWithExpectedSize(bindParams.size());
-		for (BindProperty bindParam : bindParams) {
-			FnMatcher fnMatcher = new FnMatcher(bindParam, localConfig);
-			List<BindColumn> columns = fnMatcher.match(row, ignoreColumns);
-			map.put(bindParam, columns);
-		}
-		return map;
-	}
-
-	private List<BindProperty> resolve(Map<BindProperty, List<BindColumn>> bound) {
-		if (bound.isEmpty()) {
-			return Collections.emptyList();
-		}
-		List<BindProperty> result = Lists.newArrayListWithCapacity(bound.size());
-		bound.forEach((bindParam, columns) -> {
+	private void resolve(List<BindProperty> bindProperties) {
+		for (BindProperty property : bindProperties) {
+			List<BindColumn> columns = property.getBindColumns();
 			BindMapping mapping;
-			if (bindParam.getOperation() == Operation.LINE_NUM) {
+			if (property.getOperation() == Operation.LINE_NUM) {
 				mapping = new LineNumMapping(columns);
 			} else {
 				Collection<ValueHandler> valueHandlers = localConfig.getContentValueHandlers();
-				valueHandlers.addAll(bindParam.getValueHandlers());
-				JavaType type = bindParam.getType();
+				valueHandlers.addAll(property.getValueHandlers());
+				JavaType type = property.getType();
 				if (type.isMapLikeType()) {
 					mapping = Mappings.createMapMapping(type, columns, valueHandlers);
 				} else if (type.isCollectionLikeType()) {
 					mapping = Mappings.createCollectionMapping(type, columns, valueHandlers);
 				} else {
 					Optional<PrimitiveMapping> primitiveMapping = Mappings.cratePrimitiveMapping(type, columns, valueHandlers);
-					mapping = primitiveMapping.orElseThrow(() -> {
-						log.error("-> property is [{}] ,type is [{}] , 匹配到多列 index {}", bindParam.getName(), type, columns);
-						String format = String.format("property is %s ,type is %s , 匹配到多列", bindParam.getName(), type);
-						throw new SettingException(format);
-					});
+					if (primitiveMapping.isPresent()) {
+						mapping = primitiveMapping.get();
+					} else {
+						log.error("-> property is [{}] ,type is [{}] , 匹配到多列 index {}", property.getPropertyName(), type, columns);
+						throw new SettingException(String.format("property is %s ,type is %s , 匹配到多列", property.getPropertyName(), type));
+					}
 				}
 			}
-			bindParam.setBindMapping(mapping);
-			result.add(bindParam);
-		});
-		return result;
+			property.setBindMapping(mapping);
+		}
 	}
 
 	@Override

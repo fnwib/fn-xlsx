@@ -2,7 +2,7 @@ package com.github.fnwib.mapping.impl;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapping.BindColumn;
+import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.impl.cell.CellMapping;
 import com.github.fnwib.mapping.impl.cell.NumberMapping;
 import com.github.fnwib.mapping.impl.cell.SimpleMapping;

@@ -1,12 +1,9 @@
 package com.github.fnwib.mapping.impl;
 
-import com.github.fnwib.mapping.BindColumn;
-import com.github.fnwib.mapping.impl.cell.CellMapping;
+import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.impl.cell.RawCellMapping;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 

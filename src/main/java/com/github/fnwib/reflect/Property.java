@@ -3,13 +3,16 @@ package com.github.fnwib.reflect;
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
+import com.github.fnwib.annotation.Complex;
 import com.github.fnwib.annotation.ReadValueHandler;
 import com.github.fnwib.databing.title.match.TitleMatcher;
 import com.github.fnwib.databing.title.match.TitleMatcherImpl;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.BindProperty;
+import com.github.fnwib.mapping.model.BindProperty;
+import com.github.fnwib.mapping.model.Rule;
 import com.google.common.collect.Lists;
+import lombok.Getter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -17,21 +20,19 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class Property {
 	private final Class<?> region;
+	@Getter
 	private final Field field;
-	private final JavaType javaType;
+	private final JavaType fieldType;
 	private final PropertyDescriptor propertyDescriptor;
 
-	public Property(Class<?> region, Field field, JavaType javaType, PropertyDescriptor propertyDescriptor) {
+	public Property(Class<?> region, Field field, JavaType fieldType, PropertyDescriptor propertyDescriptor) {
 		this.region = Objects.requireNonNull(region);
 		this.field = Objects.requireNonNull(field);
-		this.javaType = Objects.requireNonNull(javaType);
+		this.fieldType = Objects.requireNonNull(fieldType);
 		this.propertyDescriptor = Objects.requireNonNull(propertyDescriptor);
 	}
 
@@ -49,37 +50,27 @@ public class Property {
 	}
 
 	public Optional<BindProperty> toBindParam() {
-		CellType cellType = getAnnotation(CellType.class);
-		if (cellType != null) {
-			BindProperty param = BindProperty.builder()
-					.region(region)
-					.name(getName())
-					.type(getJavaType())
-					.valueHandlers(getValueHandlers())
-					.operation(cellType.operation())
-					.title(cellType.title())
-					.suffix(cellType.suffix())
-					.prefix(cellType.prefix())
-					.exclude(cellType.exclude())
-					.build();
-			return Optional.of(param);
-		}
 		AutoMapping mapping = field.getAnnotation(AutoMapping.class);
-		if (mapping != null) {
-			BindProperty param = BindProperty.builder()
-					.region(region)
-					.name(getName())
-					.type(getJavaType())
-					.valueHandlers(getValueHandlers())
-					.operation(mapping.operation())
-					.title(mapping.value())
-					.suffix(mapping.suffix())
-					.prefix(mapping.prefix())
-					.exclude(mapping.exclude())
-					.build();
-			return Optional.of(param);
+		if (mapping == null) {
+			return Optional.empty();
 		}
-		return Optional.empty();
+		Rule rule = Rule.builder().title(mapping.value())
+				.suffix(mapping.suffix())
+				.prefix(mapping.prefix())
+				.exclude(mapping.exclude())
+				.build();
+		BindProperty param = BindProperty.builder()
+				.region(region)
+				.propertyName(getName())
+				.type(getFieldType())
+				.valueHandlers(getValueHandlers())
+				.operation(mapping.operation())
+				.order(mapping.order())
+				.complex(mapping.complex())
+				.rule(rule)
+				.build();
+		return Optional.of(param);
+
 	}
 
 	public Collection<ValueHandler> getValueHandlers() {
@@ -105,12 +96,18 @@ public class Property {
 		return valueHandlers;
 	}
 
-	public Field getField() {
-		return field;
+	/**
+	 * please use getFieldType()
+	 *
+	 * @return
+	 */
+	@Deprecated
+	public JavaType getJavaType() {
+		return fieldType;
 	}
 
-	public JavaType getJavaType() {
-		return javaType;
+	public JavaType getFieldType() {
+		return fieldType;
 	}
 
 	public PropertyDescriptor getPropertyDescriptor() {
@@ -118,7 +115,7 @@ public class Property {
 	}
 
 	public JavaType getContentType() {
-		return javaType.getContentType();
+		return fieldType.getContentType();
 	}
 
 	public String getName() {

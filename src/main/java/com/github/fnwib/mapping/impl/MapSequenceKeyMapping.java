@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.mapping.BindColumn;
+import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.impl.cell.AbstractCellStringMapping;
 import com.github.fnwib.mapping.Mappings;
 import com.google.common.collect.Maps;

@@ -9,6 +9,7 @@ import com.github.fnwib.mapping.impl.cell.AbstractCellStringMapping;
 import com.github.fnwib.mapping.impl.cell.NumberMapping;
 import com.github.fnwib.mapping.impl.cell.SimpleMapping;
 import com.github.fnwib.mapping.impl.cell.StringMapping;
+import com.github.fnwib.mapping.model.BindColumn;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.util.Collection;

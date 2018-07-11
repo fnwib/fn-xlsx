@@ -1,13 +1,11 @@
 package com.github.fnwib.mapping.impl;
 
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.BindColumn;
-import com.github.fnwib.mapping.impl.cell.CellMapping;
+import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.impl.cell.NumberMapping;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
