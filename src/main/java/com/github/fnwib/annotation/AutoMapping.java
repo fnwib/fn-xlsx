@@ -20,8 +20,10 @@ public @interface AutoMapping {
 	 * DEFAULT Value
 	 * <p>
 	 *
+	 * please use @LineNum
 	 * @return
 	 */
+	@Deprecated
 	Operation operation() default Operation.DEFAULT;
 
 	/**

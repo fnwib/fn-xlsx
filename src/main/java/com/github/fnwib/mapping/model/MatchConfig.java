@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 /**
- * 绑定
+ * AutoMapping注解的绑定配置参数
  */
 @ToString
 @Builder

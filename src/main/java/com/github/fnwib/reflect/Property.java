@@ -1,16 +1,14 @@
 package com.github.fnwib.reflect;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.github.fnwib.annotation.AutoMapping;
-import com.github.fnwib.annotation.CellType;
-import com.github.fnwib.annotation.ReadValueHandler;
+import com.github.fnwib.annotation.*;
 import com.github.fnwib.databing.title.match.TitleMatcher;
 import com.github.fnwib.databing.title.match.TitleMatcherImpl;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapping.model.BindProperty;
 import com.github.fnwib.mapping.model.MatchConfig;
-import com.github.fnwib.mapping.model.SpecialConfig;
+import com.github.fnwib.mapping.model.FeatureConfig;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 
@@ -62,8 +60,7 @@ public class Property {
 				.prefix(mapping.prefix())
 				.exclude(mapping.exclude())
 				.build();
-		SpecialConfig specialConfig = SpecialConfig.builder()
-				.operation(mapping.operation())
+		FeatureConfig featureConfig = FeatureConfig.builder()
 				.order(mapping.order())
 				.complex(mapping.complex())
 				.bindType(mapping.bindType())
@@ -71,11 +68,16 @@ public class Property {
 				.build();
 		BindProperty param = BindProperty.builder()
 				.propertyName(getName())
+				.operation(mapping.operation())
 				.type(getFieldType())
 				.valueHandlers(getValueHandlers())
 				.matchConfig(matchConfig)
-				.specialConfig(specialConfig)
+				.featureConfig(featureConfig)
 				.build();
+		LineNum lineNum = field.getAnnotation(LineNum.class);
+		if (Objects.nonNull(lineNum)) {
+			param.setOperation(Operation.LINE_NUM);
+		}
 		return Optional.of(param);
 
 	}

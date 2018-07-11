@@ -18,8 +18,13 @@ import java.util.List;
  * 规则
  */
 @Builder
-@Getter
 public class BindProperty {
+
+	/**
+	 * 获取行号或者cell 取值
+	 */
+	@Setter
+	private Operation operation;
 
 	/**
 	 * 字段带泛型类型
@@ -48,44 +53,64 @@ public class BindProperty {
 	/**
 	 * 特殊配置
 	 */
-	private SpecialConfig specialConfig;
+	private FeatureConfig featureConfig;
 
 
 	/**
 	 * 一个规则绑定一个处理器
 	 */
 	@Setter
+	@Getter
 	private BindMapping bindMapping;
 	@Setter
+	@Getter
 	private Method readMethod;
 	@Setter
+	@Getter
 	private Method writeMethod;
 	/**
 	 * 如果是complex == Complex.Y
 	 * 则此处不为空
 	 */
 	@Setter
+	@Getter
 	private List<BindProperty> subBindProperties;
 	/**
 	 * 规则绑定的列
 	 */
 	@Setter
+	@Getter
 	private List<BindColumn> bindColumns;
 
 
 	public int getOrder() {
-		return specialConfig.getOrder();
+		return featureConfig.getOrder();
 	}
 
+	/**
+	 * 是否为复杂类型
+	 *
+	 * @return
+	 */
 	public boolean isComplexY() {
-		return specialConfig.getComplex() == Complex.Y;
+		return featureConfig.getComplex() == Complex.Y;
 	}
 
+	/**
+	 * 是否为独占模式
+	 *
+	 * @return
+	 */
 	public boolean isExclusive() {
-		return specialConfig.getBindType() == BindType.Exclusive;
+		return featureConfig.getBindType() == BindType.Exclusive;
 	}
 
+	/**
+	 * 是否为行号读取
+	 *
+	 * @return
+	 */
 	public boolean isLineNum() {
-		return specialConfig.getOperation() == Operation.LINE_NUM;
+		return operation == Operation.LINE_NUM;
 	}
 }

@@ -8,15 +8,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * AutoMapping注解的特性参数
+ */
 @ToString
 @Builder
 @Getter
-public class SpecialConfig {
-
-	/**
-	 * 获取行号或者cell 取值
-	 */
-	private Operation operation;
+public class FeatureConfig {
 
 	/**
 	 * 同一层级绑定优先级
