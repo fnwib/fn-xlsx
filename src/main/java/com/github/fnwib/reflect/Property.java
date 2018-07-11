@@ -3,14 +3,14 @@ package com.github.fnwib.reflect;
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
-import com.github.fnwib.annotation.Complex;
 import com.github.fnwib.annotation.ReadValueHandler;
 import com.github.fnwib.databing.title.match.TitleMatcher;
 import com.github.fnwib.databing.title.match.TitleMatcherImpl;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapping.model.BindProperty;
-import com.github.fnwib.mapping.model.Rule;
+import com.github.fnwib.mapping.model.MatchConfig;
+import com.github.fnwib.mapping.model.SpecialConfig;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 
@@ -20,7 +20,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
 
 public class Property {
 	private final Class<?> region;
@@ -54,20 +57,24 @@ public class Property {
 		if (mapping == null) {
 			return Optional.empty();
 		}
-		Rule rule = Rule.builder().title(mapping.value())
+		MatchConfig matchConfig = MatchConfig.builder().title(mapping.value())
 				.suffix(mapping.suffix())
 				.prefix(mapping.prefix())
 				.exclude(mapping.exclude())
 				.build();
-		BindProperty param = BindProperty.builder()
-				.region(region)
-				.propertyName(getName())
-				.type(getFieldType())
-				.valueHandlers(getValueHandlers())
+		SpecialConfig specialConfig = SpecialConfig.builder()
 				.operation(mapping.operation())
 				.order(mapping.order())
 				.complex(mapping.complex())
-				.rule(rule)
+				.bindType(mapping.bindType())
+				.rw(mapping.rw())
+				.build();
+		BindProperty param = BindProperty.builder()
+				.propertyName(getName())
+				.type(getFieldType())
+				.valueHandlers(getValueHandlers())
+				.matchConfig(matchConfig)
+				.specialConfig(specialConfig)
 				.build();
 		return Optional.of(param);
 

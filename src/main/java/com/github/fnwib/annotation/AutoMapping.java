@@ -77,12 +77,17 @@ public @interface AutoMapping {
 	int order() default Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Y 两层(最多两层)  
+	 * Y 两层(最多两层)
 	 * N 一层
 	 *
 	 * @return
 	 */
 	Complex complex() default Complex.N;
 
-
+	/**
+	 * 读写属性配置
+	 *
+	 * @return
+	 */
+	RWType rw() default RWType.READ_WRITE;
 }

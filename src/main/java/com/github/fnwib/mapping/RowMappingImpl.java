@@ -7,19 +7,14 @@ import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapping.impl.BindMapping;
-import com.github.fnwib.mapping.impl.CollectionCellMapping;
 import com.github.fnwib.mapping.impl.LineNumMapping;
 import com.github.fnwib.mapping.impl.PrimitiveMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.model.BindProperty;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -27,25 +22,25 @@ import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 
-public class RowMappingImpl implements RowMapping {
+public class RowMappingImpl<T> implements RowMapping<T> {
 
 	private static final Logger log = LoggerFactory.getLogger(RowMappingImpl.class);
 
 	private final LocalConfig localConfig;
 
-	private List<BindProperty> handlers;
+	private Class<T> type;
+	private MappingHelper<T> helper;
 	private LongAdder count;
 
-	public RowMappingImpl() {
-		this(Context.INSTANCE.getContextConfig());
+	public RowMappingImpl(Class<T> type) {
+		this(type, Context.INSTANCE.getContextConfig());
 	}
 
-	public RowMappingImpl(LocalConfig localConfig) {
+	public RowMappingImpl(Class<T> type, LocalConfig localConfig) {
+		this.type = type;
 		this.localConfig = localConfig;
 		this.count = new LongAdder();
 	}
@@ -64,8 +59,7 @@ public class RowMappingImpl implements RowMapping {
 	}
 
 	@Override
-	public <T> boolean match(Row fromValue, Class<T> type) {
-		handlers.clear();
+	public boolean match(Row fromValue) {
 		LongAdder level = new LongAdder();
 		LongAdder bindColumnCount = new LongAdder();
 		List<BindProperty> bindProperties = getBindProperties(type, level);
@@ -76,7 +70,7 @@ public class RowMappingImpl implements RowMapping {
 		bind(fromValue, bindProperties, ignoreColumns, bindColumnCount);
 		if (bindColumnCount.intValue() > 0) {
 			resolve(bindProperties);
-			this.handlers = bindProperties;
+			this.helper = new MappingHelper<>(type, bindProperties);
 			return true;
 		}
 		return false;
@@ -91,18 +85,20 @@ public class RowMappingImpl implements RowMapping {
 	 * @param bindColumnCount 规则的有效匹配数量的计数器
 	 */
 	private void bind(Row fromValue, List<BindProperty> bindProperties, Set<Integer> ignoreColumns, LongAdder bindColumnCount) {
+		//按order 顺序绑定
+		bindProperties.sort(Comparator.comparing(BindProperty::getOrder));
 		for (BindProperty property : bindProperties) {
-			if (property.getComplex() == Complex.Y) {
+			if (property.isComplexY()) {
 				bind(fromValue, property.getSubBindProperties(), ignoreColumns, bindColumnCount);
 				continue;
 			}
-			FnMatcher fnMatcher = new FnMatcher(property.getRule(), localConfig);
+			FnMatcher fnMatcher = new FnMatcher(property.getMatchConfig(), localConfig);
 			List<BindColumn> columns = fnMatcher.match(fromValue, ignoreColumns);
 			if (columns.isEmpty()) {
 				continue;
 			}
 			bindColumnCount.increment();
-			if (property.getBindType() == BindType.Exclusive) {
+			if (property.isExclusive()) {
 				columns.forEach(i -> ignoreColumns.add(i.getIndex()));
 			}
 			property.setBindColumns(columns);
@@ -125,78 +121,13 @@ public class RowMappingImpl implements RowMapping {
 				continue;
 			}
 			BindProperty bind = optional.get();
-			if (bind.getComplex() == Complex.Y) {
+			if (bind.isComplexY()) {
 				List<BindProperty> sub = getBindProperties(property.getFieldType().getRawClass(), level);
 				bind.setSubBindProperties(sub);
 			}
 			result.add(bind);
 		}
 		return result;
-	}
-
-	@Override
-	public <T> Optional<T> readValue(Row fromValue, Class<T> type) {
-		if (isEmpty(fromValue)) {
-			return Optional.empty();
-		}
-		List<BindProperty> cellHandlers = Lists.newArrayList();
-		Map<String, Object> formValue = Maps.newHashMapWithExpectedSize(count.intValue());
-
-		List<BindProperty> handlers = this.handlers;
-		for (BindProperty property : handlers) {
-			if (!property.isRegion(type)) {
-				continue;
-			}
-			String name = property.getPropertyName();
-			BindMapping mapping = property.getBindMapping();
-			if (CollectionCellMapping.class == mapping.getClass()) {
-				cellHandlers.add(property);
-			} else {
-				Optional<?> value = mapping.getValue(fromValue);
-				value.ifPresent(v -> formValue.put(name, v));
-			}
-		}
-		if (formValue.isEmpty() && cellHandlers.isEmpty()) {
-			return Optional.empty();
-		}
-		T t = Json.Mapper.convertValue(formValue, type);
-		setValue(cellHandlers, fromValue, t);
-		return Optional.of(t);
-	}
-
-	private <T> void setValue(List<BindProperty> properties, Row row, T toValue) {
-		try {
-			for (BindProperty property : properties) {
-				BindMapping bindMapping = property.getBindMapping();
-				CollectionCellMapping mapping = (CollectionCellMapping) bindMapping;
-				Optional<List<Cell>> value = mapping.getValue(row);
-				if (value.isPresent()) {
-					Method writeMethod = property.getWriteMethod();
-					writeMethod.invoke(toValue, value.get());
-				}
-			}
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			log.error("{} set value error {}", toValue.getClass(), e);
-			throw new ExcelException(e);
-		}
-	}
-
-
-	@Override
-	public <T> boolean writeValue(T fromValue, Row toValue) {
-		List<BindProperty> properties = this.handlers;
-		try {
-			for (BindProperty property : properties) {
-				Method readMethod = property.getReadMethod();
-				Object value = readMethod.invoke(fromValue);
-				BindMapping bindMapping = property.getBindMapping();
-				bindMapping.setValueToRow(value, toValue);
-			}
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			log.error("write value error {}", e);
-			throw new ExcelException(e);
-		}
-		return false;
 	}
 
 	/**
@@ -208,7 +139,7 @@ public class RowMappingImpl implements RowMapping {
 		for (BindProperty property : bindProperties) {
 			List<BindColumn> columns = property.getBindColumns();
 			BindMapping mapping;
-			if (property.getOperation() == Operation.LINE_NUM) {
+			if (property.isLineNum()) {
 				mapping = new LineNumMapping(columns);
 			} else {
 				Collection<ValueHandler> valueHandlers = localConfig.getContentValueHandlers();
@@ -233,9 +164,19 @@ public class RowMappingImpl implements RowMapping {
 	}
 
 	@Override
-	public void close() {
-		if (handlers != null) {
-			handlers.clear();
+	public Optional<T> readValue(Row fromValue) {
+		if (isEmpty(fromValue)) {
+			return Optional.empty();
 		}
+		T convert = helper.convert(fromValue);
+		return Optional.of(convert);
 	}
+
+
+	@Override
+	public void writeValue(T fromValue, Row toValue) {
+		helper.writeValue(fromValue, toValue);
+	}
+
+
 }

@@ -7,10 +7,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
+/**
+ * 绑定
+ */
 @ToString
 @Builder
 @Getter
-public class Rule {
+public class MatchConfig {
 
 	/**
 	 * 匹配参数的前缀
@@ -29,7 +32,7 @@ public class Rule {
 	 */
 	private String exclude;
 
-	public Rule(String prefix, String title, String suffix, String exclude) {
+	public MatchConfig(String prefix, String title, String suffix, String exclude) {
 		this.prefix = Objects.isNull(prefix) ? StringUtils.EMPTY : prefix;
 		this.title = Objects.isNull(title) ? StringUtils.EMPTY : title;
 		this.suffix = Objects.isNull(suffix) ? StringUtils.EMPTY : suffix;

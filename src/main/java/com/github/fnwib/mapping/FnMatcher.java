@@ -3,7 +3,7 @@ package com.github.fnwib.mapping;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapping.model.BindColumn;
-import com.github.fnwib.mapping.model.Rule;
+import com.github.fnwib.mapping.model.MatchConfig;
 import com.github.fnwib.util.ValueUtil;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +25,7 @@ public class FnMatcher {
 	private final String exclude;
 	private final Collection<ValueHandler> valueHandlers;
 
-	public FnMatcher(Rule rule, LocalConfig localConfig) {
+	public FnMatcher(MatchConfig rule, LocalConfig localConfig) {
 		this.titlePattern = Pattern.compile(rule.getTitle(), Pattern.CASE_INSENSITIVE);
 		this.prefix = rule.getPrefix();
 		this.sequence = rule.getTitle();

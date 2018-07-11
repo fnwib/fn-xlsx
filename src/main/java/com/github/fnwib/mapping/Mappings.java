@@ -56,6 +56,9 @@ public class Mappings {
 	public static BindMapping createCollectionMapping(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		BindMapping mapping;
 		if (Cell.class.isAssignableFrom(type.getContentType().getRawClass())) {
+			if (type.getRawClass() != List.class) {
+				throw new SettingException("只支持List<Cell>", Cell.class);
+			}
 			mapping = new CollectionCellMapping(columns);
 		} else {
 			mapping = new CollectionMapping(type.getContentType(), columns, valueHandlers);
