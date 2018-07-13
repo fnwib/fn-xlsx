@@ -3,6 +3,7 @@ package com.github.fnwib.write.model;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.config.FileNameProducer;
+import com.github.fnwib.write.fn.FnCellStyle;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,8 @@ public class SheetConfig {
 	private List<ExcelPreHeader> preHeaders;
 	@Getter
 	private List<ExcelHeader> headers;
+	@Getter
+	private FnCellStyle contentCellStyle;
 
 	public File getEmptyFile() {
 		String filename = fileNameProducer.getFilename(this.filename, EXTENSION);
@@ -105,6 +108,7 @@ public class SheetConfig {
 		private String sheetName;
 		private List<ExcelPreHeader> preHeaders;
 		private List<ExcelHeader> headers;
+		private FnCellStyle contentCellStyle;
 
 		public Builder() {
 			preHeaders = Lists.newArrayList();
@@ -143,6 +147,11 @@ public class SheetConfig {
 
 		public Builder addHeaders(List<ExcelHeader> val) {
 			headers.addAll(val);
+			return this;
+		}
+
+		public Builder contentCellStyle(FnCellStyle val) {
+			contentCellStyle = val;
 			return this;
 		}
 

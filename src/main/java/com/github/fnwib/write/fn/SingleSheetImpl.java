@@ -24,7 +24,7 @@ public class SingleSheetImpl implements FnSheet {
 	private SheetConfig sheetConfig;
 	private Map<String, Integer> mapping;
 	private int startRowNum;
-	private CellStyle cellStyle;
+	private CellStyle contentCellStyle;
 
 	private FileOutputStream outputStream;
 	private Workbook workbook;
@@ -35,7 +35,6 @@ public class SingleSheetImpl implements FnSheet {
 		this.sheetConfig = sheetConfig;
 		this.mapping = Maps.newHashMap();
 		this.startRowNum = 0;
-		cellStyle = null;
 		init();
 	}
 
@@ -54,6 +53,8 @@ public class SingleSheetImpl implements FnSheet {
 		}
 		addPreHeader(sheet);
 		addHeaderRow(sheet);
+		FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(sheetConfig.getContentCellStyle(), FnCellStyleType.CONTENT);
+		this.contentCellStyle = fnCellStyle.createCellStyle(workbook);
 	}
 
 
@@ -65,7 +66,12 @@ public class SingleSheetImpl implements FnSheet {
 	private void addPreHeader(Sheet sheet) {
 		List<ExcelPreHeader> headers = sheetConfig.getPreHeaders();
 		for (ExcelPreHeader header : headers) {
-			WriteHelper.setValue(sheet, header.getRowNum(), header.getCellIndex(), header.getValue(), header.getCellStyle());
+			FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(header.getCellStyle(), FnCellStyleType.PRR_HEADER);
+			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
+			Row row = WriteHelper.getOrCreateRow(sheet, header.getRowNum());
+			WriteHelper.setHeightIfGtZero(row, header.getHeight());
+			Cell cell = WriteHelper.getOrCreateCell(row, header.getCellIndex());
+			WriteHelper.setCellValue(cell, header.getValue(), cellStyle);
 			startRowNum = Math.max(header.getRowNum(), startRowNum);
 		}
 	}
@@ -81,7 +87,14 @@ public class SingleSheetImpl implements FnSheet {
 		startRowNum++;
 		for (ExcelHeader c : headers) {
 			mapping.put(c.getId(), c.getCellIndex());
-			WriteHelper.setValue(sheet, startRowNum, c.getCellIndex(), c.getValue(), c.getCellStyle());
+			FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(c.getCellStyle(), FnCellStyleType.HEADER);
+			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
+			WriteHelper.setColumnWidthIfGtZero(sheet, c.getCellIndex(), c.getWidth());
+			Row row = WriteHelper.getOrCreateRow(sheet, startRowNum);
+			WriteHelper.setHeightIfGtZero(row, c.getHeight());
+			Cell cell = WriteHelper.getOrCreateCell(row, c.getCellIndex());
+			WriteHelper.setCellValue(cell, c.getValue(), cellStyle);
+			WriteHelper.setValue(sheet, startRowNum, c.getCellIndex(), c.getValue(), cellStyle);
 		}
 	}
 
@@ -118,7 +131,7 @@ public class SingleSheetImpl implements FnSheet {
 				log.error("row {}", row);
 				log.error("k {}", k);
 			}
-			WriteHelper.setValue(sheet, startRowNum, index, v, cellStyle);
+			WriteHelper.setValue(sheet, startRowNum, index, v, contentCellStyle);
 		});
 	}
 
@@ -135,6 +148,7 @@ public class SingleSheetImpl implements FnSheet {
 			addRow(row);
 		}
 		for (Integer mergeIndex : mergedRangeIndex) {
+			//从下一行开始合并
 			CellRangeAddress cellRangeAddress = new CellRangeAddress(begin + 1, begin + rows.size(),
 					mergeIndex, mergeIndex);
 			sheet.addMergedRegion(cellRangeAddress);

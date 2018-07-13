@@ -1,5 +1,6 @@
 package com.github.fnwib.write.model;
 
+import com.github.fnwib.write.fn.FnCellStyle;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,5 +18,7 @@ public class ExcelHeader {
 	private String id;
 	private int cellIndex;
 	private String value;
-	private CellStyle cellStyle;
+	private FnCellStyle cellStyle;
+	private short height;
+	private int width;
 }

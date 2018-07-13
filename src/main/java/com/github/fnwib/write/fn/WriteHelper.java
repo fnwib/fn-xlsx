@@ -7,6 +7,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 public class WriteHelper {
 
+	public static void setColumnWidthIfGtZero(Sheet sheet, int cellNum, int width) {
+		if (width <= 0) {
+			return;
+		}
+		sheet.setColumnWidth(cellNum, width);
+	}
+
 	/**
 	 * 指定位置赋值
 	 *
@@ -17,19 +24,30 @@ public class WriteHelper {
 	 */
 	public static void setValue(Sheet sheet, int rowNum, int cellNum, String value, CellStyle cellStyle) {
 		Row row = getOrCreateRow(sheet, rowNum);
-		org.apache.poi.ss.usermodel.Cell cell = getOrCreateCell(row, cellNum);
+		Cell cell = getOrCreateCell(row, cellNum);
 		cell.setCellValue(value);
 		cell.setCellStyle(cellStyle);
 	}
 
-	private static Row getOrCreateRow(Sheet sheet, int rowNum) {
+	public static Row getOrCreateRow(Sheet sheet, int rowNum) {
 		Row row = sheet.getRow(rowNum);
 		return row == null ? sheet.createRow(rowNum) : row;
 	}
 
-	private static Cell getOrCreateCell(Row row, int cellNum) {
+	public static void setHeightIfGtZero(Row row, short height) {
+		if (height <= 0) {
+			return;
+		}
+		row.setHeight(height);
+	}
+
+	public static Cell getOrCreateCell(Row row, int cellNum) {
 		Cell cell = row.getCell(cellNum);
 		return cell == null ? row.createCell(cellNum) : cell;
 	}
 
+	public static void setCellValue(Cell cell, String value, CellStyle cellStyle) {
+		cell.setCellValue(value);
+		cell.setCellStyle(cellStyle);
+	}
 }

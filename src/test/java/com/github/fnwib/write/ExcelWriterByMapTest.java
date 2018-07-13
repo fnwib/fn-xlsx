@@ -5,9 +5,11 @@ import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.github.fnwib.write.model.ExcelPreHeader;
 import com.github.fnwib.write.model.SheetConfig;
+import com.github.fnwib.write.template.CellStyleBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +43,8 @@ public class ExcelWriterByMapTest {
 					.id("id:" + i)
 					.cellIndex(i)
 					.value("head " + i)
+					.height(((short) 600))
+					.width(4000)
 					.build();
 			headers.add(build);
 		}
