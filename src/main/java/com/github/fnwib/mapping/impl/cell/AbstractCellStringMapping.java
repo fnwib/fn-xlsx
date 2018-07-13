@@ -15,7 +15,7 @@ public abstract class AbstractCellStringMapping implements CellMapping {
 	@Override
 	public void setValueToRow(Object value, int indexColumn, Row row) {
 		Cell cell = row.createCell(indexColumn);
-		if (value != null) {
+		if (value == null) {
 			return;
 		}
 		cell.setCellType(CellType.STRING);

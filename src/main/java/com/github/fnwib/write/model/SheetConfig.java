@@ -59,7 +59,8 @@ public class SheetConfig {
 		};
 		dir = checkDir(builder.dir);
 		filename = builder.fileName;
-		maxRowsCanWrite = builder.maxRowsCanWrite;
+		//行号 = rowNum + 1
+		maxRowsCanWrite = builder.maxRowsCanWrite - 1;
 		sheetName = builder.sheetName;
 		preHeaders = builder.preHeaders;
 		headers = builder.headers;

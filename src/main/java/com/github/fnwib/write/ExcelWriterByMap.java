@@ -1,6 +1,7 @@
 package com.github.fnwib.write;
 
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.write.fn.FnSheet;
 import com.github.fnwib.write.fn.SingleSheetImpl;
 import com.github.fnwib.write.model.SheetConfig;
@@ -16,12 +17,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class WriterByMap implements ExcelWriter<Map<String, String>> {
+public class ExcelWriterByMap implements ExcelWriter<Map<String, String>> {
 	private SheetConfig sheetConfig;
 	private FnSheet fnSheet;
 	private boolean closed = false;
 
-	public WriterByMap(SheetConfig sheetConfig) {
+	public ExcelWriterByMap(SheetConfig sheetConfig) {
 		this.sheetConfig = sheetConfig;
 	}
 
@@ -32,11 +33,15 @@ public class WriterByMap implements ExcelWriter<Map<String, String>> {
 		if (fnSheet == null) {
 			fnSheet = new SingleSheetImpl(sheetConfig);
 		}
-		if (fnSheet.canWriteSize() <= size) {
+		if (fnSheet.canWriteSize() < size) {
 			log.debug("需要写入'{}'行, 当前sheet可写入行'{}'不足,将创建一个新sheet", size, fnSheet.canWriteSize());
 			fnSheet.flush();
 			fnSheet = new SingleSheetImpl(sheetConfig);
+			if (fnSheet.canWriteSize() < size) {
+				throw new SettingException("Sheet起始可写入rowNum'%s'，最大可写入rowNum '%s'。请检查配置", fnSheet.getStartRow(), sheetConfig.getMaxRowsCanWrite());
+			}
 		}
+
 	}
 
 

@@ -5,6 +5,7 @@ import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.github.fnwib.write.model.ExcelPreHeader;
 import com.github.fnwib.write.model.SheetConfig;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class WriterByMapTest {
+public class ExcelWriterByMapTest {
 
 	private String basePath;
 
@@ -68,7 +69,7 @@ public class WriterByMapTest {
 				.addPreHeader(ExcelPreHeader.builder().rowNum(0).cellIndex(0).value("标题").build())
 				.addHeaders(getHeaders(10))
 				.build();
-		ExcelWriter<Map<String, String>> writer = new WriterByMap(config);
+		ExcelWriter<Map<String, String>> writer = new ExcelWriterByMap(config);
 		writer.write(getRows(15, 10));
 		List<File> files = writer.getFiles();
 		for (File file : files) {
@@ -77,11 +78,23 @@ public class WriterByMapTest {
 	}
 
 	@Test
-	public void writeList() throws IOException {
-
-	}
-
-	@Test
 	public void writeMergedRegion() {
+		SheetConfig config = SheetConfig.builder()
+				.dir(basePath)
+				.fileName("test")
+				.maxRowsCanWrite(5)
+				.sheetName("test-sheet")
+				.addPreHeader(ExcelPreHeader.builder().rowNum(0).cellIndex(0).value("标题").build())
+				.addHeaders(getHeaders(10))
+				.build();
+		ExcelWriter<Map<String, String>> writer = new ExcelWriterByMap(config);
+		writer.writeMergedRegion(getRows(3, 10), Lists.newArrayList(1, 2, 3, 4));
+		writer.writeMergedRegion(getRows(2, 10), Lists.newArrayList(1, 2, 3, 4));
+		writer.writeMergedRegion(getRows(3, 10), Lists.newArrayList(1, 2, 3, 4));
+		writer.writeMergedRegion(getRows(3, 10), Lists.newArrayList(1, 2, 3, 4));
+		List<File> files = writer.getFiles();
+		for (File file : files) {
+			System.out.println(file.getAbsoluteFile());
+		}
 	}
 }

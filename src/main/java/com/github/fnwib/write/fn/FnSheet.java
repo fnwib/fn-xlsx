@@ -5,6 +5,8 @@ import java.util.Map;
 
 public interface FnSheet {
 
+	int getStartRow();
+
 	void flush();
 
 	int canWriteSize();

@@ -99,6 +99,11 @@ public class SingleSheetImpl implements FnSheet {
 	}
 
 	@Override
+	public int getStartRow() {
+		return startRowNum;
+	}
+
+	@Override
 	public int canWriteSize() {
 		return sheetConfig.getMaxRowsCanWrite() - startRowNum;
 	}
@@ -125,14 +130,16 @@ public class SingleSheetImpl implements FnSheet {
 	 */
 	@Override
 	public void addMergeRow(List<Map<String, String>> rows, List<Integer> mergedRangeIndex) {
-		for (Integer mergeIndex : mergedRangeIndex) {
-			CellRangeAddress cellRangeAddress = new CellRangeAddress(startRowNum, startRowNum + rows.size() - 1,
-					mergeIndex, mergeIndex);
-			sheet.addMergedRegion(cellRangeAddress);
-		}
+		int begin = this.startRowNum;
 		for (Map<String, String> row : rows) {
 			addRow(row);
 		}
+		for (Integer mergeIndex : mergedRangeIndex) {
+			CellRangeAddress cellRangeAddress = new CellRangeAddress(begin + 1, begin + rows.size(),
+					mergeIndex, mergeIndex);
+			sheet.addMergedRegion(cellRangeAddress);
+		}
+
 	}
 
 
