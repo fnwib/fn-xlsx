@@ -1,7 +1,13 @@
 package com.github.fnwib.write;
 
-import com.google.common.base.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@EqualsAndHashCode
+@ToString
 public class CellText {
     private int    rowNum;
     private int    cellNum;
@@ -35,27 +41,4 @@ public class CellText {
         return text;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CellText cellText = (CellText) o;
-        return rowNum == cellText.rowNum &&
-                cellNum == cellText.cellNum &&
-                Objects.equal(text, cellText.text);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(rowNum, cellNum, text);
-    }
-
-    @Override
-    public String toString() {
-        return "CellText{" +
-                "rowNum=" + rowNum +
-                ", cellNum=" + cellNum +
-                ", text='" + text + '\'' +
-                '}';
-    }
 }

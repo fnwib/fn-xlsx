@@ -3,17 +3,28 @@ package com.github.fnwib.write.config;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.write.CellText;
 import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 import java.util.List;
 
 public class TemplateSetting {
     private static final int step = 500000;
+    @Getter
     private int            maxRowsCanWrite;
+    @Getter
+    @Setter
     private File           template;
+    @Getter
+    @Setter
     private String         sheetName;
+    @Getter
+    @Setter
     private boolean        useDefaultCellStyle;
+    @Getter
     private List<String>   lastTitles;
+    @Getter
     private List<CellText> cellTexts;
 
     public TemplateSetting(int maxRowsCanWrite) {
@@ -34,51 +45,18 @@ public class TemplateSetting {
         return rowNum > maxRowsCanWrite;
     }
 
-    public int getMaxRowsCanWrite() {
-        return maxRowsCanWrite;
-    }
-
-    public File getTemplate() {
-        return template;
-    }
-
     public boolean changed() {
         return !lastTitles.isEmpty() || !cellTexts.isEmpty();
-    }
-
-
-    public void setTemplate(File template) {
-        this.template = template;
-    }
-
-    public String getSheetName() {
-        return sheetName;
-    }
-
-    public void setSheetName(String sheetName) {
-        this.sheetName = sheetName;
-    }
-
-    public boolean isUseDefaultCellStyle() {
-        return useDefaultCellStyle;
     }
 
     public void useDefaultCellStyle() {
         this.useDefaultCellStyle = true;
     }
 
-    public List<String> getAddLastTitles() {
-        return lastTitles;
-    }
-
     public void addLastTitles(List<String> lastTitles) {
         for (String lastTitle : lastTitles) {
             this.lastTitles.add(lastTitle);
         }
-    }
-
-    public List<CellText> getCellTexts() {
-        return cellTexts;
     }
 
     public void addCellTexts(List<CellText> cellTexts) {

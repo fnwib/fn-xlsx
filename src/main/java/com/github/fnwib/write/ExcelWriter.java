@@ -13,15 +13,15 @@ public interface ExcelWriter<T> {
      */
     void write(T element);
 
-    void write(List<T> list);
+    void write(List<T> elements);
 
     /**
      * 写入excel 合并 cellIndexes这些列
      *
-     * @param list
-     * @param cellIndexes 要合并的列
+     * @param elements
+     * @param mergeIndexes 要合并的列
      */
-    void writeMergedRegion(List<T> list, List<Integer> cellIndexes);
+    void writeMergedRegion(List<T> elements, List<Integer> mergeIndexes);
 
     /**
      * 1.写出excel
