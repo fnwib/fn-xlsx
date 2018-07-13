@@ -10,9 +10,9 @@ import java.awt.Color;
 public class DefaultHeaderCellStyleImpl implements FnCellStyle {
 
 	@Override
-	public CellStyle createCellStyle(Workbook workbook) {
+	public XSSFCellStyle createCellStyle(Workbook workbook) {
 		FnCellStyle fnCellStyle = FnCellStyleType.CONTENT.getStyle();
-		XSSFCellStyle cellStyle = (XSSFCellStyle) fnCellStyle.createCellStyle(workbook);
+		XSSFCellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
 		Font font = workbook.createFont();
 		font.setFontName("宋体");
 		font.setFontHeightInPoints(((short) 12));

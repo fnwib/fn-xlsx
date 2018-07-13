@@ -1,11 +1,12 @@
 package com.github.fnwib.write.fn;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 public class DefaultContentCellStyleImpl implements FnCellStyle {
 	@Override
-	public CellStyle createCellStyle(Workbook workbook) {
-		CellStyle cellStyle = workbook.createCellStyle();
+	public XSSFCellStyle createCellStyle(Workbook workbook) {
+		XSSFCellStyle cellStyle = (XSSFCellStyle) workbook.createCellStyle();
 		cellStyle.setBorderTop(BorderStyle.THIN);
 		cellStyle.setBorderLeft(BorderStyle.THIN);
 		cellStyle.setBorderRight(BorderStyle.THIN);
