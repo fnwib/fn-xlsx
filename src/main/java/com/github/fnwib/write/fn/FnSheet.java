@@ -1,5 +1,8 @@
 package com.github.fnwib.write.fn;
 
+import com.github.fnwib.write.model.ExcelContent;
+import com.github.fnwib.write.model.RowExcelContent;
+
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +14,9 @@ public interface FnSheet {
 
 	int canWriteSize();
 
-	void addRow(Map<String, String> row);
+	void addRow(List<ExcelContent> row);
 
-	void addMergeRow(List<Map<String, String>> rows, List<Integer> mergedRangeIndex);
+	void addRow(RowExcelContent row);
+
+	void addMergeRow(List<RowExcelContent> rows, List<Integer> mergedRangeIndex);
 }

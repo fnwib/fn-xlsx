@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -67,6 +68,7 @@ public class SheetConfig {
 		sheetName = builder.sheetName;
 		preHeaders = builder.preHeaders;
 		headers = builder.headers;
+		this.contentCellStyle = builder.contentCellStyle;
 	}
 
 	private Path checkDir(String dir) {
