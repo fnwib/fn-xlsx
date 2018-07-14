@@ -1,7 +1,10 @@
 package com.github.fnwib.mapping;
 
+import com.github.fnwib.write.model.ExcelContent;
+import com.github.fnwib.write.model.ExcelHeader;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,6 +29,10 @@ public interface RowMapping<T> {
 	 */
 	boolean match(Row fromValue);
 
+	boolean match(List<ExcelHeader> headers);
+
+	MappingHelper<T> getMappingHelper();
+
 	/**
 	 * row convert to T
 	 *
@@ -38,9 +45,8 @@ public interface RowMapping<T> {
 	 * write T to empty Row
 	 *
 	 * @param fromValue value
-	 * @param toValue   empty row
 	 */
-	void writeValue(T fromValue, Row toValue);
+	List<ExcelContent> writeValue(T fromValue);
 
 
 }

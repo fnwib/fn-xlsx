@@ -2,12 +2,15 @@ package com.github.fnwib.mapping.impl;
 
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.impl.cell.RawCellMapping;
+import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CollectionCellMapping implements BindMapping {
 
@@ -38,43 +41,48 @@ public class CollectionCellMapping implements BindMapping {
 	}
 
 	@Override
-	public void setValueToRow(Object value, Row row) {
-		if (Objects.isNull(value)) {
-			return;
+	public List<ExcelContent> getContents(Object value) {
+		List<Cell> cells = Objects.nonNull(value) ? (List<Cell>) value : Collections.emptyList();
+		Map<Integer, Cell> values = cells.stream().filter(Objects::nonNull).collect(Collectors.toMap(Cell::getColumnIndex, c -> c));
+		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
+		for (BindColumn column : columns) {
+			Integer index = column.getIndex();
+			Cell cell = values.get(index);
+			ExcelContent excelContent = new ExcelContent(cell);
+			contents.add(excelContent);
 		}
-		List<Cell> cells = (List<Cell>) value;
-		for (Cell cell : cells) {
-			int index = cell.getColumnIndex();
-			Cell newCell = row.createCell(index);
-			CellType cellType = cell.getCellTypeEnum();
-			switch (cellType) {
-				case _NONE:
-				case BLANK:
-					break;
-				case ERROR:
-					newCell.setCellType(CellType.ERROR);
-					newCell.setCellValue(cell.getStringCellValue());
-					break;
-				case STRING:
-					newCell.setCellType(CellType.STRING);
-					newCell.setCellValue(cell.getStringCellValue());
-					break;
-				case BOOLEAN:
-					newCell.setCellType(CellType.BOOLEAN);
-					newCell.setCellValue(cell.getStringCellValue());
-					break;
-				case FORMULA:
-					newCell.setCellType(CellType.FORMULA);
-					newCell.setCellValue(cell.getStringCellValue());
-					break;
-				case NUMERIC:
-					newCell.setCellType(CellType.FORMULA);
-					newCell.setCellValue(cell.getNumericCellValue());
-					break;
-				default:
-					break;
-			}
-		}
+		return contents;
+//		for (Cell cell : cells) {
+//			Cell newCell = null;
+//			CellType cellType = cell.getCellTypeEnum();
+//			switch (cellType) {
+//				case _NONE:
+//				case BLANK:
+//					break;
+//				case ERROR:
+//					newCell.setCellType(CellType.ERROR);
+//					newCell.setCellValue(cell.getStringCellValue());
+//					break;
+//				case STRING:
+//					newCell.setCellType(CellType.STRING);
+//					newCell.setCellValue(cell.getStringCellValue());
+//					break;
+//				case BOOLEAN:
+//					newCell.setCellType(CellType.BOOLEAN);
+//					newCell.setCellValue(cell.getStringCellValue());
+//					break;
+//				case FORMULA:
+//					newCell.setCellType(CellType.FORMULA);
+//					newCell.setCellValue(cell.getStringCellValue());
+//					break;
+//				case NUMERIC:
+//					newCell.setCellType(CellType.FORMULA);
+//					newCell.setCellValue(cell.getNumericCellValue());
+//					break;
+//				default:
+//					break;
+//			}
+//		}
 	}
 
 }

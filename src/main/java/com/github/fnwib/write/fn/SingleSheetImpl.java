@@ -66,7 +66,7 @@ public class SingleSheetImpl implements FnSheet {
 			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
 			Row row = WriteHelper.getOrCreateRow(sheet, header.getRowNum());
 			WriteHelper.setHeightIfGtZero(row, header.getHeight());
-			Cell cell = WriteHelper.getOrCreateCell(row, header.getCellIndex());
+			Cell cell = WriteHelper.getOrCreateCell(row, header.getColumnIndex());
 			WriteHelper.setCellValue(cell, header.getValue(), cellStyle);
 			startRowNum = Math.max(header.getRowNum(), startRowNum);
 		}
@@ -83,12 +83,12 @@ public class SingleSheetImpl implements FnSheet {
 		for (ExcelHeader c : headers) {
 			FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(c.getCellStyle(), FnCellStyleType.HEADER);
 			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
-			WriteHelper.setColumnWidthIfGtZero(sheet, c.getCellIndex(), c.getWidth());
+			WriteHelper.setColumnWidthIfGtZero(sheet, c.getColumnIndex(), c.getWidth());
 			Row row = WriteHelper.getOrCreateRow(sheet, startRowNum);
 			WriteHelper.setHeightIfGtZero(row, c.getHeight());
-			Cell cell = WriteHelper.getOrCreateCell(row, c.getCellIndex());
+			Cell cell = WriteHelper.getOrCreateCell(row, c.getColumnIndex());
 			WriteHelper.setCellValue(cell, c.getValue(), cellStyle);
-			WriteHelper.setValue(sheet, startRowNum, c.getCellIndex(), c.getValue(), cellStyle);
+			WriteHelper.setValue(sheet, startRowNum, c.getColumnIndex(), c.getValue(), cellStyle);
 		}
 	}
 

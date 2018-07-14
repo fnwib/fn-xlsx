@@ -1,6 +1,7 @@
 package com.github.fnwib.mapping.impl;
 
 import com.github.fnwib.mapping.model.BindColumn;
+import com.github.fnwib.write.model.ExcelContent;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public interface BindMapping {
 	 * @param value
 	 * @return
 	 */
-	void setValueToRow(Object value, Row row);
+//	void setValueToRow(Object value, Row row);
+
+	List<ExcelContent> getContents(Object value);
 
 }

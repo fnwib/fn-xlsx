@@ -7,12 +7,11 @@ import com.github.fnwib.mapping.impl.cell.CellMapping;
 import com.github.fnwib.mapping.impl.cell.NumberMapping;
 import com.github.fnwib.mapping.impl.cell.SimpleMapping;
 import com.github.fnwib.mapping.impl.cell.StringMapping;
+import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Row;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class PrimitiveMapping implements BindMapping {
 
@@ -43,7 +42,11 @@ public class PrimitiveMapping implements BindMapping {
 	}
 
 	@Override
-	public void setValueToRow(Object value, Row row) {
-		cellMapping.setValueToRow(value, column.getIndex(), row);
+	public List<ExcelContent> getContents(Object value) {
+		List<ExcelContent> contents = Lists.newArrayListWithCapacity(1);
+		Integer index = column.getIndex();
+		String val = Objects.isNull(value) ? null : value.toString();
+		contents.add(new ExcelContent(index, val));
+		return contents;
 	}
 }

@@ -52,9 +52,18 @@ public class Property {
 
 	public Optional<BindProperty> toBindParam() {
 		AutoMapping mapping = field.getAnnotation(AutoMapping.class);
-		if (mapping == null) {
-			return Optional.empty();
+		if (mapping != null) {
+			return toBindParam(mapping);
 		}
+
+		CellType cellType = field.getAnnotation(CellType.class);
+		if (cellType != null) {
+			return toBindParam(cellType);
+		}
+		return Optional.empty();
+	}
+
+	private Optional<BindProperty> toBindParam(AutoMapping mapping) {
 		MatchConfig matchConfig = MatchConfig.builder().title(mapping.value())
 				.suffix(mapping.suffix())
 				.prefix(mapping.prefix())
@@ -68,6 +77,36 @@ public class Property {
 				.build();
 		BindProperty param = BindProperty.builder()
 				.propertyName(getName())
+				.propertyDescriptor(propertyDescriptor)
+				.operation(mapping.operation())
+				.type(getFieldType())
+				.valueHandlers(getValueHandlers())
+				.matchConfig(matchConfig)
+				.featureConfig(featureConfig)
+				.build();
+		LineNum lineNum = field.getAnnotation(LineNum.class);
+		if (Objects.nonNull(lineNum)) {
+			param.setOperation(Operation.LINE_NUM);
+		}
+		return Optional.of(param);
+
+	}
+
+	private Optional<BindProperty> toBindParam(CellType mapping) {
+		MatchConfig matchConfig = MatchConfig.builder().title(mapping.title())
+				.suffix(mapping.suffix())
+				.prefix(mapping.prefix())
+				.exclude(mapping.exclude())
+				.build();
+		FeatureConfig featureConfig = FeatureConfig.builder()
+				.order(mapping.order())
+				.complex(mapping.complex())
+				.bindType(mapping.bindType())
+				.rw(mapping.rw())
+				.build();
+		BindProperty param = BindProperty.builder()
+				.propertyName(getName())
+				.propertyDescriptor(propertyDescriptor)
 				.operation(mapping.operation())
 				.type(getFieldType())
 				.valueHandlers(getValueHandlers())

@@ -2,6 +2,7 @@ package com.github.fnwib.write.config;
 
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.UUIDUtils;
+import lombok.Getter;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,9 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * please user com.github.fnwib.write.model.SheetConfig
+ */
 public class ResultFileSetting {
 
 	private static final Logger log = LoggerFactory.getLogger(ResultFileSetting.class);
@@ -29,6 +33,12 @@ public class ResultFileSetting {
 
 	private final String baseName;
 
+	//兼容
+	@Getter
+	private final String filename;
+	//兼容
+	@Getter
+	private final String dir;
 
 	/**
 	 * @param filename     结果文件的名称
@@ -57,6 +67,8 @@ public class ResultFileSetting {
 			this.resultFolder = resultFolder;
 		}
 		this.baseName = FilenameUtils.getBaseName(filename);
+		this.filename = filename;
+		this.dir = resultFolder.getAbsolutePath();
 
 	}
 

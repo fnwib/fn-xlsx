@@ -4,7 +4,7 @@ import com.github.fnwib.exception.ExcelException;
 import org.apache.poi.ss.usermodel.*;
 
 import java.util.Optional;
-
+@Deprecated
 public class CellStyleBuilder {
 
     public static Builder builder() {

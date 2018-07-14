@@ -16,7 +16,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 @Getter
 public class ExcelHeader {
 	private String id;
-	private int cellIndex;
+	private int columnIndex;
 	private String value;
 	private FnCellStyle cellStyle;
 	private short height;

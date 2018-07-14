@@ -17,7 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
+@Deprecated
 public class EmptyTemplate<T> extends Template<T> {
 
 	private static final Logger log = LoggerFactory.getLogger(EmptyTemplate.class);

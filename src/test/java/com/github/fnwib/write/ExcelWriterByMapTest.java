@@ -41,7 +41,7 @@ public class ExcelWriterByMapTest {
 		for (int i = 0; i < size; i++) {
 			ExcelHeader build = ExcelHeader.builder()
 					.id("id:" + i)
-					.cellIndex(i)
+					.columnIndex(i)
 					.value("head " + i)
 					.height(((short) 600))
 					.width(4000)
@@ -70,7 +70,7 @@ public class ExcelWriterByMapTest {
 				.fileName("test")
 				.maxRowsCanWrite(5)
 				.sheetName("test-sheet")
-				.addPreHeader(ExcelPreHeader.builder().rowNum(0).cellIndex(0).value("标题").build())
+				.addPreHeader(ExcelPreHeader.builder().rowNum(0).columnIndex(0).value("标题").build())
 				.addHeaders(getHeaders(10))
 				.build();
 		ExcelWriter<Map<String, String>> writer = new ExcelWriterByMap(config);
@@ -88,7 +88,7 @@ public class ExcelWriterByMapTest {
 				.fileName("test")
 				.maxRowsCanWrite(5)
 				.sheetName("test-sheet")
-				.addPreHeader(ExcelPreHeader.builder().rowNum(0).cellIndex(0).value("标题").build())
+				.addPreHeader(ExcelPreHeader.builder().rowNum(0).columnIndex(0).value("标题").build())
 				.addHeaders(getHeaders(10))
 				.build();
 		ExcelWriter<Map<String, String>> writer = new ExcelWriterByMap(config);

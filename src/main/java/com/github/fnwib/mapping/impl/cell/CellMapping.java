@@ -8,6 +8,4 @@ public interface CellMapping {
 
 	Optional<?> getValue(int indexColumn, Row row);
 
-	void setValueToRow(Object value, int indexColumn, Row row);
-
 }

@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-
+@Deprecated
 public class ExistTemplate<T> extends Template<T> {
     private static final Logger log = LoggerFactory.getLogger(ExistTemplate.class);
 

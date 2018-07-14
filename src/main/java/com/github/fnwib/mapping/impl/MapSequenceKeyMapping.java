@@ -7,6 +7,8 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.impl.cell.AbstractCellStringMapping;
 import com.github.fnwib.mapping.Mappings;
+import com.github.fnwib.write.model.ExcelContent;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -17,11 +19,8 @@ public class MapSequenceKeyMapping extends AbstractMapMapping {
 
 	private AbstractCellStringMapping mapping;
 
-	private Map<Sequence, Integer> map;
-
 	public MapSequenceKeyMapping(JavaType contentType, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		super(columns);
-		map = columns.stream().collect(Collectors.toMap(BindColumn::getSequence, BindColumn::getIndex));
 		this.mapping = Mappings.createSimpleMapping(contentType, valueHandlers);
 	}
 
@@ -39,18 +38,18 @@ public class MapSequenceKeyMapping extends AbstractMapMapping {
 	}
 
 	@Override
-	public void setValueToRow(Object value, Row row) {
-		if (value == null) {
-			return;
-		}
-		Map<Sequence, String> values = (Map<Sequence, String>) value;
+	public List<ExcelContent> getContents(Object value) {
+		Map<Sequence, String> values = value == null ? Collections.emptyMap() : (Map<Sequence, String>) value;
 		if (values.size() > columns.size()) {
-			String format = String.format("当前集合数量'%s'大于允许写入数量'%s'", values.size(), columns.size());
-			throw new ExcelException(format);
+			throw new ExcelException("当前集合数量'%s'大于允许写入数量'%s'", values.size(), columns.size());
 		}
-		values.forEach((sequence, val) -> {
-			Integer index = map.get(sequence);
-			mapping.setValueToRow(val, index, row);
-		});
+		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
+		for (BindColumn column : columns) {
+			Integer index = column.getIndex();
+			Sequence sequence = column.getSequence();
+			String val = values.get(sequence);
+			contents.add(new ExcelContent(index, val));
+		}
+		return contents;
 	}
 }

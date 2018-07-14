@@ -63,4 +63,27 @@ public @interface CellType {
 	 */
 	int order() default Ordered.LOWEST_PRECEDENCE;
 
+	/**
+	 * 是否独占绑定结果
+	 *
+	 * @return 默认共享
+	 */
+	BindType bindType() default BindType.Nonexclusive;
+
+
+	/**
+	 * Y 两层(最多两层)
+	 * N 一层
+	 *
+	 * @return
+	 */
+	Complex complex() default Complex.N;
+
+	/**
+	 * 读写属性配置
+	 *
+	 * @return
+	 */
+	RWType rw() default RWType.READ_WRITE;
+
 }

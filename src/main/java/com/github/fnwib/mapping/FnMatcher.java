@@ -5,19 +5,17 @@ import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.model.MatchConfig;
 import com.github.fnwib.util.ValueUtil;
+import com.github.fnwib.write.model.ExcelHeader;
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class FnMatcher {
-	private static final Logger log = LoggerFactory.getLogger(FnMatcher.class);
 	private final Pattern titlePattern;
 	private final String prefix;
 	private final String sequence;
@@ -34,13 +32,13 @@ public class FnMatcher {
 		this.valueHandlers = localConfig.getTitleValueHandlers();
 	}
 
-	public List<BindColumn> match(Row row, Set<Integer> ignoreColumns) {
-		Map<Integer, String> cells = Maps.newHashMapWithExpectedSize(row.getLastCellNum() + 1);
-		for (Cell cell : row) {
+	public List<BindColumn> match(List<ExcelHeader> headers, Set<Integer> ignoreColumns) {
+		Map<Integer, String> cells = Maps.newHashMapWithExpectedSize(headers.size());
+		for (ExcelHeader cell : headers) {
 			if (ignoreColumns.contains(cell.getColumnIndex())) {
 				continue;
 			}
-			Optional<String> cellValue = ValueUtil.getCellValue(cell, valueHandlers);
+			Optional<String> cellValue = ValueUtil.getStringValue(cell.getValue(), valueHandlers);
 			cellValue.ifPresent(v -> cells.put(cell.getColumnIndex(), v));
 		}
 		return match(cells);

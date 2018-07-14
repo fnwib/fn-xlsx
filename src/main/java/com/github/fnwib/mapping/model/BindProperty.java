@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
@@ -64,10 +65,7 @@ public class BindProperty {
 	private BindMapping bindMapping;
 	@Setter
 	@Getter
-	private Method readMethod;
-	@Setter
-	@Getter
-	private Method writeMethod;
+	private PropertyDescriptor propertyDescriptor;
 	/**
 	 * 如果是complex == Complex.Y
 	 * 则此处不为空
@@ -82,9 +80,17 @@ public class BindProperty {
 	@Getter
 	private List<BindColumn> bindColumns;
 
-
 	public int getOrder() {
 		return featureConfig.getOrder();
+	}
+
+	/**
+	 * 是否有效
+	 *
+	 * @return
+	 */
+	public boolean isBound() {
+		return bindMapping != null;
 	}
 
 	/**
@@ -112,5 +118,13 @@ public class BindProperty {
 	 */
 	public boolean isLineNum() {
 		return operation == Operation.LINE_NUM;
+	}
+
+	public Method getReadMethod() {
+		return propertyDescriptor.getReadMethod();
+	}
+
+	public Method getWriteMethod() {
+		return propertyDescriptor.getWriteMethod();
 	}
 }

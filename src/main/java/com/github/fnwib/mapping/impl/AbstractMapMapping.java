@@ -1,6 +1,7 @@
 package com.github.fnwib.mapping.impl;
 
 import com.github.fnwib.mapping.model.BindColumn;
+import com.github.fnwib.write.model.ExcelContent;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
@@ -23,5 +24,5 @@ public abstract class AbstractMapMapping implements BindMapping {
 	abstract public Optional<?> getValue(Row row);
 
 	@Override
-	abstract public void setValueToRow(Object value, Row row);
+	abstract public List<ExcelContent> getContents(Object value);
 }

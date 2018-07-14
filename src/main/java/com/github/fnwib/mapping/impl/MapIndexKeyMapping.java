@@ -6,6 +6,8 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.Mappings;
 import com.github.fnwib.mapping.impl.cell.*;
+import com.github.fnwib.write.model.ExcelContent;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -35,14 +37,18 @@ public class MapIndexKeyMapping extends AbstractMapMapping {
 	}
 
 	@Override
-	public void setValueToRow(Object value, Row row) {
-		if (value == null) {
-			return;
-		}
-		Map<Integer, String> values = (Map<Integer, String>) value;
+	public List<ExcelContent> getContents(Object value) {
+		Map<Integer, String> values = value == null ? Collections.emptyMap() : (Map<Integer, String>) value;
 		if (values.size() > columns.size()) {
 			throw new ExcelException("当前集合数量'%s'大于允许写入数量'%s'", values.size(), columns.size());
 		}
-		values.forEach((index, val) -> mapping.setValueToRow(val, index, row));
+		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
+		for (BindColumn column : columns) {
+			Integer index = column.getIndex();
+			String val = values.get(index);
+			ExcelContent excelContent = new ExcelContent(index, val);
+			contents.add(excelContent);
+		}
+		return contents;
 	}
 }

@@ -39,7 +39,7 @@ public class BeanConverter implements PropertyConverter {
 	public BeanConverter(Property property,
 						 Integer bindColumn,
 						 Collection<ValueHandler> valueHandlers) {
-		this(property, property.getJavaType(), bindColumn, valueHandlers);
+		this(property, property.getFieldType(), bindColumn, valueHandlers);
 	}
 
 	public BeanConverter(Property property,

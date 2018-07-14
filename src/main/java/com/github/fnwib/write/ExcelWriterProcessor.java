@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @param <T>
  */
+@Deprecated
 public class ExcelWriterProcessor<T> implements ExcelWriter<T> {
 
     private final WorkbookConfig workbookConfig;

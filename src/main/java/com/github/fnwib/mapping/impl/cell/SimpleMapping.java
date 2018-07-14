@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class SimpleMapping extends AbstractCellStringMapping {
@@ -33,11 +34,7 @@ public class SimpleMapping extends AbstractCellStringMapping {
 		}
 		if (deserializer != null) {
 			Object deserialize = deserializer.deserialize(cell);
-			if (deserialize == null) {
-				return Optional.empty();
-			} else {
-				return Optional.of(deserialize.toString());
-			}
+			return Objects.isNull(deserialize) ? Optional.empty() : Optional.of(deserialize.toString());
 		}
 		switch (cell.getCellTypeEnum()) {
 			case BLANK:

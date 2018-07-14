@@ -2,6 +2,8 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
+import com.github.fnwib.mapping.RowMapping;
+import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.fn.FnSheet;
 import com.github.fnwib.write.fn.SingleSheetImpl;
 import com.github.fnwib.write.model.ExcelContent;
@@ -9,7 +11,6 @@ import com.github.fnwib.write.model.ExcelHeader;
 import com.github.fnwib.write.model.RowExcelContent;
 import com.github.fnwib.write.model.SheetConfig;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -18,36 +19,38 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Excel生成工具
+ * <p>
+ *
+ * @param <T>
+ */
 @Slf4j
-public class ExcelWriterByMap implements ExcelWriter<Map<String, String>> {
+public class ExcelWriterImpl<T> implements ExcelWriter<T> {
+
 	private final SheetConfig sheetConfig;
-	private final Map<String, Integer> mapping;
+	private RowMapping<T> rowMapping;
 	private FnSheet fnSheet;
 	private boolean closed;
 
-	public ExcelWriterByMap(SheetConfig sheetConfig) {
-		this.sheetConfig = sheetConfig;
-		this.mapping = mapping(sheetConfig.getHeaders());
-		this.closed = false;
-
-	}
-
-	public Map<String, Integer> mapping(List<ExcelHeader> headers) {
-		Map<String, Integer> mapping = Maps.newHashMap();
-		for (ExcelHeader header : headers) {
-			mapping.put(header.getId(), header.getColumnIndex());
+	public ExcelWriterImpl(WorkbookConfig workbookConfig) {
+		ComUtils<T> comUtils = new ComUtils<>(workbookConfig);
+		this.sheetConfig = comUtils.toSheetConfig();
+		rowMapping = comUtils.getRowMapping();
+		List<ExcelHeader> headers = sheetConfig.getHeaders();
+		boolean match = rowMapping.match(headers);
+		if (!match) {
+			new SettingException("未知错误");
 		}
-		return mapping;
+		this.closed = false;
 	}
 
 	private void check(int size) {
 		if (closed) {
 			throw new ExcelException("已经关闭");
 		}
-
 		if (fnSheet == null) {
 			fnSheet = new SingleSheetImpl(sheetConfig);
 		}
@@ -63,50 +66,35 @@ public class ExcelWriterByMap implements ExcelWriter<Map<String, String>> {
 	}
 
 	@Override
-	public void write(Map<String, String> element) {
-		if (element == null || element.isEmpty()) {
-			return;
-		}
+	public void write(T element) {
 		check(1);
-		fnSheet.addRow(convert(element));
-	}
-
-	private RowExcelContent convert(Map<String, String> element) {
-		List<ExcelContent> cells = Lists.newArrayListWithCapacity(element.size());
-		element.forEach((k, v) -> {
-			Integer index = mapping.get(k);
-			if (index == null) {
-				log.warn("k {}", k);
-				log.warn("element {}", element);
-				log.warn("mapping {}", mapping);
-				return;
-			}
-			cells.add(new ExcelContent(index, v));
-		});
-		return new RowExcelContent(cells);
+		List<ExcelContent> contents = rowMapping.writeValue(element);
+		fnSheet.addRow(contents);
 	}
 
 	@Override
-	public void write(List<Map<String, String>> elements) {
-		for (Map<String, String> element : elements) {
-			write(element);
+	public void write(List<T> elements) {
+		for (T element : elements) {
+			this.write(element);
 		}
 	}
 
 	@Override
-	public void writeMergedRegion(List<Map<String, String>> elements, List<Integer> mergeIndexes) {
+	public void writeMergedRegion(List<T> elements, List<Integer> mergedRangeIndexes) {
+
 		if (elements.isEmpty()) {
 			return;
-		}
-		if (elements.size() == 1) {
-			write(elements);
+		} else if (elements.size() == 1) {
+			List<ExcelContent> contents = rowMapping.writeValue(elements.get(0));
+			fnSheet.addRow(contents);
 		} else {
 			check(elements.size());
 			List<RowExcelContent> rows = Lists.newArrayListWithCapacity(elements.size());
-			for (Map<String, String> element : elements) {
-				rows.add(convert(element));
+			for (T element : elements) {
+				List<ExcelContent> contents = rowMapping.writeValue(element);
+				rows.add(new RowExcelContent(contents));
 			}
-			fnSheet.addMergeRow(rows, mergeIndexes);
+			fnSheet.addMergeRow(rows, mergedRangeIndexes);
 		}
 	}
 
@@ -132,3 +120,4 @@ public class ExcelWriterByMap implements ExcelWriter<Map<String, String>> {
 		}
 	}
 }
+

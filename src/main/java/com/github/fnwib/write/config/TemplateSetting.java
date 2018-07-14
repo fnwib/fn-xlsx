@@ -9,63 +9,66 @@ import lombok.Setter;
 import java.io.File;
 import java.util.List;
 
+/**
+ * please user com.github.fnwib.write.model.SheetConfig
+ */
 public class TemplateSetting {
-    private static final int step = 500000;
-    @Getter
-    private int            maxRowsCanWrite;
-    @Getter
-    @Setter
-    private File           template;
-    @Getter
-    @Setter
-    private String         sheetName;
-    @Getter
-    @Setter
-    private boolean        useDefaultCellStyle;
-    @Getter
-    private List<String>   lastTitles;
-    @Getter
-    private List<CellText> cellTexts;
+	private static final int step = 500000;
+	@Getter
+	private int maxRowsCanWrite;
+	@Getter
+	@Setter
+	private File template;
+	@Getter
+	@Setter
+	private String sheetName;
+	@Getter
+	@Setter
+	private boolean useDefaultCellStyle;
+	@Getter
+	private List<String> lastTitles;
+	@Getter
+	private List<CellText> cellTexts;
 
-    public TemplateSetting(int maxRowsCanWrite) {
-        if (maxRowsCanWrite <= 0) {
-            throw new SettingException("Sheet可写入最大行不能小于等于0");
-        }
-        this.maxRowsCanWrite = maxRowsCanWrite;
-        this.lastTitles = Lists.newArrayList();
-        this.cellTexts = Lists.newArrayList();
-    }
+	public TemplateSetting(int maxRowsCanWrite) {
+		if (maxRowsCanWrite <= 0) {
+			throw new SettingException("Sheet可写入最大行不能小于等于0");
+		}
+		this.maxRowsCanWrite = maxRowsCanWrite;
+		this.lastTitles = Lists.newArrayList();
+		this.cellTexts = Lists.newArrayList();
+	}
 
-    public TemplateSetting() {
-        this(step);
-    }
+	public TemplateSetting() {
+		this(step);
+	}
 
 
-    public boolean gt(int rowNum) {
-        return rowNum > maxRowsCanWrite;
-    }
+	public boolean gt(int rowNum) {
+		return rowNum > maxRowsCanWrite;
+	}
 
-    public boolean changed() {
-        return !lastTitles.isEmpty() || !cellTexts.isEmpty();
-    }
+	public boolean changed() {
+		return !lastTitles.isEmpty() || !cellTexts.isEmpty();
+	}
 
-    public void useDefaultCellStyle() {
-        this.useDefaultCellStyle = true;
-    }
+	public void useDefaultCellStyle() {
+		this.useDefaultCellStyle = true;
+	}
 
-    public void addLastTitles(List<String> lastTitles) {
-        for (String lastTitle : lastTitles) {
-            this.lastTitles.add(lastTitle);
-        }
-    }
+	public void addLastTitles(List<String> lastTitles) {
+		for (String lastTitle : lastTitles) {
+			this.lastTitles.add(lastTitle);
+		}
+	}
 
-    public void addCellTexts(List<CellText> cellTexts) {
-        for (CellText cellText : cellTexts) {
-            this.cellTexts.add(cellText);
-        }
-    }
+	public void addCellTexts(List<CellText> cellTexts) {
+		for (CellText cellText : cellTexts) {
+			this.cellTexts.add(cellText);
+		}
+	}
 
-    public void addCellText(CellText cellText) {
-        this.cellTexts.add(cellText);
-    }
+	public void addCellText(CellText cellText) {
+		this.cellTexts.add(cellText);
+	}
 }
