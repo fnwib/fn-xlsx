@@ -15,14 +15,12 @@ import java.util.Optional;
 
 public class LineNumMapping implements BindMapping {
 	private List<BindColumn> columns;
-	private NumberMapping mapping;
 
 	public LineNumMapping(List<BindColumn> columns) {
 		if (columns.size() > 2) {
-			throw new SettingException();
+			throw new SettingException("LineNum匹配到多列");
 		}
 		this.columns = columns;
-		this.mapping = new NumberMapping();
 	}
 
 	@Override

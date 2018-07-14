@@ -49,7 +49,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
     private List<WriteModel> writeAndRead(WorkbookConfig writeConfig) {
         List<WriteModel> source = getDataList(6);
         List<WriteModel> target = new ArrayList<>();
-        ExcelWriter<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
+        ExcelWriter<WriteModel> writerProcessor = new ExcelWriterImpl<>(writeConfig);
         writerProcessor.write(source);
         List<File> files = writerProcessor.getFiles();
         LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
@@ -57,7 +57,6 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
             Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
             ExcelReader<WriteModel> excelReader = new ExcelReaderImpl<>(lineReader, workbook, 0);
             List<WriteModel> data = excelReader.fetchAllData();
-            System.out.println(excelReader.hasNext());
             target.addAll(data);
             String preTitle = excelReader.getPreTitle(0, 0);
             Assert.assertEquals("0,0 标题不一致", "标题", preTitle);
@@ -116,7 +115,7 @@ public class ExcelWriterProcessorTest extends ExcelWriterImplBaseTest {
 
         final LineReader<WriteModel> lineReader = new LineReaderForExcel<>(WriteModel.class);
         WorkbookConfig writeConfig = new WorkbookBuilder<>(lineReader, resultFileSetting, templateSetting);
-        ExcelWriterProcessor<WriteModel> writerProcessor = new ExcelWriterProcessor<>(writeConfig);
+        ExcelWriter<WriteModel> writerProcessor = new ExcelWriterImpl<>(writeConfig);
 
         List<WriteModel> source = getDataList(6);
 

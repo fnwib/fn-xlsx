@@ -23,33 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ExcelWriterByMapTest {
-
-	private String basePath;
-
-	@Before
-	public void initDate() throws IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		String dir = classLoader.getResource("test-file").getFile();
-		Path path = Paths.get(dir, UUIDUtils.getHalfId());
-		Files.createDirectory(path);
-		basePath = path.toString();
-	}
-
-	private List<ExcelHeader> getHeaders(int size) {
-		List<ExcelHeader> headers = new ArrayList<>(size);
-		for (int i = 0; i < size; i++) {
-			ExcelHeader build = ExcelHeader.builder()
-					.id("id:" + i)
-					.columnIndex(i)
-					.value("head " + i)
-					.height(((short) 600))
-					.width(4000)
-					.build();
-			headers.add(build);
-		}
-		return headers;
-	}
+public class ExcelWriterByMapTest extends CommonPathTest{
 
 	private List<Map<String, String>> getRows(int rowSize, int columnSize) {
 		List<Map<String, String>> rows = new ArrayList<>(rowSize);

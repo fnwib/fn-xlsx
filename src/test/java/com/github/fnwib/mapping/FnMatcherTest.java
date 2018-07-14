@@ -23,7 +23,7 @@ public class FnMatcherTest {
 		row.put(2, "aa(a");
 		List<BindColumn> match = fnMatcher.match(row);
 		Assert.assertEquals("", 1, match.size());
-		Assert.assertEquals("", Integer.valueOf(2), match.get(0).getIndex());
+		Assert.assertEquals("", 2, match.get(0).getIndex());
 	}
 
 	@Test
@@ -36,7 +36,7 @@ public class FnMatcherTest {
 		row.put(2, "aa(a");
 		List<BindColumn> match = fnMatcher.match(row);
 		Assert.assertEquals("", 1, match.size());
-		Assert.assertEquals("", Integer.valueOf(1), match.get(0).getIndex());
+		Assert.assertEquals("", 1, match.get(0).getIndex());
 	}
 
 	@Test

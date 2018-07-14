@@ -3,16 +3,18 @@ package com.github.fnwib.mapping.model;
 import com.github.fnwib.databing.title.Sequence;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Objects;
 
+@ToString
 @Getter
 @EqualsAndHashCode
 public class BindColumn {
 	/**
 	 * cell columnIndex
 	 */
-	private Integer index;
+	private int index;
 	/**
 	 * cell getStringValue
 	 */
@@ -22,8 +24,8 @@ public class BindColumn {
 	 */
 	private Sequence sequence;
 
-	public BindColumn(Integer index, String text, String mid) {
-		this.index = Objects.requireNonNull(index, "cell columnIndex must be not null");
+	public BindColumn(int index, String text, String mid) {
+		this.index = index;
 		this.text = Objects.requireNonNull(text);
 		this.sequence = new Sequence(Objects.requireNonNull(mid));
 	}

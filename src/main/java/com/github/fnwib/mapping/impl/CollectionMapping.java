@@ -13,6 +13,13 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
 
+/**
+ * Collection impl
+ * <p>
+ * Tip ！ contentType 应该是集合元素类型
+ * 它只能是 Number String Enum 之类的单一映射的结构
+ * 不能是Collection 或Map
+ */
 public class CollectionMapping implements BindMapping {
 
 	private AbstractCellStringMapping mapping;
@@ -55,6 +62,7 @@ public class CollectionMapping implements BindMapping {
 			Object v = null;
 			if (i < size) {
 				v = objects.get(i);
+				i++;
 			}
 			Integer index = column.getIndex();
 			String val = Objects.isNull(v) ? null : v.toString();
