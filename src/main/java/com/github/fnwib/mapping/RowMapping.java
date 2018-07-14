@@ -31,8 +31,6 @@ public interface RowMapping<T> {
 
 	boolean match(List<ExcelHeader> headers);
 
-	MappingHelper<T> getMappingHelper();
-
 	/**
 	 * row convert to T
 	 *

@@ -1,9 +1,11 @@
 package com.github.fnwib.mapping;
 
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
+import com.github.fnwib.mapping.impl.NestedMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.model.BindProperty;
 import com.github.fnwib.reflect.BeanResolver;
@@ -28,7 +30,7 @@ public class RowMappingImpl<T> implements RowMapping<T> {
 	private final LocalConfig localConfig;
 
 	private Class<T> type;
-	private MappingHelper<T> helper;
+	private NestedMapping<T> helper;
 	//所有绑定的列的数量
 	private LongAdder count;
 
@@ -72,22 +74,12 @@ public class RowMappingImpl<T> implements RowMapping<T> {
 		Set<Integer> ignoreColumns = Sets.newHashSet();
 		bind(headers, bindProperties, ignoreColumns, bindColumnCount);
 		if (bindColumnCount.intValue() > 0) {
-			for (BindProperty property : bindProperties) {
-				Mappings.createMapping(property, localConfig);
-			}
-			this.helper = new MappingHelper<>(type, bindProperties, localConfig);
+			TypeFactory typeFactory = TypeFactory.defaultInstance();
+			this.helper = new NestedMapping<>(typeFactory.constructType(type), bindProperties, localConfig);
 			count.add(bindColumnCount.intValue());
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public MappingHelper<T> getMappingHelper() {
-		if (helper == null || count.intValue() <= 0) {
-			throw new ExcelException("没有进行匹配或者没有匹配到");
-		}
-		return helper;
 	}
 
 	private List<ExcelHeader> to(Row row) {
@@ -159,16 +151,13 @@ public class RowMappingImpl<T> implements RowMapping<T> {
 		if (isEmpty(fromValue)) {
 			return Optional.empty();
 		}
-		T convert = helper.convert(fromValue);
-		return Optional.of(convert);
+		return helper.getValue(fromValue);
 	}
 
 
 	@Override
 	public List<ExcelContent> writeValue(T fromValue) {
-		List<ExcelContent> contents = Lists.newArrayListWithCapacity(count.intValue());
-		helper.writeValue(fromValue, contents);
-		return contents;
+		return helper.getContents(fromValue);
 	}
 
 

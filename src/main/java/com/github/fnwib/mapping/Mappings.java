@@ -26,16 +26,14 @@ public class Mappings {
 	private Mappings() {
 	}
 
-	public static void createMapping(BindProperty bindProperty, LocalConfig config) {
-		if (bindProperty.isNested()) {
-			if (bindProperty.getType().isPrimitive()) {
-				throw new SettingException("不支持这样的嵌套类型");
-			}
-			for (BindProperty property : bindProperty.getSubBindProperties()) {
-				createFlatMapping(property, config);
-			}
+	public static void createMapping(BindProperty bind, LocalConfig config) {
+		if (bind.isNested()) {
+			BindMapping mapping = new NestedMapping(bind.getType(), bind.getSubBindProperties(), config);
+			List<BindColumn> columns = mapping.getColumns();
+			bind.setBindMapping(mapping);
+			bind.setBindColumns(columns);
 		} else {
-			createFlatMapping(bindProperty, config);
+			createFlatMapping(bind, config);
 		}
 	}
 

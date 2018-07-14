@@ -32,6 +32,7 @@ public class BindProperty {
 	 * field 信息
 	 */
 	@Setter
+	@Getter
 	Property property;
 
 	/**

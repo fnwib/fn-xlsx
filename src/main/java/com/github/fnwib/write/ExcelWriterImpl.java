@@ -43,7 +43,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
 		boolean match = this.rowMapping.match(headers);
 		if (!match) {
-			new SettingException("未知错误");
+			throw new SettingException("未知错误");
 		}
 		this.closed = false;
 	}
@@ -54,7 +54,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
 		boolean match = this.rowMapping.match(headers);
 		if (!match) {
-			new SettingException("未知错误");
+			throw new SettingException("未知错误");
 		}
 		this.closed = false;
 	}

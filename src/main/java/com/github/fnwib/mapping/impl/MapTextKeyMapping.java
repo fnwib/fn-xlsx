@@ -19,11 +19,8 @@ public class MapTextKeyMapping extends AbstractMapMapping {
 
 	private AbstractCellStringMapping mapping;
 
-	private Map<String, Integer> map;
-
 	public MapTextKeyMapping(JavaType contentType, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		super(columns);
-		map = columns.stream().collect(Collectors.toMap(BindColumn::getText, BindColumn::getIndex));
 		this.mapping = Mappings.createSimpleMapping(contentType, valueHandlers);
 	}
 
