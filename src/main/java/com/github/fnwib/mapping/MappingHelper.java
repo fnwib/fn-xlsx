@@ -2,11 +2,15 @@ package com.github.fnwib.mapping;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.fnwib.databing.LocalConfig;
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapping.impl.BindMapping;
 import com.github.fnwib.mapping.impl.CollectionCellMapping;
+import com.github.fnwib.mapping.impl.LineNumMapping;
+import com.github.fnwib.mapping.impl.PrimitiveMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.model.BindProperty;
 import com.github.fnwib.write.model.ExcelContent;
@@ -20,10 +24,7 @@ import org.apache.poi.ss.usermodel.Row;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 public class MappingHelper<T> {
@@ -49,10 +50,13 @@ public class MappingHelper<T> {
 
 	//有效的绑定的属性
 	private int count;
-
+	/**
+	 * 写excel时候检查是否存在重复绑定的列 如果存在请设置读写权限
+	 * @Link AutoMapping
+	 */
 	boolean writeChecked;
 
-	public MappingHelper(Class<T> type, List<BindProperty> handlers) {
+	public MappingHelper(Class<T> type, List<BindProperty> handlers, LocalConfig config) {
 		this.type = type;
 		cellHandlers = Lists.newArrayList();
 		nestedMappingHelper = Maps.newHashMap();
@@ -66,16 +70,22 @@ public class MappingHelper<T> {
 				cellHandlers.add(handler);
 				continue;
 			}
-			if (handler.isComplexY()) {
+			if (handler.isNested()) {
 				List<BindProperty> subBindProperties = handler.getSubBindProperties();
 				Class<?> rawClass = handler.getType().getRawClass();
-				MappingHelper<?> helper = new MappingHelper(rawClass, subBindProperties);
+				MappingHelper<?> helper = new MappingHelper(rawClass, subBindProperties, config);
 				nestedMappingHelper.put(helper, handler.getPropertyDescriptor());
 				continue;
 			}
 			customHandlers.add(handler);
 		}
 		this.count = cellHandlers.size() + nestedMappingHelper.size() + customHandlers.size();
+	}
+
+	public void init() {
+		for (BindProperty customHandler : customHandlers) {
+
+		}
 	}
 
 	public T convert(Row fromValue) {
@@ -153,4 +163,5 @@ public class MappingHelper<T> {
 			throw new ExcelException(e);
 		}
 	}
+
 }

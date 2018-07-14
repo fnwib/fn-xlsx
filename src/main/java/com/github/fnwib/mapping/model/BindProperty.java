@@ -2,10 +2,11 @@ package com.github.fnwib.mapping.model;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.BindType;
-import com.github.fnwib.annotation.Complex;
+import com.github.fnwib.annotation.ComplexEnum;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapping.impl.BindMapping;
+import com.github.fnwib.reflect.Property;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,16 +29,10 @@ public class BindProperty {
 	private Operation operation;
 
 	/**
-	 * 字段带泛型类型
+	 * field 信息
 	 */
-	@Getter
-	private JavaType type;
-
-	/**
-	 * 当前字段name
-	 */
-	@Getter
-	private String propertyName;
+	@Setter
+	Property property;
 
 	/**
 	 * String 的值处理器列表
@@ -63,9 +58,6 @@ public class BindProperty {
 	@Setter
 	@Getter
 	private BindMapping bindMapping;
-	@Setter
-	@Getter
-	private PropertyDescriptor propertyDescriptor;
 	/**
 	 * 如果是complex == Complex.Y
 	 * 则此处不为空
@@ -94,12 +86,12 @@ public class BindProperty {
 	}
 
 	/**
-	 * 是否为复杂类型
+	 * 是否为嵌套类型
 	 *
 	 * @return
 	 */
-	public boolean isComplexY() {
-		return featureConfig.getComplex() == Complex.Y;
+	public boolean isNested() {
+		return featureConfig.getComplex() == ComplexEnum.Nested;
 	}
 
 	/**
@@ -121,10 +113,22 @@ public class BindProperty {
 	}
 
 	public Method getReadMethod() {
-		return propertyDescriptor.getReadMethod();
+		return property.getReadMethod();
 	}
 
 	public Method getWriteMethod() {
-		return propertyDescriptor.getWriteMethod();
+		return property.getWriteMethod();
+	}
+
+	public PropertyDescriptor getPropertyDescriptor() {
+		return property.getPropertyDescriptor();
+	}
+
+	public JavaType getType() {
+		return property.getFieldType();
+	}
+
+	public String getPropertyName() {
+		return property.getName();
 	}
 }

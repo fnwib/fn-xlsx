@@ -1,10 +1,13 @@
 package com.github.fnwib.write.model;
 
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.config.FileNameProducer;
 import com.github.fnwib.write.fn.FnCellStyle;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +18,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class SheetConfig {
@@ -32,14 +38,20 @@ public class SheetConfig {
 
 	@Getter
 	private Path dir;
+	/**
+	 * 允许写入最大的rowNum
+	 */
 	@Getter
-	private int maxRowsCanWrite;
+	private int maxRowNumCanWrite;
 	@Getter
 	private String sheetName;
 	@Getter
 	private List<ExcelPreHeader> preHeaders;
 	@Getter
 	private List<ExcelHeader> headers;
+	/**
+	 * head以下所有的默认使用
+	 */
 	@Getter
 	private FnCellStyle contentCellStyle;
 
@@ -63,14 +75,64 @@ public class SheetConfig {
 		};
 		dir = checkDir(builder.dir);
 		filename = builder.fileName;
-		//行号 = rowNum + 1
-		maxRowsCanWrite = builder.maxRowsCanWrite - 1;
+		maxRowNumCanWrite = builder.maxRowNumCanWrite;
 		sheetName = builder.sheetName;
 		preHeaders = builder.preHeaders;
-		headers = builder.headers;
+		headers = getHeaders(builder.headers, builder.simpleHeaders);
 		this.contentCellStyle = builder.contentCellStyle;
 	}
 
+	/**
+	 * 创建header
+	 *
+	 * @param headers       Excel header 优先添加
+	 * @param simpleHeaders LinkedHashSet 如果headers不为空 就去header的第一个元素的配置
+	 * @return
+	 */
+	private List<ExcelHeader> getHeaders(List<ExcelHeader> headers, Set<String> simpleHeaders) {
+		List<ExcelHeader> hs = Lists.newArrayList();
+		AtomicInteger columnIndex = new AtomicInteger();
+		ExcelHeader.ExcelHeaderBuilder builder = ExcelHeader.builder();
+		if (!headers.isEmpty()) {
+			ExcelHeader header = headers.get(0);
+			FnCellStyle cellStyle = header.getCellStyle();
+			builder.cellStyle(cellStyle);
+			builder.width(header.getWidth());
+			builder.height(header.getHeight());
+		}
+		for (ExcelHeader header : headers) {
+			columnIndex.set(Math.max(header.getColumnIndex(), columnIndex.get()) + 1);
+			hs.add(header);
+		}
+		for (String val : simpleHeaders) {
+			ExcelHeader header = builder.columnIndex(columnIndex.getAndIncrement())
+					.value(val).build();
+			hs.add(header);
+		}
+		checkRepeatHead(hs);
+		return hs;
+	}
+
+	private void checkRepeatHead(List<ExcelHeader> headers) {
+		Map<String, ExcelHeader> map = Maps.newHashMapWithExpectedSize(headers.size());
+		for (ExcelHeader header : headers) {
+			String key = header.getValue().toLowerCase();
+			if (map.containsKey(key)) {
+				ExcelHeader exist = map.get(key);
+				throw new ExcelException("存在重复的title,index [%s,%s] value [%s] ", exist.getColumnIndex(), header.getColumnIndex(), header.getValue());
+			}
+			map.put(key, header);
+		}
+	}
+
+	/**
+	 * 检查dir
+	 * <p>
+	 * 如果dir不为空会新建一个子文件夹使用
+	 *
+	 * @param dir
+	 * @return
+	 */
 	private Path checkDir(String dir) {
 		if (StringUtils.isBlank(dir)) {
 			throw new SettingException("存放结果的文件夹不能为空");
@@ -106,15 +168,17 @@ public class SheetConfig {
 	public static final class Builder {
 		private String dir;
 		private String fileName;
-		private int maxRowsCanWrite;
+		private int maxRowNumCanWrite;
 		private String sheetName;
 		private List<ExcelPreHeader> preHeaders;
 		private List<ExcelHeader> headers;
+		private Set<String> simpleHeaders;
 		private FnCellStyle contentCellStyle;
 
 		public Builder() {
 			preHeaders = Lists.newArrayList();
 			headers = Lists.newArrayList();
+			simpleHeaders = Sets.newLinkedHashSet();
 		}
 
 		public Builder dir(String val) {
@@ -127,8 +191,8 @@ public class SheetConfig {
 			return this;
 		}
 
-		public Builder maxRowsCanWrite(int val) {
-			maxRowsCanWrite = val;
+		public Builder maxRowNumCanWrite(int val) {
+			maxRowNumCanWrite = val;
 			return this;
 		}
 
@@ -142,13 +206,39 @@ public class SheetConfig {
 			return this;
 		}
 
+		public Builder addPreHeader(int rowNum, int columnIndex, String value) {
+			ExcelPreHeader preHeader = ExcelPreHeader.builder().rowNum(rowNum).columnIndex(columnIndex).value(value).build();
+			preHeaders.add(preHeader);
+			return this;
+		}
+
 		public Builder addPreHeader(List<ExcelPreHeader> val) {
 			preHeaders.addAll(val);
 			return this;
 		}
 
+		/**
+		 * addHeaders(List<ExcelHeader> val)
+		 * 优先级大于 addHeaders(String... val)
+		 *
+		 * @param val
+		 * @return
+		 */
 		public Builder addHeaders(List<ExcelHeader> val) {
-			headers.addAll(val);
+			for (ExcelHeader h : val) {
+				if (StringUtils.isNotBlank(h.getValue())) {
+					headers.add(h);
+				}
+			}
+			return this;
+		}
+
+		public Builder addHeaders(String... val) {
+			for (String h : val) {
+				if (StringUtils.isNotBlank(h)) {
+					simpleHeaders.add(h);
+				}
+			}
 			return this;
 		}
 

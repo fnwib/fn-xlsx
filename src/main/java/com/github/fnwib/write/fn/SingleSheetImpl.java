@@ -112,7 +112,7 @@ public class SingleSheetImpl implements FnSheet {
 
 	@Override
 	public int canWriteSize() {
-		return sheetConfig.getMaxRowsCanWrite() - startRowNum;
+		return sheetConfig.getMaxRowNumCanWrite() - startRowNum;
 	}
 
 	@Override

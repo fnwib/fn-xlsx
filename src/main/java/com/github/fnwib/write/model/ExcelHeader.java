@@ -1,16 +1,14 @@
 package com.github.fnwib.write.model;
 
 import com.github.fnwib.write.fn.FnCellStyle;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 /**
  * Excel 头信息
  * 根据id 与 cellIndex 映射
  */
+@ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter

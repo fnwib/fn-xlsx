@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
+@Deprecated
 public class ExcelWriterImplBaseTest {
 
     File tempTemplateFile;

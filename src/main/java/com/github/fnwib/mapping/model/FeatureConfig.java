@@ -1,8 +1,7 @@
 package com.github.fnwib.mapping.model;
 
 import com.github.fnwib.annotation.BindType;
-import com.github.fnwib.annotation.Complex;
-import com.github.fnwib.annotation.Operation;
+import com.github.fnwib.annotation.ComplexEnum;
 import com.github.fnwib.annotation.RWType;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +24,7 @@ public class FeatureConfig {
 	 * Y 两层(最多两层)
 	 * N 一层
 	 */
-	private Complex complex;
+	private ComplexEnum complex;
 
 	/**
 	 * 绑定模式 : 共享  or  独占

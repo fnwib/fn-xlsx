@@ -1,5 +1,7 @@
 package com.github.fnwib.annotation;
 
+import org.apache.poi.ss.formula.functions.Complex;
+
 import java.lang.annotation.*;
 
 /**
@@ -19,8 +21,9 @@ public @interface AutoMapping {
 	 * LINE_NUM 字段是excel行号 从1开始
 	 * DEFAULT Value
 	 * <p>
-	 *
+	 * <p>
 	 * please use @LineNum
+	 *
 	 * @return
 	 */
 	@Deprecated
@@ -79,12 +82,12 @@ public @interface AutoMapping {
 	int order() default Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Y 两层(最多两层)
-	 * N 一层
+	 * Nested 嵌套类型(最多两层)
+	 * Flat  非嵌套类型
 	 *
 	 * @return
 	 */
-	Complex complex() default Complex.N;
+	ComplexEnum complex() default ComplexEnum.Flat;
 
 	/**
 	 * 读写属性配置

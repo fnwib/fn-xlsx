@@ -1,14 +1,9 @@
 package com.github.fnwib.mapping;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.LocalConfig;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.impl.BindMapping;
-import com.github.fnwib.mapping.impl.LineNumMapping;
-import com.github.fnwib.mapping.impl.PrimitiveMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.model.BindProperty;
 import com.github.fnwib.reflect.BeanResolver;
@@ -17,6 +12,7 @@ import com.github.fnwib.write.model.ExcelContent;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,9 +22,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 
+@Slf4j
 public class RowMappingImpl<T> implements RowMapping<T> {
-
-	private static final Logger log = LoggerFactory.getLogger(RowMappingImpl.class);
 
 	private final LocalConfig localConfig;
 
@@ -77,8 +72,10 @@ public class RowMappingImpl<T> implements RowMapping<T> {
 		Set<Integer> ignoreColumns = Sets.newHashSet();
 		bind(headers, bindProperties, ignoreColumns, bindColumnCount);
 		if (bindColumnCount.intValue() > 0) {
-			resolve(bindProperties);
-			this.helper = new MappingHelper<>(type, bindProperties);
+			for (BindProperty property : bindProperties) {
+				Mappings.createMapping(property, localConfig);
+			}
+			this.helper = new MappingHelper<>(type, bindProperties, localConfig);
 			count.add(bindColumnCount.intValue());
 			return true;
 		}
@@ -115,7 +112,7 @@ public class RowMappingImpl<T> implements RowMapping<T> {
 		//按order 顺序绑定
 		bindProperties.sort(Comparator.comparing(BindProperty::getOrder));
 		for (BindProperty property : bindProperties) {
-			if (property.isComplexY()) {
+			if (property.isNested()) {
 				bind(headers, property.getSubBindProperties(), ignoreColumns, bindColumnCount);
 				continue;
 			}
@@ -147,7 +144,7 @@ public class RowMappingImpl<T> implements RowMapping<T> {
 				continue;
 			}
 			BindProperty bind = optional.get();
-			if (bind.isComplexY()) {
+			if (bind.isNested()) {
 				List<BindProperty> sub = getBindProperties(property.getFieldType().getRawClass(), level);
 				bind.setSubBindProperties(sub);
 			}
@@ -156,41 +153,6 @@ public class RowMappingImpl<T> implements RowMapping<T> {
 		return result;
 	}
 
-	/**
-	 * setBindMapping
-	 *
-	 * @param bindProperties
-	 */
-	private void resolve(List<BindProperty> bindProperties) {
-		for (BindProperty property : bindProperties) {
-			List<BindColumn> columns = property.getBindColumns();
-			BindMapping mapping;
-			if (property.isLineNum()) {
-				mapping = new LineNumMapping(columns);
-			} else {
-				if (columns.isEmpty()) {
-					continue;
-				}
-				Collection<ValueHandler> valueHandlers = localConfig.getContentValueHandlers();
-				valueHandlers.addAll(property.getValueHandlers());
-				JavaType type = property.getType();
-				if (type.isMapLikeType()) {
-					mapping = Mappings.createMapMapping(type, columns, valueHandlers);
-				} else if (type.isCollectionLikeType()) {
-					mapping = Mappings.createCollectionMapping(type, columns, valueHandlers);
-				} else {
-					Optional<PrimitiveMapping> primitiveMapping = Mappings.cratePrimitiveMapping(type, columns, valueHandlers);
-					if (primitiveMapping.isPresent()) {
-						mapping = primitiveMapping.get();
-					} else {
-						log.error("-> property is [{}] ,type is [{}] , 匹配到多列 index {}", property.getPropertyName(), type, columns);
-						throw new SettingException(String.format("property is %s ,type is %s , 匹配到多列", property.getPropertyName(), type));
-					}
-				}
-			}
-			property.setBindMapping(mapping);
-		}
-	}
 
 	@Override
 	public Optional<T> readValue(Row fromValue) {

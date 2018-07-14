@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * please user com.github.fnwib.write.model.SheetConfig
  */
+@Deprecated
 public class ResultFileSetting {
 
 	private static final Logger log = LoggerFactory.getLogger(ResultFileSetting.class);

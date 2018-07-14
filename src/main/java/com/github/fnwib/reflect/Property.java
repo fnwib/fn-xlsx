@@ -76,10 +76,8 @@ public class Property {
 				.rw(mapping.rw())
 				.build();
 		BindProperty param = BindProperty.builder()
-				.propertyName(getName())
-				.propertyDescriptor(propertyDescriptor)
+				.property(this)
 				.operation(mapping.operation())
-				.type(getFieldType())
 				.valueHandlers(getValueHandlers())
 				.matchConfig(matchConfig)
 				.featureConfig(featureConfig)
@@ -105,10 +103,8 @@ public class Property {
 				.rw(mapping.rw())
 				.build();
 		BindProperty param = BindProperty.builder()
-				.propertyName(getName())
-				.propertyDescriptor(propertyDescriptor)
+				.property(this)
 				.operation(mapping.operation())
-				.type(getFieldType())
 				.valueHandlers(getValueHandlers())
 				.matchConfig(matchConfig)
 				.featureConfig(featureConfig)
@@ -176,6 +172,10 @@ public class Property {
 
 	public Method getReadMethod() {
 		return propertyDescriptor.getReadMethod();
+	}
+
+	public Method getWriteMethod() {
+		return propertyDescriptor.getWriteMethod();
 	}
 
 

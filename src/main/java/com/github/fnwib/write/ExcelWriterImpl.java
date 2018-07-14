@@ -35,12 +35,24 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	private FnSheet fnSheet;
 	private boolean closed;
 
+	@Deprecated
 	public ExcelWriterImpl(WorkbookConfig workbookConfig) {
 		ComUtils<T> comUtils = new ComUtils<>(workbookConfig);
-		this.sheetConfig = comUtils.toSheetConfig();
+		sheetConfig = comUtils.toSheetConfig();
 		rowMapping = comUtils.getRowMapping();
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
-		boolean match = rowMapping.match(headers);
+		boolean match = this.rowMapping.match(headers);
+		if (!match) {
+			new SettingException("未知错误");
+		}
+		this.closed = false;
+	}
+
+	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapping<T> rowMapping) {
+		this.sheetConfig = sheetConfig;
+		this.rowMapping = rowMapping;
+		List<ExcelHeader> headers = sheetConfig.getHeaders();
+		boolean match = this.rowMapping.match(headers);
 		if (!match) {
 			new SettingException("未知错误");
 		}
@@ -59,7 +71,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			fnSheet.flush();
 			fnSheet = new SingleSheetImpl(sheetConfig);
 			if (fnSheet.canWriteSize() < size) {
-				throw new SettingException("Sheet起始可写入rowNum'%s'，最大可写入rowNum '%s'。请检查配置", fnSheet.getStartRow(), sheetConfig.getMaxRowsCanWrite());
+				throw new SettingException("Sheet起始可写入rowNum'%s'，最大可写入rowNum '%s'。请检查配置", fnSheet.getStartRow(), sheetConfig.getMaxRowNumCanWrite());
 			}
 		}
 
@@ -81,12 +93,10 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 
 	@Override
 	public void writeMergedRegion(List<T> elements, List<Integer> mergedRangeIndexes) {
-
 		if (elements.isEmpty()) {
 			return;
 		} else if (elements.size() == 1) {
-			List<ExcelContent> contents = rowMapping.writeValue(elements.get(0));
-			fnSheet.addRow(contents);
+			this.write(elements.get(0));
 		} else {
 			check(elements.size());
 			List<RowExcelContent> rows = Lists.newArrayListWithCapacity(elements.size());

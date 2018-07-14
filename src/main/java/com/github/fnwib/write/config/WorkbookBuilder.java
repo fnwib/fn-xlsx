@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class WorkbookBuilder<T> implements WorkbookConfig {
 
 	private static final int defaultSheetIndex = 0;

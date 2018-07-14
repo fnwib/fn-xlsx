@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * please user com.github.fnwib.write.model.SheetConfig
  */
+@Deprecated
 public class TemplateSetting {
 	private static final int step = 500000;
 	@Getter

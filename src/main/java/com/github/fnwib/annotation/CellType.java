@@ -72,12 +72,12 @@ public @interface CellType {
 
 
 	/**
-	 * Y 两层(最多两层)
-	 * N 一层
+	 * Nested 嵌套类型(最多两层)
+	 * Flat  非嵌套类型
 	 *
 	 * @return
 	 */
-	Complex complex() default Complex.N;
+	ComplexEnum complex() default ComplexEnum.Flat;
 
 	/**
 	 * 读写属性配置

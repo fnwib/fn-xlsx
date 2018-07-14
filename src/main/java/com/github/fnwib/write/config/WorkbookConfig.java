@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import java.io.File;
 import java.util.List;
 
+@Deprecated
 public interface WorkbookConfig {
 
 	boolean isWritten();

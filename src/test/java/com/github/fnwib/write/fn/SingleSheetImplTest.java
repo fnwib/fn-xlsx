@@ -1,8 +1,10 @@
 package com.github.fnwib.write.fn;
 
+import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.CommonPathTest;
 import com.github.fnwib.write.model.ExcelPreHeader;
 import com.github.fnwib.write.model.SheetConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SingleSheetImplTest extends CommonPathTest {
@@ -22,33 +25,32 @@ public class SingleSheetImplTest extends CommonPathTest {
 	 * getSheet2 test preHeader
 	 * getSheet3 test sheetName
 	 * getSheet4 test filename
-	 *
-	 * @throws IOException
+	 * <p>
+	 * 校验Header写入
 	 */
 	@Test
 	public void getSheet() {
 		SheetConfig config = SheetConfig.builder()
 				.dir(basePath)
 				.addHeaders(getHeaders(10))
+				.addHeaders(UUIDUtils.getHalfId(), UUIDUtils.getHalfId())
 				.build();
 		SingleSheetImpl singleSheet = new SingleSheetImpl(config);
-		//校验sheetName
 		Sheet sheet = singleSheet.getSheet();
-		//校验PreHeader写入
 		int assignCount = 0;
 		for (Row row : sheet) {
 			for (Cell cell : row) {
-				assignCount++;
+				if (Objects.nonNull(cell) || StringUtils.isNotBlank(cell.getStringCellValue())) {
+					assignCount++;
+				}
 			}
 		}
-		Assert.assertEquals("指定的10列header", 10, assignCount);
+		Assert.assertEquals("指定的12列header", 12, assignCount);
 		singleSheet.flush();
 	}
 
 	/**
 	 * 校验PreHeader写入
-	 *
-	 * @throws IOException
 	 */
 	@Test
 	public void getSheet2() {
@@ -94,7 +96,6 @@ public class SingleSheetImplTest extends CommonPathTest {
 					return flag.get();
 				}).count();
 		Assert.assertTrue("filename", count > 0);
-		singleSheet.flush();
 	}
 
 	/**

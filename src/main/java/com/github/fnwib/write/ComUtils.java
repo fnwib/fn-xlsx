@@ -69,7 +69,7 @@ public class ComUtils<T> {
 				.dir(resultFileSetting.getDir())
 				.fileName(resultFileSetting.getFilename())
 				.sheetName(templateSetting.getSheetName())
-				.maxRowsCanWrite(templateSetting.getMaxRowsCanWrite());
+				.maxRowNumCanWrite(templateSetting.getMaxRowsCanWrite());
 	}
 
 	private void addNewCells(SheetConfig.Builder builder, TemplateSetting templateSetting) {
@@ -97,7 +97,7 @@ public class ComUtils<T> {
 						.cellStyle(FnCellStyles.to(((XSSFCellStyle) cell.getCellStyle())))
 						.build();
 				headers.add(header);
-				beginIndex = Math.max(cell.getColumnIndex(), beginIndex);
+				beginIndex = Math.max(cell.getColumnIndex(), beginIndex)+1;
 			}
 			int size = headers.size();
 			ExcelHeader beforeExcelHeader = headers.get(size - 1);

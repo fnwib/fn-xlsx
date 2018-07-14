@@ -56,7 +56,7 @@ public class ExcelWriterByMap implements ExcelWriter<Map<String, String>> {
 			fnSheet.flush();
 			fnSheet = new SingleSheetImpl(sheetConfig);
 			if (fnSheet.canWriteSize() < size) {
-				throw new SettingException("Sheet起始可写入rowNum'%s'，最大可写入rowNum '%s'。请检查配置", fnSheet.getStartRow(), sheetConfig.getMaxRowsCanWrite());
+				throw new SettingException("Sheet起始可写入rowNum'%s'，最大可写入rowNum '%s'。请检查配置", fnSheet.getStartRow(), sheetConfig.getMaxRowNumCanWrite());
 			}
 		}
 
