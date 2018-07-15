@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 嵌套类型处理
+ * 嵌套类型实现
  */
 @Slf4j
 public class NestedMapping<T> implements BindMapping {

@@ -1,6 +1,5 @@
 package com.github.fnwib.mapping.flat;
 
-import com.github.fnwib.mapping.BindMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import org.apache.poi.ss.usermodel.Row;
@@ -8,7 +7,10 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractMapMapping implements BindMapping {
+/**
+ * MAP实现
+ */
+public abstract class AbstractMapMapping implements FlatMapping {
 
 	List<BindColumn> columns;
 

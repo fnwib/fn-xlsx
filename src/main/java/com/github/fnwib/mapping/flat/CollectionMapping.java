@@ -21,7 +21,7 @@ import java.util.*;
  * 它只能是 Number String Enum 之类的单一映射的结构
  * 不能是Collection 或Map
  */
-public class CollectionMapping implements BindMapping {
+public class CollectionMapping implements FlatMapping {
 
 	private AbstractCellStringMapping mapping;
 	private List<BindColumn> columns;

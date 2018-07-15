@@ -1,8 +1,7 @@
 package com.github.fnwib.mapping.flat;
 
-import com.github.fnwib.mapping.BindMapping;
-import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.cell.RawCellMapping;
+import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Cell;
@@ -11,7 +10,10 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CollectionCellMapping implements BindMapping {
+/**
+ * List<Cell>的实现
+ */
+public class CollectionCellMapping implements FlatMapping {
 
 	private RawCellMapping mapping;
 	private List<BindColumn> columns;

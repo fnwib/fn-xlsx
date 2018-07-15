@@ -101,14 +101,14 @@ public class Mappings {
 	 * @param config   LocalConfig
 	 * @return FlagMapping
 	 */
-	private static BindMapping createFlatMapping(BindProperty property, List<BindColumn> columns, LocalConfig config) {
+	private static FlatMapping createFlatMapping(BindProperty property, List<BindColumn> columns, LocalConfig config) {
 		if (property.isLineNum()) {
 			return new LineNumMapping(columns);
 		}
 		if (columns.isEmpty()) {
 			return null;
 		}
-		BindMapping mapping;
+		FlatMapping mapping;
 		Collection<ValueHandler> valueHandlers = config.getContentValueHandlers();
 		valueHandlers.addAll(property.getValueHandlers());
 		JavaType type = property.getType();
@@ -160,8 +160,8 @@ public class Mappings {
 		return mapping;
 	}
 
-	private static BindMapping createCollectionMapping(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
-		BindMapping mapping;
+	private static FlatMapping createCollectionMapping(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
+		FlatMapping mapping;
 		if (Cell.class.isAssignableFrom(type.getContentType().getRawClass())) {
 			if (type.getRawClass() != List.class) {
 				throw new SettingException("只支持List<Cell>", Cell.class);

@@ -13,6 +13,9 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
 
+/**
+ * MAP key为columnIndex 实现
+ */
 public class MapIndexKeyMapping extends AbstractMapMapping {
 
 	private AbstractCellStringMapping mapping;

@@ -14,7 +14,10 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
 
-public class PrimitiveMapping implements BindMapping {
+/**
+ * 一个字段绑定一个column的实现
+ */
+public class PrimitiveMapping implements FlatMapping {
 
 
 	private CellMapping cellMapping;

@@ -1,7 +1,6 @@
 package com.github.fnwib.mapping.flat;
 
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.flat.FlagMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class LineNumMapping implements FlagMapping {
+public class LineNumMapping implements FlatMapping {
 	private List<BindColumn> columns;
 
 	public LineNumMapping(List<BindColumn> columns) {

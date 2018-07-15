@@ -14,6 +14,9 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
 
+/**
+ * Map key为ExcelHeader.value 实现
+ */
 public class MapTextKeyMapping extends AbstractMapMapping {
 
 	private AbstractCellStringMapping mapping;

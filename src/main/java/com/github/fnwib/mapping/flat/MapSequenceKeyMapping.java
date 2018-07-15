@@ -14,6 +14,9 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
 
+/**
+ * MAP key为@AutoMapping.value() 实现
+ */
 public class MapSequenceKeyMapping extends AbstractMapMapping {
 
 	private AbstractCellStringMapping mapping;
