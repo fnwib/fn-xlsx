@@ -54,7 +54,7 @@ public enum BeanResolver {
 				Collection<ValueHandler> valueHandlers = property.getValueHandlers();
 				Method writeMethod = propertyDescriptor.getWriteMethod();
 				final Object value = readMethod.invoke(param);
-				if (property.getJavaType().getRawClass() != String.class) {
+				if (property.getFieldType().getRawClass() != String.class) {
 					writeMethod.invoke(newInstance, value);
 				} else {
 					Optional<String> newValue = ValueUtil.getStringValue(((String) value), valueHandlers);
