@@ -6,7 +6,6 @@ import com.github.fnwib.mapping.RowMapper;
 import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.fn.FnSheet;
 import com.github.fnwib.write.fn.SingleSheetImpl;
-import com.github.fnwib.write.model.ExcelContent;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.github.fnwib.write.model.RowExcelContent;
 import com.github.fnwib.write.model.SheetConfig;
@@ -80,8 +79,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	@Override
 	public void write(T element) {
 		check(1);
-		List<ExcelContent> contents = mapper.writeValue(element);
-		fnSheet.addRow(contents);
+		fnSheet.addRow(mapper.convert(element));
 	}
 
 	@Override
@@ -101,8 +99,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			check(elements.size());
 			List<RowExcelContent> rows = Lists.newArrayListWithCapacity(elements.size());
 			for (T element : elements) {
-				List<ExcelContent> contents = mapper.writeValue(element);
-				rows.add(new RowExcelContent(contents));
+				rows.add(mapper.convert(element));
 			}
 			fnSheet.addMergeRow(rows, mergedRangeIndexes);
 		}

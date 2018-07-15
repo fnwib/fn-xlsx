@@ -84,6 +84,6 @@ public @interface CellType {
 	 *
 	 * @return
 	 */
-	RWType rw() default RWType.READ_WRITE;
+	AccessEnum rw() default AccessEnum.READ_WRITE;
 
 }

@@ -1,18 +1,21 @@
 package model;
 
 import com.github.fnwib.annotation.CellType;
-import com.github.fnwib.annotation.LineNum;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
 import com.github.fnwib.databing.title.Sequence;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+@EqualsAndHashCode
+@ToString
 @Getter
 @Setter
 public class AutoMappingModel {

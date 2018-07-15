@@ -9,11 +9,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class ExcelReaderImpl<T> implements ExcelReader<T> {
@@ -138,6 +139,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 			workbook.close();
 		} catch (IOException e) {
 			log.error("workbook can not close ", e);
+			throw new ExcelException(e);
 		}
 	}
 }

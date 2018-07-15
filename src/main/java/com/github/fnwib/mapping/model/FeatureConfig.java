@@ -1,8 +1,8 @@
 package com.github.fnwib.mapping.model;
 
+import com.github.fnwib.annotation.AccessEnum;
 import com.github.fnwib.annotation.BindType;
 import com.github.fnwib.annotation.ComplexEnum;
-import com.github.fnwib.annotation.RWType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -34,5 +34,5 @@ public class FeatureConfig {
 	/**
 	 * 读写配置
 	 */
-	private RWType rw;
+	private AccessEnum rw;
 }

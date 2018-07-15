@@ -19,14 +19,13 @@ import org.junit.Test;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExcelWriterImplTest extends CommonPathTest {
 
-	protected List<ExcelHeader> getHeader() {
+	private List<ExcelHeader> getHeader() {
 		List<String> values = Lists.newArrayList();
 		values.add("序号");
 		values.add("字符串");
@@ -46,7 +45,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		return ExcelHeaderCreater.create(new AtomicInteger(), values);
 	}
 
-	List<TestModel> getDataList(int length) {
+	private List<TestModel> getDataList(int length) {
 		List<TestModel> result = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
 			List<String> list1 = new ArrayList<>();
@@ -107,7 +106,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, rowMapping);
 		writer.write(source);
 		List<File> files = writer.getFiles();
-		Collections.sort(target, Comparator.comparing(TestModel::getSequence));
+		target.sort(Comparator.comparing(TestModel::getSequence));
 		return target;
 	}
 

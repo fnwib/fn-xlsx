@@ -1,4 +1,4 @@
-package com.github.fnwib.databing.valuehandler;
+package com.github.fnwib.plugin;
 
 @FunctionalInterface
 public interface ValueFormatter<T> {

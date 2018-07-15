@@ -1,5 +1,6 @@
-package com.github.fnwib.databing.valuehandler;
+package com.github.fnwib.plugin;
 
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
