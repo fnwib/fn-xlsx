@@ -5,8 +5,8 @@ import com.github.fnwib.databing.LineReaderForExcel;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapper.RowMapper;
-import com.github.fnwib.mapper.RowMapperImpl;
+import com.github.fnwib.mapper.RowReader;
+import com.github.fnwib.mapper.RowReaderImpl;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
 import com.github.fnwib.write.config.WorkbookBuilder;
@@ -35,7 +35,7 @@ public class ComUtils<T> {
 	private TemplateSetting templateSetting;
 	private ResultFileSetting resultFileSetting;
 	@Getter
-	private RowMapper<T> rowMapper;
+	private RowReader<T> rowReader;
 
 	public ComUtils(WorkbookConfig workbookConfig) {
 		WorkbookBuilder config = (WorkbookBuilder) workbookConfig;
@@ -45,7 +45,7 @@ public class ComUtils<T> {
 		LineReaderForExcel<T> reader = (LineReaderForExcel) lineReader;
 		Class<T> entityClass = reader.getEntityClass();
 		LocalConfig localConfig = reader.getLocalConfig();
-		rowMapper = new RowMapperImpl<>(entityClass, localConfig);
+		rowReader = new RowReaderImpl<>(entityClass, localConfig);
 	}
 
 	public SheetConfig toSheetConfig() {
@@ -131,10 +131,10 @@ public class ComUtils<T> {
 		List<Row> preRow = new ArrayList<>();
 		Row head = null;
 		for (Row row : sheet) {
-			if (rowMapper.isEmpty(row)) {
+			if (rowReader.isEmpty(row)) {
 				continue;
 			}
-			boolean match = rowMapper.match(row);
+			boolean match = rowReader.match(row);
 			if (match) {
 				head = row;
 			} else {

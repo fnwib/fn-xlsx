@@ -27,18 +27,18 @@ import java.util.Optional;
  * @param <T>
  */
 @Slf4j
-public class RowMapperImpl<T> implements RowMapper<T> {
+public class RowReaderImpl<T> implements RowReader<T> {
 
 	private final LocalConfig localConfig;
 
 	private Class<T> type;
 	private NestedMapper<T> mapper;
 
-	public RowMapperImpl(Class<T> type) {
+	public RowReaderImpl(Class<T> type) {
 		this(type, Context.INSTANCE.getContextConfig());
 	}
 
-	public RowMapperImpl(Class<T> type, LocalConfig localConfig) {
+	public RowReaderImpl(Class<T> type, LocalConfig localConfig) {
 		this.type = type;
 		this.localConfig = localConfig;
 	}

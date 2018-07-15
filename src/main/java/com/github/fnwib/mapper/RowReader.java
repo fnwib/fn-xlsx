@@ -11,7 +11,7 @@ import java.util.Optional;
 /**
  * row 转对象的实现
  */
-public interface RowMapper<T> extends LineReader<T> {
+public interface RowReader<T> extends LineReader<T> {
 	/**
 	 * 判断当前row是否为空行
 	 *

@@ -2,9 +2,8 @@ package com.github.fnwib.mapper.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.Mappings;
-import com.github.fnwib.mapper.cell.AbstractCellHandler;
+import com.github.fnwib.mapper.cell.AbstractCellValueHandler;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
@@ -22,11 +21,11 @@ import java.util.*;
  */
 public class CollectionMapper extends AbstractContainerMapper {
 
-	private AbstractCellHandler handler;
+	private AbstractCellValueHandler handler;
 
 	public CollectionMapper(String name, JavaType contentType, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		super(name, columns);
-		this.handler = Mappings.createCellHandler(contentType, valueHandlers);
+		this.handler = Mappings.createCellValueHandler(contentType, valueHandlers);
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class CollectionMapper extends AbstractContainerMapper {
 			String val = null;
 			if (i < size) {
 				Object v = values.get(i);
-				if (val != null) {
+				if (v != null) {
 					val = v.toString();
 				}
 				i++;

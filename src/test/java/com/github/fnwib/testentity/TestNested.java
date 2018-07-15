@@ -4,6 +4,7 @@ import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.ComplexEnum;
 import lombok.*;
 
+@ToString
 @Getter
 @Setter
 @EqualsAndHashCode

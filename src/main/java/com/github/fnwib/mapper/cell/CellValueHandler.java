@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.Optional;
 
 @FunctionalInterface
-public interface CellHandler {
+public interface CellValueHandler {
 
 	Optional<?> getValue(int indexColumn, Row row);
 

@@ -6,7 +6,7 @@ import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapper.cell.AbstractCellHandler;
+import com.github.fnwib.mapper.cell.AbstractCellValueHandler;
 import com.github.fnwib.mapper.cell.NumberHandler;
 import com.github.fnwib.mapper.cell.SimpleHandler;
 import com.github.fnwib.mapper.cell.StringHandler;
@@ -128,8 +128,8 @@ public class Mappings {
 
 	}
 
-	public static AbstractCellHandler createCellHandler(JavaType type, Collection<ValueHandler> valueHandlers) {
-		AbstractCellHandler handler;
+	public static AbstractCellValueHandler createCellValueHandler(JavaType type, Collection<ValueHandler> valueHandlers) {
+		AbstractCellValueHandler handler;
 		Class<?> rawClass = type.getRawClass();
 		if (String.class == rawClass) {
 			handler = new StringHandler(valueHandlers);

@@ -6,11 +6,13 @@ import com.github.fnwib.annotation.LineNum;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+@ToString
 @EqualsAndHashCode
 @Getter
 @Setter

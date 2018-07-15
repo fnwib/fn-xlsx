@@ -6,12 +6,16 @@ import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.util.ExcelUtil;
 import com.github.fnwib.util.ValueUtil;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
-public class StringHandler extends AbstractCellHandler {
+public class StringHandler extends AbstractCellValueHandler {
 
 	private final Collection<ValueHandler> valueHandlers;
 
@@ -28,12 +32,12 @@ public class StringHandler extends AbstractCellHandler {
 		switch (cell.getCellTypeEnum()) {
 			case BLANK:
 				return Optional.empty();
-			case NUMERIC:
 			case STRING:
 				return ValueUtil.getCellValue(cell, valueHandlers);
+			case NUMERIC:
 			case ERROR:
-			case BOOLEAN:
 			case FORMULA:
+			case BOOLEAN:
 			case _NONE:
 				String format = String.format("坐标[%s][%s]值为[%s],类型是[%s]",
 						row.getRowNum() + 1,

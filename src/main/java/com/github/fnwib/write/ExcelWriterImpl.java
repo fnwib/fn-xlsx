@@ -2,7 +2,7 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapper.RowMapper;
+import com.github.fnwib.mapper.RowReader;
 import com.github.fnwib.util.FnUtils;
 import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.fn.FnSheet;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 
 	private final SheetConfig sheetConfig;
-	private RowMapper<T> mapper;
+	private RowReader<T> reader;
 	private FnSheet fnSheet;
 	private boolean closed;
 
@@ -39,32 +39,25 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	public ExcelWriterImpl(WorkbookConfig workbookConfig) {
 		ComUtils<T> comUtils = new ComUtils<>(workbookConfig);
 		sheetConfig = comUtils.toSheetConfig();
-		mapper = comUtils.getRowMapper();
+		reader = comUtils.getRowReader();
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
-		boolean match = this.mapper.match(headers);
+		boolean match = this.reader.match(headers);
 		if (!match) {
 			throw new SettingException("未知错误");
 		}
 		this.closed = false;
 	}
 
-	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapper<T> mapper) {
-		this.sheetConfig = sheetConfig;
-		this.mapper = mapper;
-		List<ExcelHeader> headers = sheetConfig.getHeaders();
-		boolean match = this.mapper.match(headers);
-		if (!match) {
-			throw new SettingException("未知错误");
-		}
-		this.closed = false;
+	public ExcelWriterImpl(SheetConfig sheetConfig, RowReader<T> reader) {
+		this(sheetConfig, reader, null);
 	}
 
-	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapper<T> mapper, File template) {
+	public ExcelWriterImpl(SheetConfig sheetConfig, RowReader<T> reader, File template) {
 		this.sheetConfig = sheetConfig;
-		this.mapper = mapper;
-		FnUtils.merge(sheetConfig,template,mapper);
+		this.reader = reader;
+		FnUtils.merge(sheetConfig, template, reader);
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
-		boolean match = this.mapper.match(headers);
+		boolean match = this.reader.match(headers);
 		if (!match) {
 			throw new SettingException("未知错误");
 		}
@@ -92,7 +85,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	@Override
 	public void write(T element) {
 		check(1);
-		fnSheet.addRow(mapper.convert(element));
+		fnSheet.addRow(reader.convert(element));
 	}
 
 	@Override
@@ -112,7 +105,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			check(elements.size());
 			List<RowExcelContent> rows = Lists.newArrayListWithCapacity(elements.size());
 			for (T element : elements) {
-				rows.add(mapper.convert(element));
+				rows.add(reader.convert(element));
 			}
 			fnSheet.addMergeRow(rows, mergedRangeIndexes);
 		}

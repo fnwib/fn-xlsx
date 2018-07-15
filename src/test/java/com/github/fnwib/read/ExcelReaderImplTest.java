@@ -3,7 +3,7 @@ package com.github.fnwib.read;
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapper.RowMapperImpl;
+import com.github.fnwib.mapper.RowReaderImpl;
 import com.github.fnwib.util.BCConvert;
 import com.monitorjbl.xlsx.StreamingReader;
 import model.AutoMappingModel;
@@ -35,7 +35,7 @@ public class ExcelReaderImplTest {
         LocalConfig localConfig = new LocalConfig();
         localConfig.registerReadContentValueHandlers(valueHandler, valueHandler2);
         localConfig.registerTitleValueHandlers(valueHandler, valueHandler2);
-        LineReader<AutoMappingModel> parser = new RowMapperImpl<>(AutoMappingModel.class, localConfig);
+        LineReader<AutoMappingModel> parser = new RowReaderImpl<>(AutoMappingModel.class, localConfig);
         reader = new ExcelReaderImpl<>(parser, workbook, 0);
     }
 

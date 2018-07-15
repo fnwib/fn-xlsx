@@ -103,18 +103,19 @@ public class NestedMapper<T> implements BindMapper {
 
 	@Override
 	public List<ExcelContent> getContents(Object value) {
-		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
+		List<ExcelContent> result = Lists.newArrayListWithCapacity(columns.size());
 		for (BindProperty property : cellHandlers) {
 			BindMapper mapper = property.getMapper();
 			Object pv = getValue(value, property.getReadMethod());
-			contents.addAll(mapper.getContents(pv));
+			result.addAll(mapper.getContents(pv));
 		}
 		for (BindProperty property : flatHandlers) {
 			BindMapper mapper = property.getMapper();
 			Object pv = getValue(value, property.getReadMethod());
-			contents.addAll(mapper.getContents(pv));
+			List<ExcelContent> contents = mapper.getContents(pv);
+			result.addAll(contents);
 		}
-		return contents;
+		return result;
 	}
 
 	private Object getValue(Object fromValue, Method readValue) {

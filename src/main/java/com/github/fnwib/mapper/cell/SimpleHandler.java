@@ -7,13 +7,14 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.util.ExcelUtil;
 import com.github.fnwib.util.ValueUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Objects;
 import java.util.Optional;
 
-public class SimpleHandler extends AbstractCellHandler {
+public class SimpleHandler extends AbstractCellValueHandler {
 
 	private final CellDeserializer<?> deserializer;
 
@@ -36,7 +37,7 @@ public class SimpleHandler extends AbstractCellHandler {
 			case BLANK:
 				return Optional.empty();
 			case NUMERIC:
-				return Optional.of(cell.getStringCellValue());
+				return Optional.of(cell.getNumericCellValue() + StringUtils.EMPTY);
 			case STRING:
 				return ValueUtil.getCellValue(cell);
 			case ERROR:

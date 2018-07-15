@@ -3,9 +3,8 @@ package com.github.fnwib.mapper.flat;
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.Mappings;
-import com.github.fnwib.mapper.cell.AbstractCellHandler;
+import com.github.fnwib.mapper.cell.AbstractCellValueHandler;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
@@ -19,11 +18,11 @@ import java.util.*;
  */
 public class MapTextKeyMapper extends AbstractContainerMapper {
 
-	private AbstractCellHandler mapping;
+	private AbstractCellValueHandler mapping;
 
 	public MapTextKeyMapper(String name, JavaType contentType, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		super(name, columns);
-		this.mapping = Mappings.createCellHandler(contentType, valueHandlers);
+		this.mapping = Mappings.createCellValueHandler(contentType, valueHandlers);
 	}
 
 	@Override

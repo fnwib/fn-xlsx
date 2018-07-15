@@ -2,7 +2,7 @@ package com.github.fnwib.mapper.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapper.cell.CellHandler;
+import com.github.fnwib.mapper.cell.CellValueHandler;
 import com.github.fnwib.mapper.cell.NumberHandler;
 import com.github.fnwib.mapper.cell.SimpleHandler;
 import com.github.fnwib.mapper.cell.StringHandler;
@@ -22,7 +22,7 @@ import java.util.Optional;
 public class PrimitiveMapper implements FlatMapper {
 
 
-	private CellHandler handler;
+	private CellValueHandler handler;
 	private BindColumn column;
 
 	public PrimitiveMapper(JavaType javaType, BindColumn column, Collection<ValueHandler> valueHandlers) {
