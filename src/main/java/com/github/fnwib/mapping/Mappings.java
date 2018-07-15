@@ -104,9 +104,6 @@ public class Mappings {
 		if (property.isLineNum()) {
 			return new LineNumMapping(columns);
 		}
-		if (columns.isEmpty()) {
-			return null;
-		}
 		FlatMapping mapping;
 		Collection<ValueHandler> valueHandlers = config.getContentValueHandlers();
 		valueHandlers.addAll(property.getValueHandlers());
@@ -116,6 +113,9 @@ public class Mappings {
 		} else if (type.isCollectionLikeType()) {
 			mapping = Mappings.createCollectionMapping(type, columns, valueHandlers);
 		} else {
+			if (columns.isEmpty()) {
+				return null;
+			}
 			Optional<PrimitiveMapping> primitiveMapping = Mappings.cratePrimitiveMapping(type, columns, valueHandlers);
 			if (primitiveMapping.isPresent()) {
 				mapping = primitiveMapping.get();
