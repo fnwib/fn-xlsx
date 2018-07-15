@@ -28,8 +28,6 @@ public interface BindMapping {
 	 * @param value
 	 * @return
 	 */
-//	void setValueToRow(Object value, Row row);
-
 	List<ExcelContent> getContents(Object value);
 
 }

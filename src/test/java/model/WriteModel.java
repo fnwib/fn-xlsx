@@ -5,6 +5,7 @@ import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
+import com.github.fnwib.testentity.EnumType;
 import lombok.Getter;
 import lombok.Setter;
 

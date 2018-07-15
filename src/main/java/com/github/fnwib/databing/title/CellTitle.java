@@ -4,6 +4,7 @@ import com.github.fnwib.write.CellText;
 
 import java.util.Objects;
 
+@Deprecated
 public class CellTitle {
 
     private static final String EMPTY_TEXT = "";

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 /**
  * title解析器  将Excel.Row与Entity.Field做映射
  */
+@Deprecated
 public class TitleResolver {
 
 	private static final Logger log = LoggerFactory.getLogger(TitleResolver.class);

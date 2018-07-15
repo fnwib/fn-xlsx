@@ -1,7 +1,9 @@
 package com.github.fnwib.mapping;
 
 import com.github.fnwib.databing.Context;
+import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.databing.LocalConfig;
+import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.mapping.nested.NestedMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
@@ -10,24 +12,34 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 对象与POI ROW的转换关系实现
+ * <p>
+ * 对象的最大嵌套层数由LocalConfig配置
+ *
+ * @param <T>
+ */
 @Slf4j
-public class RowMappingImpl<T> implements RowMapping<T> {
+public class RowMapperImpl<T> implements RowMapper<T> {
 
 	private final LocalConfig localConfig;
 
 	private Class<T> type;
 	private NestedMapping<T> mapping;
 
-	public RowMappingImpl(Class<T> type) {
+	public RowMapperImpl(Class<T> type) {
 		this(type, Context.INSTANCE.getContextConfig());
 	}
 
-	public RowMappingImpl(Class<T> type, LocalConfig localConfig) {
+	public RowMapperImpl(Class<T> type, LocalConfig localConfig) {
 		this.type = type;
 		this.localConfig = localConfig;
 	}
@@ -73,18 +85,25 @@ public class RowMappingImpl<T> implements RowMapping<T> {
 	}
 
 	@Override
-	public Optional<T> readValue(Row fromValue) {
+	public Optional<T> convert(Row fromValue) {
 		if (isEmpty(fromValue)) {
 			return Optional.empty();
 		}
 		return mapping.getValue(fromValue);
 	}
 
-
 	@Override
 	public List<ExcelContent> writeValue(T fromValue) {
 		return mapping.getContents(fromValue);
 	}
 
+	@Override
+	public Map<String, Object> convertToMap(Row row) {
+		throw new NotSupportedException();
+	}
 
+	@Override
+	public LineWriter<T> getLineWriter() {
+		throw new NotSupportedException();
+	}
 }

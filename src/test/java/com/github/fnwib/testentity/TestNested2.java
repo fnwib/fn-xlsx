@@ -9,11 +9,9 @@ import lombok.*;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class TestNested {
-	@AutoMapping("Nested B")
+public class TestNested2 {
+	@AutoMapping("Nested C")
 	private String bb;
-	@AutoMapping("Nested A")
+	@AutoMapping("Nested D")
 	private String aa;
-	@AutoMapping(complex = ComplexEnum.Nested, order = 1)
-	private TestNested2 testNested2;
 }

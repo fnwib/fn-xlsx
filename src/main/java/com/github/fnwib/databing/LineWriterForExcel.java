@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class LineWriterForExcel<T> implements LineWriter<T> {
 
 	private static final Logger log = LoggerFactory.getLogger(LineWriterForExcel.class);
@@ -43,7 +44,7 @@ public class LineWriterForExcel<T> implements LineWriter<T> {
 	}
 
 	private List<CellText> getCellTextStream(T element) {
-		List<CellText> cellTexts =Lists.newArrayListWithCapacity(maxCellNum);
+		List<CellText> cellTexts = Lists.newArrayListWithCapacity(maxCellNum);
 		for (PropertyConverter converter : converters) {
 			List<CellText> cellText = converter.getCellText(element);
 			for (CellText text : cellText) {

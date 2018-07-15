@@ -2,7 +2,7 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.RowMapping;
+import com.github.fnwib.mapping.RowMapper;
 import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.fn.FnSheet;
 import com.github.fnwib.write.fn.SingleSheetImpl;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 
 	private final SheetConfig sheetConfig;
-	private RowMapping<T> rowMapping;
+	private RowMapper<T> mapper;
 	private FnSheet fnSheet;
 	private boolean closed;
 
@@ -39,20 +39,20 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	public ExcelWriterImpl(WorkbookConfig workbookConfig) {
 		ComUtils<T> comUtils = new ComUtils<>(workbookConfig);
 		sheetConfig = comUtils.toSheetConfig();
-		rowMapping = comUtils.getRowMapping();
+		mapper = comUtils.getRowMapper();
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
-		boolean match = this.rowMapping.match(headers);
+		boolean match = this.mapper.match(headers);
 		if (!match) {
 			throw new SettingException("未知错误");
 		}
 		this.closed = false;
 	}
 
-	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapping<T> rowMapping) {
+	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapper<T> mapper) {
 		this.sheetConfig = sheetConfig;
-		this.rowMapping = rowMapping;
+		this.mapper = mapper;
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
-		boolean match = this.rowMapping.match(headers);
+		boolean match = this.mapper.match(headers);
 		if (!match) {
 			throw new SettingException("未知错误");
 		}
@@ -80,7 +80,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	@Override
 	public void write(T element) {
 		check(1);
-		List<ExcelContent> contents = rowMapping.writeValue(element);
+		List<ExcelContent> contents = mapper.writeValue(element);
 		fnSheet.addRow(contents);
 	}
 
@@ -101,7 +101,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			check(elements.size());
 			List<RowExcelContent> rows = Lists.newArrayListWithCapacity(elements.size());
 			for (T element : elements) {
-				List<ExcelContent> contents = rowMapping.writeValue(element);
+				List<ExcelContent> contents = mapper.writeValue(element);
 				rows.add(new RowExcelContent(contents));
 			}
 			fnSheet.addMergeRow(rows, mergedRangeIndexes);

@@ -5,6 +5,7 @@ import com.github.fnwib.databing.title.CellTitle;
 
 import java.util.List;
 
+@Deprecated
 public interface TitleMatcher {
 
     List<CellTitle> match(List<CellTitle> titles);

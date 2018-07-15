@@ -3,19 +3,19 @@ package com.github.fnwib.testentity;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.ComplexEnum;
 import com.github.fnwib.annotation.LineNum;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import model.EnumType;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+@EqualsAndHashCode
 @Getter
 @Setter
 public class TestModel {
-	@LineNum()
-	@AutoMapping("行号")
+	@LineNum
 	private Integer lineNum;
 	@AutoMapping("序号")
 	private Integer sequence;

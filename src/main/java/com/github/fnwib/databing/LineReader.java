@@ -7,13 +7,15 @@ import java.util.Optional;
 
 public interface LineReader<T> {
 
-    boolean isEmpty(Row row);
+	boolean isEmpty(Row row);
 
-    boolean match(Row row);
+	boolean match(Row row);
 
-    Optional<T> convert(Row row);
+	Optional<T> convert(Row row);
 
-    Map<String, Object> convertToMap(Row row);
+	@Deprecated
+	Map<String, Object> convertToMap(Row row);
 
-    LineWriter<T> getLineWriter();
+	@Deprecated
+	LineWriter<T> getLineWriter();
 }

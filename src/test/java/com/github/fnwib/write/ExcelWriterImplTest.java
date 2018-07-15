@@ -1,15 +1,19 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.mapping.RowMappingImpl;
+import com.github.fnwib.databing.LocalConfig;
+import com.github.fnwib.mapping.RowMapper;
+import com.github.fnwib.mapping.RowMapperImpl;
+import com.github.fnwib.testentity.EnumType;
+import com.github.fnwib.testentity.TestModel;
+import com.github.fnwib.testentity.TestNested;
+import com.github.fnwib.testentity.TestNested2;
 import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.github.fnwib.write.model.ExcelHeaderCreater;
 import com.github.fnwib.write.model.SheetConfig;
-import com.github.fnwib.testentity.TestModel;
-import com.github.fnwib.testentity.TestNested;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import model.EnumType;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -24,7 +28,6 @@ public class ExcelWriterImplTest extends CommonPathTest {
 
 	protected List<ExcelHeader> getHeader() {
 		List<String> values = Lists.newArrayList();
-		values.add("行号");
 		values.add("序号");
 		values.add("字符串");
 		values.add("数字");
@@ -36,8 +39,10 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		values.add("MAP B null");
 		values.add("MAP C null");
 		values.add("枚举");
-		values.add("Nested B");
 		values.add("Nested A");
+		values.add("Nested B");
+		values.add("Nested C");
+		values.add("Nested D");
 		return ExcelHeaderCreater.create(new AtomicInteger(), values);
 	}
 
@@ -63,7 +68,9 @@ public class ExcelWriterImplTest extends CommonPathTest {
 			model.setMapNull(Maps.newHashMap());
 			model.setNoMatchMap(Maps.newHashMap());
 			model.setEnumType(EnumType.A);
-			model.setTestNested(new TestNested("aa" + i, "bb" + i));
+			TestNested2 nested2 = new TestNested2("aa" + i, "bb" + i);
+			TestNested nested = new TestNested("aa" + i, "bb" + i, nested2);
+			model.setTestNested(nested);
 			result.add(model);
 		}
 		return result;
@@ -79,32 +86,22 @@ public class ExcelWriterImplTest extends CommonPathTest {
 				.addHeaders(getHeader())
 				.addHeaders("append after")
 				.build();
-		RowMappingImpl<TestModel> rowMapping = new RowMappingImpl<>(TestModel.class);
-		List<TestModel> target = writeAndRead(config, rowMapping);
+		LocalConfig localConfig = new LocalConfig();
+		localConfig.setMaxNestLevel(3);
+		RowMapper<TestModel> rowMapper = new RowMapperImpl<>(TestModel.class, localConfig);
+		List<TestModel> target = writeAndRead(config, rowMapper);
 		List<TestModel> source = getDataList(6);
 
-//		Assert.assertSame("集合长度不一致", source.size(), target.size());
-//		for (int i = 0; i < source.size(); i++) {
-//			TestModel sourceModel = source.get(i);
-//			TestModel targetModel = target.get(i);
-//			Assert.assertEquals("字符串不一致", StringUtils.trimToEmpty(sourceModel.getString()), StringUtils.trimToEmpty(targetModel.getString()));
-//			Assert.assertEquals("数字int不一致", sourceModel.getIntNum(), targetModel.getIntNum());
-//			Assert.assertEquals("数字long不一致", sourceModel.getLongNum(), targetModel.getLongNum());
-//			Assert.assertEquals("日期不一致", sourceModel.getLocalDate(), targetModel.getLocalDate());
-//
-//			List<String> sourceNumberList = sourceModel.getListNumber();
-//			List<String> targetNumberList = targetModel.getListNumber();
-//			Assert.assertArrayEquals("List number 值不一致", sourceNumberList.toArray(), targetNumberList.toArray());
-//
-//			List<String> sourceStringMap = sourceModel.getListNumber();
-//			List<String> targetStringMap = targetModel.getListNumber();
-//			Assert.assertArrayEquals("List String 值不一致", sourceStringMap.toArray(), targetStringMap.toArray());
-//			Assert.assertEquals("枚举", sourceModel.getEnumType(), targetModel.getEnumType());
-//		}
+		Assert.assertSame("集合长度不一致", source.size(), target.size());
+		for (int i = 0; i < source.size(); i++) {
+			TestModel sourceModel = source.get(i);
+			TestModel targetModel = target.get(i);
+			Assert.assertEquals("Equals", sourceModel, targetModel);
+		}
 
 	}
 
-	private List<TestModel> writeAndRead(SheetConfig config, RowMappingImpl<TestModel> rowMapping) {
+	private List<TestModel> writeAndRead(SheetConfig config, RowMapper<TestModel> rowMapping) {
 		List<TestModel> source = getDataList(6);
 		List<TestModel> target = new ArrayList<>();
 		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, rowMapping);

@@ -1,5 +1,7 @@
 package com.github.fnwib.mapping;
 
+import com.github.fnwib.databing.LineReader;
+import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.write.model.ExcelContent;
 import com.github.fnwib.write.model.ExcelHeader;
 import org.apache.poi.ss.usermodel.Row;
@@ -10,7 +12,7 @@ import java.util.Optional;
 /**
  * row 转对象的实现
  */
-public interface RowMapping<T> {
+public interface RowMapper<T> extends LineReader<T> {
 	/**
 	 * 判断当前row是否为空行
 	 *
@@ -37,7 +39,7 @@ public interface RowMapping<T> {
 	 * @param fromValue poi row
 	 * @return
 	 */
-	Optional<T> readValue(Row fromValue);
+	Optional<T> convert(Row fromValue);
 
 	/**
 	 * write T to empty Row

@@ -1,7 +1,7 @@
 package com.github.fnwib.write;
 
 import com.github.fnwib.util.UUIDUtils;
-import model.EnumType;
+import com.github.fnwib.testentity.EnumType;
 import model.WriteModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;

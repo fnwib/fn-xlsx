@@ -35,11 +35,8 @@ public class Mappings {
 
 	public static <T> NestedMapping<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers) {
 		LongAdder level = new LongAdder();
-		NestedMapping<T> nestedMapping = createNestedMapping(type, config, headers, Sets.newHashSet(), level);
-		if (level.intValue() >= 3) {
-			throw new SettingException("'%s'嵌套层数超过两层", type);
-		}
-		return nestedMapping;
+		level.increment();
+		return createNestedMapping(type, config, headers, Sets.newHashSet(), level);
 	}
 
 	/**
@@ -47,11 +44,13 @@ public class Mappings {
 	 * @param config           LocalConfig
 	 * @param headers          Headers(等价于org.apache.poi.ss.usermodel.Row)
 	 * @param exclusiveColumns 独占模式的列
-	 * @param level            嵌套类型的层级
 	 * @param <T>              嵌套类型
 	 * @return NestedMapping
 	 */
 	private static <T> NestedMapping<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns, LongAdder level) {
+		if (level.intValue() > config.getMaxNestLevel()) {
+			throw new SettingException("嵌套层数超过'%s'层,当前对象为'%s'", config.getMaxNestLevel(), type);
+		}
 		JavaType javaType = TypeFactory.defaultInstance().constructType(type);
 		if (type.isPrimitive()) {
 			throw new SettingException("不支持这样的嵌套类型");

@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
+@Deprecated
 public class LineReaderForExcel<T> implements LineReader<T> {
 
 	@Getter
