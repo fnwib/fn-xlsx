@@ -3,9 +3,9 @@ package com.github.fnwib.mapper.flat;
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.mapper.cell.AbstractCellStringMapping;
-import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.Mappings;
+import com.github.fnwib.mapper.cell.AbstractCellHandler;
+import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -18,11 +18,11 @@ import java.util.*;
  */
 public class MapIndexKeyMapper extends AbstractContainerMapper {
 
-	private AbstractCellStringMapping mapping;
+	private AbstractCellHandler handler;
 
 	public MapIndexKeyMapper(String name, JavaType contentType, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		super(name, columns);
-		this.mapping = Mappings.createSimpleMapping(contentType, valueHandlers);
+		this.handler = Mappings.createCellHandler(contentType, valueHandlers);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class MapIndexKeyMapper extends AbstractContainerMapper {
 		Map<Integer, String> result = Maps.newHashMapWithExpectedSize(super.columns.size());
 		for (BindColumn column : super.columns) {
 			Integer index = column.getIndex();
-			Optional<String> value = mapping.getValue(index, row);
+			Optional<String> value = handler.getValue(index, row);
 			value.ifPresent(v -> result.put(index, v));
 		}
 		return Optional.of(result);
@@ -42,9 +42,7 @@ public class MapIndexKeyMapper extends AbstractContainerMapper {
 	@Override
 	public List<ExcelContent> getContents(Object value) {
 		Map<Integer, String> values = value == null ? Collections.emptyMap() : (Map<Integer, String>) value;
-		if (values.size() > columns.size()) {
-			throw new ExcelException("[%s]允许写入数量'%s',实际数量'%s'大于", name, columns.size(), values.size());
-		}
+		check(values.size());
 		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
 		for (BindColumn column : columns) {
 			Integer index = column.getIndex();

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.Mappings;
-import com.github.fnwib.mapper.cell.AbstractCellStringMapping;
+import com.github.fnwib.mapper.cell.AbstractCellHandler;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
@@ -22,11 +22,11 @@ import java.util.*;
  */
 public class CollectionMapper extends AbstractContainerMapper {
 
-	private AbstractCellStringMapping mapping;
+	private AbstractCellHandler handler;
 
 	public CollectionMapper(String name, JavaType contentType, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		super(name, columns);
-		this.mapping = Mappings.createSimpleMapping(contentType, valueHandlers);
+		this.handler = Mappings.createCellHandler(contentType, valueHandlers);
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class CollectionMapper extends AbstractContainerMapper {
 		}
 		Collection<String> result = Lists.newArrayListWithCapacity(columns.size());
 		for (BindColumn column : columns) {
-			Optional<String> value = mapping.getValue(column.getIndex(), row);
+			Optional<String> value = handler.getValue(column.getIndex(), row);
 			result.add(value.orElse(StringUtils.EMPTY));
 		}
 		return Optional.of(result);
@@ -45,10 +45,7 @@ public class CollectionMapper extends AbstractContainerMapper {
 	@Override
 	public List<ExcelContent> getContents(Object value) {
 		List<Object> values = Objects.nonNull(value) ? (List<Object>) value : Collections.emptyList();
-		if (values.size() > columns.size()) {
-			throw new ExcelException("[%s]允许写入数量'%s',实际数量'%s'大于", name, columns.size(), values.size());
-
-		}
+		check(values.size());
 		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
 		int size = values.size();
 		int i = 0;

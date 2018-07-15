@@ -20,7 +20,7 @@ public class SheetConfigTest extends CommonPathTest {
 				.addHeaders(Lists.newArrayList(build))
 				.addHeaders(UUIDUtils.getHalfId(), UUIDUtils.getHalfId(), "head")
 				.build();
-		Assert.assertNotNull(config);
+		Assert.assertNotNull(config.getHeaders());
 	}
 
 	@Test(expected = ExcelException.class)
@@ -34,7 +34,7 @@ public class SheetConfigTest extends CommonPathTest {
 				.addHeaders(Lists.newArrayList(build))
 				.addHeaders(UUIDUtils.getHalfId(), UUIDUtils.getHalfId(), "head")
 				.build();
-		Assert.assertNotNull(config);
+		Assert.assertNotNull(config.getHeaders());
 	}
 
 }

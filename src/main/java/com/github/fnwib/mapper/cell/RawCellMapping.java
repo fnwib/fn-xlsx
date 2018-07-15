@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Optional;
 
-public class RawCellMapping implements CellMapping {
+public class RawCellMapping implements CellHandler {
 
 	@Override
 	public Optional<Cell> getValue(int indexColumn, Row row) {

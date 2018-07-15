@@ -1,5 +1,6 @@
 package com.github.fnwib.mapper.flat;
 
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import org.apache.poi.ss.usermodel.Row;
@@ -31,4 +32,11 @@ public abstract class AbstractContainerMapper implements FlatMapper {
 
 	@Override
 	abstract public List<ExcelContent> getContents(Object value);
+
+	public void check(int size) {
+		if (size > columns.size()) {
+			throw new ExcelException(" '%s' 允许写入数量'%s',实际数量'%s'", name, columns.size(), size);
+		}
+	}
+
 }

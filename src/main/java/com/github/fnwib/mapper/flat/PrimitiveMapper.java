@@ -2,10 +2,10 @@ package com.github.fnwib.mapper.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapper.cell.CellMapping;
-import com.github.fnwib.mapper.cell.NumberMapping;
-import com.github.fnwib.mapper.cell.SimpleMapping;
-import com.github.fnwib.mapper.cell.StringMapping;
+import com.github.fnwib.mapper.cell.CellHandler;
+import com.github.fnwib.mapper.cell.NumberHandler;
+import com.github.fnwib.mapper.cell.SimpleHandler;
+import com.github.fnwib.mapper.cell.StringHandler;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
@@ -22,17 +22,17 @@ import java.util.Optional;
 public class PrimitiveMapper implements FlatMapper {
 
 
-	private CellMapping cellMapping;
+	private CellHandler handler;
 	private BindColumn column;
 
 	public PrimitiveMapper(JavaType javaType, BindColumn column, Collection<ValueHandler> valueHandlers) {
 		Class<?> rawClass = javaType.getRawClass();
 		if (String.class == rawClass) {
-			cellMapping = new StringMapping(valueHandlers);
+			handler = new StringHandler(valueHandlers);
 		} else if (Number.class.isAssignableFrom(rawClass)) {
-			cellMapping = new NumberMapping();
+			handler = new NumberHandler();
 		} else {
-			cellMapping = new SimpleMapping(javaType);
+			handler = new SimpleHandler(javaType);
 		}
 		this.column = column;
 	}
@@ -44,7 +44,7 @@ public class PrimitiveMapper implements FlatMapper {
 
 	@Override
 	public Optional<?> getValue(Row row) {
-		return cellMapping.getValue(column.getIndex(), row);
+		return handler.getValue(column.getIndex(), row);
 	}
 
 	@Override

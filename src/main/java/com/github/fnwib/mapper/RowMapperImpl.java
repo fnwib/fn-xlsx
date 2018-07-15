@@ -64,7 +64,7 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 
 	@Override
 	public boolean match(List<ExcelHeader> headers) {
-		NestedMapper<T> mapper = Mappings.createNestedMapping(type, localConfig, headers);
+		NestedMapper<T> mapper = Mappings.createNestedMapper(type, localConfig, headers);
 		List<BindColumn> columns = mapper.getColumns();
 		if (columns.size() > 1) {
 			this.mapper = mapper;

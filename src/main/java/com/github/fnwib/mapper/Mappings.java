@@ -6,10 +6,10 @@ import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapper.cell.AbstractCellStringMapping;
-import com.github.fnwib.mapper.cell.NumberMapping;
-import com.github.fnwib.mapper.cell.SimpleMapping;
-import com.github.fnwib.mapper.cell.StringMapping;
+import com.github.fnwib.mapper.cell.AbstractCellHandler;
+import com.github.fnwib.mapper.cell.NumberHandler;
+import com.github.fnwib.mapper.cell.SimpleHandler;
+import com.github.fnwib.mapper.cell.StringHandler;
 import com.github.fnwib.mapper.flat.*;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.model.BindProperty;
@@ -18,7 +18,6 @@ import com.github.fnwib.mapper.nested.NestedMapper;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.write.model.ExcelHeader;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -33,10 +32,10 @@ public class Mappings {
 	private Mappings() {
 	}
 
-	public static <T> NestedMapper<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers) {
+	public static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<ExcelHeader> headers) {
 		LongAdder level = new LongAdder();
 		level.increment();
-		return createNestedMapping(type, config, headers, Sets.newHashSet(), level);
+		return createNestedMapper(type, config, headers, Sets.newHashSet(), level);
 	}
 
 	/**
@@ -47,7 +46,7 @@ public class Mappings {
 	 * @param <T>              嵌套类型
 	 * @return NestedMapping
 	 */
-	private static <T> NestedMapper<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns, LongAdder level) {
+	private static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns, LongAdder level) {
 		if (level.intValue() > config.getMaxNestLevel()) {
 			throw new SettingException("嵌套层数超过'%s'层,当前对象为'%s'", config.getMaxNestLevel(), type);
 		}
@@ -60,17 +59,16 @@ public class Mappings {
 				.map(Optional::get)
 				.sorted(Comparator.comparing(BindProperty::getOrder))
 				.collect(Collectors.toList());
-		List<BindMapper> mappers = Lists.newArrayListWithCapacity(properties.size());
 		for (BindProperty property : properties) {
 			if (property.isNested()) {
 				level.increment();
-				NestedMapper<?> nestedMapping = createNestedMapping(property.getRawClass(), config, headers, exclusiveColumns, level);
-				mappers.add(nestedMapping);
+				NestedMapper<?> nestedMapping = createNestedMapper(property.getRawClass(), config, headers, exclusiveColumns, level);
+				property.setMapper(nestedMapping);
 				continue;
 			}
 			List<BindColumn> columns = match(property, config, headers, exclusiveColumns);
 			FlatMapper flatMapper = createFlatMapper(property, columns, config);
-			mappers.add(flatMapper);
+			property.setMapper(flatMapper);
 		}
 		return new NestedMapper<>(javaType, properties);
 	}
@@ -130,17 +128,17 @@ public class Mappings {
 
 	}
 
-	public static AbstractCellStringMapping createSimpleMapping(JavaType type, Collection<ValueHandler> valueHandlers) {
-		AbstractCellStringMapping mapping;
+	public static AbstractCellHandler createCellHandler(JavaType type, Collection<ValueHandler> valueHandlers) {
+		AbstractCellHandler handler;
 		Class<?> rawClass = type.getRawClass();
 		if (String.class == rawClass) {
-			mapping = new StringMapping(valueHandlers);
+			handler = new StringHandler(valueHandlers);
 		} else if (Number.class.isAssignableFrom(rawClass)) {
-			mapping = new NumberMapping();
+			handler = new NumberHandler();
 		} else {
-			mapping = new SimpleMapping(type);
+			handler = new SimpleHandler(type);
 		}
-		return mapping;
+		return handler;
 	}
 
 	private static AbstractContainerMapper createMapMapper(BindProperty property, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {

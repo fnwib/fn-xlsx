@@ -119,6 +119,6 @@ public class BindProperty {
 	}
 
 	public String getFullName() {
-		return property.getRegion().getName();
+		return property.getRegion().getName() + "." + property.getName();
 	}
 }
