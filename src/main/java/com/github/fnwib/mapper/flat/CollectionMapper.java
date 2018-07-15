@@ -2,12 +2,11 @@ package com.github.fnwib.mapper.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapper.Mappings;
-import com.github.fnwib.mapper.cell.AbstractCellValueHandler;
+import com.github.fnwib.mapper.cell.CellValueHandler;
+import com.github.fnwib.mapper.cell.CellValueHandlers;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
@@ -21,22 +20,22 @@ import java.util.*;
  */
 public class CollectionMapper extends AbstractContainerMapper {
 
-	private AbstractCellValueHandler handler;
+	private CellValueHandler handler;
 
 	public CollectionMapper(String name, JavaType contentType, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		super(name, columns);
-		this.handler = Mappings.createCellValueHandler(contentType, valueHandlers);
+		this.handler = CellValueHandlers.createCellValueHandler(contentType, valueHandlers);
 	}
 
 	@Override
-	public Optional<Collection<String>> getValue(Row row) {
+	public Optional<Collection<Object>> getValue(Row row) {
 		if (columns.isEmpty()) {
 			return Optional.empty();
 		}
-		Collection<String> result = Lists.newArrayListWithCapacity(columns.size());
+		Collection<Object> result = Lists.newArrayListWithCapacity(columns.size());
 		for (BindColumn column : columns) {
-			Optional<String> value = handler.getValue(column.getIndex(), row);
-			result.add(value.orElse(StringUtils.EMPTY));
+			Optional<?> value = handler.getValue(column.getIndex(), row);
+			result.add(value.orElse(null));
 		}
 		return Optional.of(result);
 	}

@@ -1,8 +1,5 @@
 package com.github.fnwib.mapper.cell;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.github.fnwib.databing.Context;
-import com.github.fnwib.databing.deser.CellDeserializer;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.util.ExcelUtil;
@@ -11,17 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class SimpleHandler extends AbstractCellValueHandler {
-
-	private final CellDeserializer<?> deserializer;
-
-
-	public SimpleHandler(JavaType contentType) {
-		this.deserializer = Context.INSTANCE.findCellDeserializer(contentType);
-	}
 
 	@Override
 	public Optional<String> getValue(int indexColumn, Row row) {
@@ -29,17 +18,13 @@ public class SimpleHandler extends AbstractCellValueHandler {
 		if (cell == null) {
 			return Optional.empty();
 		}
-		if (deserializer != null) {
-			Object deserialize = deserializer.deserialize(cell);
-			return Objects.isNull(deserialize) ? Optional.empty() : Optional.of(deserialize.toString());
-		}
 		switch (cell.getCellTypeEnum()) {
 			case BLANK:
 				return Optional.empty();
-			case NUMERIC:
-				return Optional.of(cell.getNumericCellValue() + StringUtils.EMPTY);
 			case STRING:
 				return ValueUtil.getCellValue(cell);
+			case NUMERIC:
+				return Optional.of(cell.getNumericCellValue() + StringUtils.EMPTY);
 			case ERROR:
 			case BOOLEAN:
 			case FORMULA:

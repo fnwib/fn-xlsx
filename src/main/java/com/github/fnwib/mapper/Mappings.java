@@ -6,10 +6,6 @@ import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapper.cell.AbstractCellValueHandler;
-import com.github.fnwib.mapper.cell.NumberHandler;
-import com.github.fnwib.mapper.cell.SimpleHandler;
-import com.github.fnwib.mapper.cell.StringHandler;
 import com.github.fnwib.mapper.flat.*;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.model.BindProperty;
@@ -126,19 +122,6 @@ public class Mappings {
 		}
 		return mapper;
 
-	}
-
-	public static AbstractCellValueHandler createCellValueHandler(JavaType type, Collection<ValueHandler> valueHandlers) {
-		AbstractCellValueHandler handler;
-		Class<?> rawClass = type.getRawClass();
-		if (String.class == rawClass) {
-			handler = new StringHandler(valueHandlers);
-		} else if (Number.class.isAssignableFrom(rawClass)) {
-			handler = new NumberHandler();
-		} else {
-			handler = new SimpleHandler(type);
-		}
-		return handler;
 	}
 
 	private static AbstractContainerMapper createMapMapper(BindProperty property, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {

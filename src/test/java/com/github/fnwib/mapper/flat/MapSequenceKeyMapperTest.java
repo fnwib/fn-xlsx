@@ -32,15 +32,16 @@ public class MapSequenceKeyMapperTest {
 		AbstractContainerMapper mapper = new MapSequenceKeyMapper("1", javaType, columns, Collections.emptyList());
 		Map<Sequence, String> value = Maps.newHashMap();
 		value.put(new Sequence(1), "va");
-		value.put(new Sequence(2), "va1");
+		value.put(new Sequence(2), null);
 		value.put(new Sequence(3), "va2");
 		List<ExcelContent> contents = mapper.getContents(value);
 		Assert.assertEquals("map<Sequence,String> to  contents", 3, contents.size());
 		contents.sort(Comparator.comparing(ExcelContent::getColumnIndex));
 		List<ExcelContent> expected = Lists.newArrayList();
 		expected.add(new ExcelContent(1, "va"));
-		expected.add(new ExcelContent(2, "va1"));
+		expected.add(new ExcelContent(2, null));
 		expected.add(new ExcelContent(3, "va2"));
 		Assert.assertEquals("map<Sequence,String> to  contents", expected, contents);
 	}
+
 }

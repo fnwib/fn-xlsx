@@ -3,9 +3,7 @@ package com.github.fnwib.mapper.flat;
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandler;
-import com.github.fnwib.mapper.cell.NumberHandler;
-import com.github.fnwib.mapper.cell.SimpleHandler;
-import com.github.fnwib.mapper.cell.StringHandler;
+import com.github.fnwib.mapper.cell.CellValueHandlers;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
@@ -26,14 +24,7 @@ public class PrimitiveMapper implements FlatMapper {
 	private BindColumn column;
 
 	public PrimitiveMapper(JavaType javaType, BindColumn column, Collection<ValueHandler> valueHandlers) {
-		Class<?> rawClass = javaType.getRawClass();
-		if (String.class == rawClass) {
-			handler = new StringHandler(valueHandlers);
-		} else if (Number.class.isAssignableFrom(rawClass)) {
-			handler = new NumberHandler();
-		} else {
-			handler = new SimpleHandler(javaType);
-		}
+		this.handler = CellValueHandlers.createCellValueHandler(javaType,valueHandlers);
 		this.column = column;
 	}
 
