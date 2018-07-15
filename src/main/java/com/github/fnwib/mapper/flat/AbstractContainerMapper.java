@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Collection and Map impl
+ * Map and Collection impl
  */
 public abstract class AbstractContainerMapper implements FlatMapper {
 

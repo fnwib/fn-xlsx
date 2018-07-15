@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.Optional;
 
 /**
- * 提供CellDeserializer
+ * 注册的CellDeserializer的实现
  */
 public class DeserializeHandler implements CellValueHandler {
 

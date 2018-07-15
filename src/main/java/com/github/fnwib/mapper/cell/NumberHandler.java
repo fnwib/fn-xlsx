@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * 类型转换由Jackson实现
  */
-public class NumberHandler extends AbstractCellValueHandler {
+public class NumberHandler implements CellValueHandler {
 
 	@Override
 	public Optional<String> getValue(int indexColumn, Row row) {

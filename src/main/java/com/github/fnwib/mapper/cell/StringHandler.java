@@ -6,16 +6,12 @@ import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.util.ExcelUtil;
 import com.github.fnwib.util.ValueUtil;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 
-public class StringHandler extends AbstractCellValueHandler {
+public class StringHandler implements CellValueHandler {
 
 	private final Collection<ValueHandler> valueHandlers;
 

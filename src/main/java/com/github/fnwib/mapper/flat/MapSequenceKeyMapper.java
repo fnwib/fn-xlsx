@@ -14,7 +14,10 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.*;
 
 /**
- * MAP key为@AutoMapping.value() 实现
+ * MAP key为@BindCoumn.sequence() 实现
+ * <p>
+ * Map  读value为null时,不会赋值
+ * row {1:"1",2:"2",3:"3"} -> map {1:"1",2:"2"}
  */
 public class MapSequenceKeyMapper extends AbstractContainerMapper {
 
@@ -39,6 +42,7 @@ public class MapSequenceKeyMapper extends AbstractContainerMapper {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ExcelContent> getContents(Object value) {
 		Map<Sequence, String> values = value == null ? Collections.emptyMap() : (Map<Sequence, String>) value;
 		check(values.size());

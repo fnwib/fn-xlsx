@@ -14,17 +14,13 @@ public class CellValueHandlers {
 		if (deserializer != null) {
 			return new DeserializeHandler(deserializer);
 		}
-		return createAbstractCellValueHandler(type, valueHandlers);
-	}
-
-	private static AbstractCellValueHandler createAbstractCellValueHandler(JavaType type, Collection<ValueHandler> valueHandlers) {
 		Class<?> rawClass = type.getRawClass();
 		if (String.class == rawClass) {
 			return new StringHandler(valueHandlers);
 		} else if (Number.class.isAssignableFrom(rawClass)) {
 			return new NumberHandler();
 		} else {
-			return new SimpleHandler();
+			return new DefaultHandler();
 		}
 	}
 

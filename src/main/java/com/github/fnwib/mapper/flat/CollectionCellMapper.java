@@ -36,6 +36,7 @@ public class CollectionCellMapper extends AbstractContainerMapper {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ExcelContent> getContents(Object value) {
 		List<Cell> cells = Objects.nonNull(value) ? (List<Cell>) value : Collections.emptyList();
 		Map<Integer, Cell> values = cells.stream().filter(Objects::nonNull).collect(Collectors.toMap(Cell::getColumnIndex, c -> c));

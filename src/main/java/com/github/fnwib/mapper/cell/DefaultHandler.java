@@ -10,7 +10,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Optional;
 
-public class SimpleHandler extends AbstractCellValueHandler {
+public class DefaultHandler implements CellValueHandler {
 
 	@Override
 	public Optional<String> getValue(int indexColumn, Row row) {

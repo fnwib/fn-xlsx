@@ -36,7 +36,7 @@ public class TestModel {
 	@AutoMapping("Excel no match")
 	private Map<Integer, String> noMatchMap;
 	@AutoMapping("枚举")
-	private EnumType enumType;
+	private TestEnumType enumType;
 	@AutoMapping(complex = ComplexEnum.Nested, order = 1)
 	private TestNested testNested;
 }

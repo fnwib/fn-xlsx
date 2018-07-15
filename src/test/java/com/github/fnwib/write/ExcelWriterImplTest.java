@@ -5,7 +5,7 @@ import com.github.fnwib.mapper.RowReader;
 import com.github.fnwib.mapper.RowReaderImpl;
 import com.github.fnwib.read.ExcelReader;
 import com.github.fnwib.read.ExcelReaderImpl;
-import com.github.fnwib.testentity.EnumType;
+import com.github.fnwib.testentity.TestEnumType;
 import com.github.fnwib.testentity.TestModel;
 import com.github.fnwib.testentity.TestNested;
 import com.github.fnwib.testentity.TestNested2;
@@ -71,7 +71,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 			model.setList2(list2);
 			model.setMapNull(Maps.newHashMap());
 			model.setNoMatchMap(Maps.newHashMap());
-			model.setEnumType(EnumType.A);
+			model.setEnumType(TestEnumType.A);
 			TestNested2 nested2 = new TestNested2("aa" + i, "bb" + i);
 			TestNested nested = new TestNested("aa" + i, "bb" + i, nested2);
 			model.setTestNested(nested);

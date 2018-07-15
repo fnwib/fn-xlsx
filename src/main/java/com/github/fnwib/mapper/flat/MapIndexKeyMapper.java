@@ -14,6 +14,10 @@ import java.util.*;
 
 /**
  * MAP key为columnIndex 实现
+ * <p>
+ * Map  读value为null时,不会赋值
+ * row {1:"1",2:"2",3:"3"} -> map {1:"1",2:"2"}
+ * <p>
  */
 public class MapIndexKeyMapper extends AbstractContainerMapper {
 
@@ -39,6 +43,7 @@ public class MapIndexKeyMapper extends AbstractContainerMapper {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ExcelContent> getContents(Object value) {
 		Map<Integer, String> values = value == null ? Collections.emptyMap() : (Map<Integer, String>) value;
 		check(values.size());

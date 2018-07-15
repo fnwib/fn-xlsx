@@ -5,7 +5,7 @@ import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
-import com.github.fnwib.testentity.EnumType;
+import com.github.fnwib.testentity.TestEnumType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,7 +46,7 @@ public class WriteModel {
 	private String aaa;
 
 	@AutoMapping("enumType")
-	private EnumType enumType;
+	private TestEnumType enumType;
 
 
 }

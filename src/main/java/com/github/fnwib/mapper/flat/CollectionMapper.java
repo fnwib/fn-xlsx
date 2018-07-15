@@ -14,6 +14,9 @@ import java.util.*;
 /**
  * Collection impl
  * <p>
+ * 读 value为null 会赋值
+ * [null,"t","t"]
+ * <p>
  * Tip ！ contentType 应该是集合元素类型
  * 它只能是 Number String Enum 之类的单一映射的结构
  * 不能是Collection 或Map
@@ -41,6 +44,7 @@ public class CollectionMapper extends AbstractContainerMapper {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ExcelContent> getContents(Object value) {
 		List<Object> values = Objects.nonNull(value) ? (List<Object>) value : Collections.emptyList();
 		check(values.size());

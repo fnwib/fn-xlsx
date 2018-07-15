@@ -13,7 +13,10 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.*;
 
 /**
- * Map key为ExcelHeader.value 实现
+ * MAP key为@BindCoumn.text 实现
+ * <p>
+ * Map  读value为null时,不会赋值
+ * row {"k1":"1","k2":"2","k3":"3"} -> map {"k1":"1","k2":"2"}
  */
 public class MapTextKeyMapper extends AbstractContainerMapper {
 
@@ -38,6 +41,7 @@ public class MapTextKeyMapper extends AbstractContainerMapper {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ExcelContent> getContents(Object value) {
 		Map<String, String> values = value == null ? Collections.emptyMap() : (Map<String, String>) value;
 		check(values.size());
