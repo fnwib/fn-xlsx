@@ -1,7 +1,5 @@
 package com.github.fnwib.annotation;
 
-import org.apache.poi.ss.formula.functions.Complex;
-
 import java.lang.annotation.*;
 
 /**
@@ -53,6 +51,8 @@ public @interface AutoMapping {
 	 * "aaa 汉字"  -> "aaa.*"
 	 * "aaa" "bbb"  -> "aaa|bbb"
 	 * <p>
+	 * <p>
+	 * Alias : sequence
 	 */
 	String value() default "";
 

@@ -1,7 +1,8 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.fnwib.mapping.flat.PrimitiveMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import org.junit.Assert;
@@ -9,8 +10,6 @@ import org.junit.Test;
 
 import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class PrimitiveMappingTest {
 

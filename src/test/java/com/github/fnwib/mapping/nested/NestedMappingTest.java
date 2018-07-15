@@ -1,8 +1,6 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.nested;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class NestedMappingTest {
 

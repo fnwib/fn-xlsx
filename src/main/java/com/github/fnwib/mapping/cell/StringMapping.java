@@ -1,21 +1,26 @@
-package com.github.fnwib.mapping.impl.cell;
+package com.github.fnwib.mapping.cell;
 
+import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.util.ExcelUtil;
 import com.github.fnwib.util.ValueUtil;
-import com.github.fnwib.write.CellText;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.util.Collection;
 import java.util.Optional;
 
-public class NumberMapping extends AbstractCellStringMapping {
+public class StringMapping extends AbstractCellStringMapping {
+
+	private final Collection<ValueHandler> valueHandlers;
+
+	public StringMapping(Collection<ValueHandler> valueHandlers) {
+		this.valueHandlers = valueHandlers;
+	}
 
 	@Override
-	public Optional<String> getValue(int indexColumn,Row row) {
+	public Optional<String> getValue(int indexColumn, Row row) {
 		Cell cell = row.getCell(indexColumn);
 		if (cell == null) {
 			return Optional.empty();
@@ -24,9 +29,8 @@ public class NumberMapping extends AbstractCellStringMapping {
 			case BLANK:
 				return Optional.empty();
 			case NUMERIC:
-				return Optional.of(cell.getNumericCellValue() + "");
 			case STRING:
-				return ValueUtil.getCellValue(cell);
+				return ValueUtil.getCellValue(cell, valueHandlers);
 			case ERROR:
 			case BOOLEAN:
 			case FORMULA:
@@ -42,6 +46,5 @@ public class NumberMapping extends AbstractCellStringMapping {
 		}
 
 	}
-
 
 }

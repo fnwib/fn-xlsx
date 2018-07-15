@@ -1,5 +1,6 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.flat;
 
+import com.github.fnwib.mapping.BindMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.write.model.ExcelContent;
 import org.apache.poi.ss.usermodel.Row;

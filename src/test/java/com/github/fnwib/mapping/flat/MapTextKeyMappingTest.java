@@ -1,7 +1,9 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.fnwib.mapping.flat.AbstractMapMapping;
+import com.github.fnwib.mapping.flat.MapTextKeyMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.model.ExcelContent;
@@ -11,8 +13,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
-
-import static org.junit.Assert.*;
 
 public class MapTextKeyMappingTest {
 

@@ -1,11 +1,12 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.nested;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.github.fnwib.databing.LocalConfig;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
-import com.github.fnwib.mapping.Mappings;
+import com.github.fnwib.mapping.BindMapping;
+import com.github.fnwib.mapping.flat.CollectionCellMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.model.BindProperty;
 import com.github.fnwib.write.model.ExcelContent;
@@ -27,6 +28,9 @@ import java.util.Optional;
 @Slf4j
 public class NestedMapping<T> implements BindMapping {
 
+	private static final JavaType LIST_CELL_TYPE = TypeFactory.defaultInstance().constructCollectionType(List.class, Cell.class);
+
+
 	private List<BindColumn> columns;
 	private Class<T> type;
 	/**
@@ -42,7 +46,7 @@ public class NestedMapping<T> implements BindMapping {
 	//有效的绑定的属性
 	private int count;
 
-	public NestedMapping(JavaType type, List<BindProperty> properties, LocalConfig config) {
+	public NestedMapping(JavaType type, List<BindProperty> properties) {
 		if (type.isPrimitive()) {
 			throw new SettingException("不支持这样的嵌套类型");
 		}
@@ -51,17 +55,12 @@ public class NestedMapping<T> implements BindMapping {
 		columns = Lists.newArrayList();
 		this.type = (Class<T>) type.getRawClass();
 		for (BindProperty bind : properties) {
-			Mappings.createMapping(bind, config);
 			if (!bind.isBound()) {
 				continue;
 			}
-			List<BindColumn> columns = bind.getBindColumns();
-			if (columns == null) {
-				log.error("{} {} columns is null",bind.getPropertyName(), type);
-				continue;
-			}
-			this.columns.addAll(columns);
-			if (bind.getType() == Constant.LIST_CELL_TYPE) {
+			BindMapping mapping = bind.getBindMapping();
+			this.columns.addAll(mapping.getColumns());
+			if (bind.getType() == LIST_CELL_TYPE) {
 				cellHandlers.add(bind);
 			} else {
 				customHandlers.add(bind);

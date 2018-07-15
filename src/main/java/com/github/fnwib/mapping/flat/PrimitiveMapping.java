@@ -1,12 +1,13 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.mapping.BindMapping;
 import com.github.fnwib.mapping.model.BindColumn;
-import com.github.fnwib.mapping.impl.cell.CellMapping;
-import com.github.fnwib.mapping.impl.cell.NumberMapping;
-import com.github.fnwib.mapping.impl.cell.SimpleMapping;
-import com.github.fnwib.mapping.impl.cell.StringMapping;
+import com.github.fnwib.mapping.cell.CellMapping;
+import com.github.fnwib.mapping.cell.NumberMapping;
+import com.github.fnwib.mapping.cell.SimpleMapping;
+import com.github.fnwib.mapping.cell.StringMapping;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Row;

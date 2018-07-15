@@ -1,24 +1,31 @@
 package com.github.fnwib.mapping;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.impl.*;
-import com.github.fnwib.mapping.impl.cell.AbstractCellStringMapping;
-import com.github.fnwib.mapping.impl.cell.NumberMapping;
-import com.github.fnwib.mapping.impl.cell.SimpleMapping;
-import com.github.fnwib.mapping.impl.cell.StringMapping;
+import com.github.fnwib.mapping.flat.*;
+import com.github.fnwib.mapping.cell.AbstractCellStringMapping;
+import com.github.fnwib.mapping.cell.NumberMapping;
+import com.github.fnwib.mapping.cell.SimpleMapping;
+import com.github.fnwib.mapping.cell.StringMapping;
+import com.github.fnwib.mapping.flat.LineNumMapping;
 import com.github.fnwib.mapping.model.BindColumn;
 import com.github.fnwib.mapping.model.BindProperty;
+import com.github.fnwib.mapping.model.MatchConfig;
+import com.github.fnwib.mapping.nested.NestedMapping;
+import com.github.fnwib.reflect.BeanResolver;
+import com.github.fnwib.reflect.Property;
+import com.github.fnwib.write.model.ExcelHeader;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Mappings {
@@ -26,25 +33,80 @@ public class Mappings {
 	private Mappings() {
 	}
 
-	public static void createMapping(BindProperty bind, LocalConfig config) {
-		if (bind.isNested()) {
-			BindMapping mapping = new NestedMapping(bind.getType(), bind.getSubBindProperties(), config);
-			List<BindColumn> columns = mapping.getColumns();
-			bind.setBindMapping(mapping);
-			bind.setBindColumns(columns);
-		} else {
-			createFlatMapping(bind, config);
+	public static <T> NestedMapping<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers) {
+		LongAdder level = new LongAdder();
+		NestedMapping<T> nestedMapping = createNestedMapping(type, config, headers, Sets.newHashSet(), level);
+		if (level.intValue() >= 3) {
+			throw new SettingException("'%s'嵌套层数超过两层", type);
 		}
+		return nestedMapping;
 	}
 
-	private static void createFlatMapping(BindProperty property, LocalConfig config) {
-		if (property.isLineNum()) {
-			BindMapping mapping = new LineNumMapping(property.getBindColumns());
+	/**
+	 * @param type             嵌套类型
+	 * @param config           LocalConfig
+	 * @param headers          Headers(等价于org.apache.poi.ss.usermodel.Row)
+	 * @param exclusiveColumns 独占模式的列
+	 * @param level            嵌套类型的层级
+	 * @param <T>              嵌套类型
+	 * @return NestedMapping
+	 */
+	private static <T> NestedMapping<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns, LongAdder level) {
+		JavaType javaType = TypeFactory.defaultInstance().constructType(type);
+		if (type.isPrimitive()) {
+			throw new SettingException("不支持这样的嵌套类型");
+		}
+		List<BindProperty> properties = BeanResolver.INSTANCE.getProperties(type).stream().map(Property::toBindParam)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.sorted(Comparator.comparing(BindProperty::getOrder))
+				.collect(Collectors.toList());
+		for (BindProperty property : properties) {
+			if (property.isNested()) {
+				level.increment();
+				NestedMapping<?> nestedMapping = createNestedMapping(property.getRawClass(), config, headers, exclusiveColumns, level);
+				property.setBindMapping(nestedMapping);
+				continue;
+			}
+			List<BindColumn> columns = match(property, config, headers, exclusiveColumns);
+			BindMapping mapping = createFlatMapping(property, columns, config);
 			property.setBindMapping(mapping);
 		}
-		List<BindColumn> columns = property.getBindColumns();
+		return new NestedMapping<>(javaType, properties);
+	}
+
+	/**
+	 * 属性与Header匹配
+	 *
+	 * @param property         嵌套类型
+	 * @param config           LocalConfig
+	 * @param headers          Headers(等价于org.apache.poi.ss.usermodel.Row)
+	 * @param exclusiveColumns 独占模式的列
+	 * @return 匹配到的列集合
+	 */
+	private static List<BindColumn> match(BindProperty property, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns) {
+		MatchConfig matchConfig = property.getMatchConfig();
+		FnMatcher matcher = new FnMatcher(matchConfig, config);
+		if (property.isExclusive()) {
+			return matcher.match(headers, exclusiveColumns);
+		}
+		return matcher.match(headers, Collections.emptySet());
+	}
+
+	/**
+	 * 创建非嵌套类型的BindMapping
+	 *
+	 * @param property 字段属性的封装
+	 * @param columns  匹配到的列
+	 * @param config   LocalConfig
+	 * @return FlagMapping
+	 */
+	private static BindMapping createFlatMapping(BindProperty property, List<BindColumn> columns, LocalConfig config) {
+		if (property.isLineNum()) {
+			return new LineNumMapping(columns);
+		}
 		if (columns.isEmpty()) {
-			return;
+			return null;
 		}
 		BindMapping mapping;
 		Collection<ValueHandler> valueHandlers = config.getContentValueHandlers();
@@ -63,7 +125,7 @@ public class Mappings {
 				throw new SettingException(String.format("property is %s ,type is %s , 匹配到多列", property.getPropertyName(), type));
 			}
 		}
-		property.setBindMapping(mapping);
+		return mapping;
 
 	}
 

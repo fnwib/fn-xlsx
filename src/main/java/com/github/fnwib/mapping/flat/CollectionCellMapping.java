@@ -1,12 +1,11 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.flat;
 
+import com.github.fnwib.mapping.BindMapping;
 import com.github.fnwib.mapping.model.BindColumn;
-import com.github.fnwib.mapping.impl.cell.RawCellMapping;
+import com.github.fnwib.mapping.cell.RawCellMapping;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;

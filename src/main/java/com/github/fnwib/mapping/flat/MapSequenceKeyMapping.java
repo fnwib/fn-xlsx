@@ -1,11 +1,11 @@
-package com.github.fnwib.mapping.impl;
+package com.github.fnwib.mapping.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapping.model.BindColumn;
-import com.github.fnwib.mapping.impl.cell.AbstractCellStringMapping;
+import com.github.fnwib.mapping.cell.AbstractCellStringMapping;
 import com.github.fnwib.mapping.Mappings;
 import com.github.fnwib.write.model.ExcelContent;
 import com.google.common.collect.Lists;
@@ -13,7 +13,6 @@ import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MapSequenceKeyMapping extends AbstractMapMapping {
 

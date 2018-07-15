@@ -1,4 +1,4 @@
-package com.github.fnwib.mapping.impl.cell;
+package com.github.fnwib.mapping.cell;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

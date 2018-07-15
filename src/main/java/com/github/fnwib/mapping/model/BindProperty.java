@@ -5,16 +5,14 @@ import com.github.fnwib.annotation.BindType;
 import com.github.fnwib.annotation.ComplexEnum;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapping.impl.BindMapping;
+import com.github.fnwib.mapping.BindMapping;
 import com.github.fnwib.reflect.Property;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 规则
@@ -59,19 +57,6 @@ public class BindProperty {
 	@Setter
 	@Getter
 	private BindMapping bindMapping;
-	/**
-	 * 如果是complex == Complex.Y
-	 * 则此处不为空
-	 */
-	@Setter
-	@Getter
-	private List<BindProperty> subBindProperties;
-	/**
-	 * 规则绑定的列
-	 */
-	@Setter
-	@Getter
-	private List<BindColumn> bindColumns;
 
 	public int getOrder() {
 		return featureConfig.getOrder();
@@ -121,12 +106,12 @@ public class BindProperty {
 		return property.getWriteMethod();
 	}
 
-	public PropertyDescriptor getPropertyDescriptor() {
-		return property.getPropertyDescriptor();
-	}
-
 	public JavaType getType() {
 		return property.getFieldType();
+	}
+
+	public Class<?> getRawClass() {
+		return property.getFieldType().getRawClass();
 	}
 
 	public String getPropertyName() {
