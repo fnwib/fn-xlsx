@@ -1,9 +1,8 @@
 package com.github.fnwib.mapping;
 
 import com.github.fnwib.databing.LineReader;
-import com.github.fnwib.databing.LineWriter;
-import com.github.fnwib.write.model.ExcelContent;
 import com.github.fnwib.write.model.ExcelHeader;
+import com.github.fnwib.write.model.RowExcelContent;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
@@ -42,11 +41,10 @@ public interface RowMapper<T> extends LineReader<T> {
 	Optional<T> convert(Row fromValue);
 
 	/**
-	 * write T to empty Row
+	 * T to contents
 	 *
 	 * @param fromValue value
 	 */
-	List<ExcelContent> writeValue(T fromValue);
-
+	RowExcelContent convert(T fromValue);
 
 }

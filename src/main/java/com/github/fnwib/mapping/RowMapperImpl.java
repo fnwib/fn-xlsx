@@ -4,17 +4,16 @@ import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.mapping.nested.NestedMapping;
 import com.github.fnwib.mapping.model.BindColumn;
+import com.github.fnwib.mapping.nested.NestedMapping;
 import com.github.fnwib.write.model.ExcelContent;
 import com.github.fnwib.write.model.ExcelHeader;
+import com.github.fnwib.write.model.RowExcelContent;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.List;
 import java.util.Map;
@@ -93,8 +92,9 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 	}
 
 	@Override
-	public List<ExcelContent> writeValue(T fromValue) {
-		return mapping.getContents(fromValue);
+	public RowExcelContent convert(T fromValue) {
+		List<ExcelContent> contents = mapping.getContents(fromValue);
+		return new RowExcelContent(contents);
 	}
 
 	@Override
