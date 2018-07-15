@@ -1,5 +1,8 @@
-package com.github.fnwib.mapping.cell;
+package com.github.fnwib.mapper.cell;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.github.fnwib.databing.Context;
+import com.github.fnwib.databing.deser.CellDeserializer;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.util.ExcelUtil;
@@ -7,21 +10,33 @@ import com.github.fnwib.util.ValueUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.util.Objects;
 import java.util.Optional;
 
-public class NumberMapping extends AbstractCellStringMapping {
+public class SimpleMapping extends AbstractCellStringMapping {
+
+	private final CellDeserializer<?> deserializer;
+
+
+	public SimpleMapping(JavaType contentType) {
+		this.deserializer = Context.INSTANCE.findCellDeserializer(contentType);
+	}
 
 	@Override
-	public Optional<String> getValue(int indexColumn,Row row) {
+	public Optional<String> getValue(int indexColumn, Row row) {
 		Cell cell = row.getCell(indexColumn);
 		if (cell == null) {
 			return Optional.empty();
+		}
+		if (deserializer != null) {
+			Object deserialize = deserializer.deserialize(cell);
+			return Objects.isNull(deserialize) ? Optional.empty() : Optional.of(deserialize.toString());
 		}
 		switch (cell.getCellTypeEnum()) {
 			case BLANK:
 				return Optional.empty();
 			case NUMERIC:
-				return Optional.of(cell.getNumericCellValue() + "");
+				return Optional.of(cell.getStringCellValue());
 			case STRING:
 				return ValueUtil.getCellValue(cell);
 			case ERROR:
@@ -39,6 +54,4 @@ public class NumberMapping extends AbstractCellStringMapping {
 		}
 
 	}
-
-
 }

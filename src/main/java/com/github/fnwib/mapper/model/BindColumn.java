@@ -1,4 +1,4 @@
-package com.github.fnwib.mapping.model;
+package com.github.fnwib.mapper.model;
 
 import com.github.fnwib.databing.title.Sequence;
 import lombok.EqualsAndHashCode;

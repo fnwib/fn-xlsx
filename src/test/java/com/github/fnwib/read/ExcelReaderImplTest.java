@@ -3,7 +3,7 @@ package com.github.fnwib.read;
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapping.RowMapperImpl;
+import com.github.fnwib.mapper.RowMapperImpl;
 import com.github.fnwib.util.BCConvert;
 import com.monitorjbl.xlsx.StreamingReader;
 import model.AutoMappingModel;

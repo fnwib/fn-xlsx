@@ -1,8 +1,10 @@
 package com.github.fnwib.write;
 
 import com.github.fnwib.databing.LocalConfig;
-import com.github.fnwib.mapping.RowMapper;
-import com.github.fnwib.mapping.RowMapperImpl;
+import com.github.fnwib.mapper.RowMapper;
+import com.github.fnwib.mapper.RowMapperImpl;
+import com.github.fnwib.read.ExcelReader;
+import com.github.fnwib.read.ExcelReaderImpl;
 import com.github.fnwib.testentity.EnumType;
 import com.github.fnwib.testentity.TestModel;
 import com.github.fnwib.testentity.TestNested;
@@ -13,14 +15,14 @@ import com.github.fnwib.write.model.ExcelHeaderCreater;
 import com.github.fnwib.write.model.SheetConfig;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.monitorjbl.xlsx.StreamingReader;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExcelWriterImplTest extends CommonPathTest {
@@ -63,7 +65,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 			model.setIntNum(i << 5);
 			model.setLocalDate(LocalDate.now());
 			model.setList(list1);
-			model.setList(list2);
+			model.setList2(list2);
 			model.setMapNull(Maps.newHashMap());
 			model.setNoMatchMap(Maps.newHashMap());
 			model.setEnumType(EnumType.A);
@@ -88,9 +90,11 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		LocalConfig localConfig = new LocalConfig();
 		localConfig.setMaxNestLevel(3);
 		RowMapper<TestModel> rowMapper = new RowMapperImpl<>(TestModel.class, localConfig);
-		List<TestModel> target = writeAndRead(config, rowMapper);
+		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, rowMapper);
 		List<TestModel> source = getDataList(6);
-
+		writer.write(source);
+		List<File> files = writer.getFiles();
+		List<TestModel> target = read(files, rowMapper);
 		Assert.assertSame("集合长度不一致", source.size(), target.size());
 		for (int i = 0; i < source.size(); i++) {
 			TestModel sourceModel = source.get(i);
@@ -100,29 +104,50 @@ public class ExcelWriterImplTest extends CommonPathTest {
 
 	}
 
-	private List<TestModel> writeAndRead(SheetConfig config, RowMapper<TestModel> rowMapping) {
-		List<TestModel> source = getDataList(6);
-		List<TestModel> target = new ArrayList<>();
-		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, rowMapping);
-		writer.write(source);
-		List<File> files = writer.getFiles();
+	private List<TestModel> read(List<File> files, RowMapper<TestModel> rowMapper) {
+		List<TestModel> target = Lists.newArrayList();
+		for (File file2 : files) {
+			Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
+			ExcelReader<TestModel> reader = new ExcelReaderImpl<>(rowMapper, workbook, 0);
+			List<TestModel> data = reader.fetchAllData();
+			target.addAll(data);
+			String preTitle = reader.getPreTitle(0, 0);
+			Assert.assertEquals("0,0 标题不一致", "标题", preTitle);
+		}
 		target.sort(Comparator.comparing(TestModel::getSequence));
 		return target;
 	}
 
 	@Test
-	public void write1() {
-	}
-
-	@Test
 	public void writeMergedRegion() {
+		SheetConfig config = SheetConfig.builder()
+				.fileName("test")
+				.dir(basePath)
+				.maxRowNumCanWrite(5)
+				.addPreHeader(0, 0, "标题")
+				.addHeaders(getHeader())
+				.addHeaders("append after")
+				.build();
+		LocalConfig localConfig = new LocalConfig();
+		localConfig.setMaxNestLevel(3);
+		RowMapper<TestModel> rowMapper = new RowMapperImpl<>(TestModel.class, localConfig);
+		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, rowMapper);
+
+		List<TestModel> source = getDataList(6);
+
+		writer.writeMergedRegion(source.subList(0, 1), Arrays.asList(0, 1, 2));
+		writer.writeMergedRegion(source.subList(1, 3), Arrays.asList(0, 1, 2));
+		writer.writeMergedRegion(source.subList(3, source.size()), Arrays.asList(0, 1, 2));
+
+		List<File> files = writer.getFiles();
+		List<TestModel> target = read(files, rowMapper);
+		Assert.assertSame("集合长度不一致", source.size(), target.size());
+		for (int i = 0; i < source.size(); i++) {
+			TestModel sourceModel = source.get(i);
+			TestModel targetModel = target.get(i);
+			Assert.assertTrue("Equals", Objects.deepEquals(sourceModel, targetModel));
+		}
+
 	}
 
-	@Test
-	public void flush() {
-	}
-
-	@Test
-	public void getFiles() {
-	}
 }

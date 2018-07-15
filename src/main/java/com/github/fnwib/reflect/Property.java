@@ -6,9 +6,9 @@ import com.github.fnwib.databing.title.match.TitleMatcher;
 import com.github.fnwib.databing.title.match.TitleMatcherImpl;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.model.BindProperty;
-import com.github.fnwib.mapping.model.MatchConfig;
-import com.github.fnwib.mapping.model.FeatureConfig;
+import com.github.fnwib.mapper.model.BindProperty;
+import com.github.fnwib.mapper.model.MatchConfig;
+import com.github.fnwib.mapper.model.FeatureConfig;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 
@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Property {
+	@Getter
 	private final Class<?> region;
 	@Getter
 	private final Field field;

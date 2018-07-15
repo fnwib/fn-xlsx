@@ -18,10 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -47,8 +44,12 @@ public class SheetConfig {
 	private String sheetName;
 	@Getter
 	private List<ExcelPreHeader> preHeaders;
-	@Getter
+	// Template
+	private List<ExcelHeader> prependHeaders;
+	// 优先添加
 	private List<ExcelHeader> headers;
+	// LinkedHashSet 如果headers不为空 就去header的第一个元素的配置
+	private Set<String> appendHeaders;
 	/**
 	 * head以下所有的默认使用
 	 */
@@ -78,34 +79,56 @@ public class SheetConfig {
 		maxRowNumCanWrite = builder.maxRowNumCanWrite;
 		sheetName = builder.sheetName;
 		preHeaders = builder.preHeaders;
-		headers = getHeaders(builder.headers, builder.simpleHeaders);
+		prependHeaders = Lists.newArrayList();
+		headers = builder.headers;
+		appendHeaders = builder.appendHeaders;
 		this.contentCellStyle = builder.contentCellStyle;
 	}
 
-	/**
-	 * 创建header
-	 *
-	 * @param headers       Excel header 优先添加
-	 * @param simpleHeaders LinkedHashSet 如果headers不为空 就去header的第一个元素的配置
-	 * @return
-	 */
-	private List<ExcelHeader> getHeaders(List<ExcelHeader> headers, Set<String> simpleHeaders) {
-		List<ExcelHeader> hs = Lists.newArrayList();
-		AtomicInteger columnIndex = new AtomicInteger();
+	public void prependHeaders(List<ExcelHeader> headers) {
+		this.prependHeaders.addAll(headers);
+	}
+
+	private ExcelHeader.ExcelHeaderBuilder getHeaderBuilder() {
 		ExcelHeader.ExcelHeaderBuilder builder = ExcelHeader.builder();
+		if (!prependHeaders.isEmpty()) {
+			ExcelHeader header = headers.get(0);
+			FnCellStyle cellStyle = header.getCellStyle();
+			builder.cellStyle(cellStyle);
+			builder.width(header.getWidth());
+			builder.height(header.getHeight());
+			return builder;
+		}
 		if (!headers.isEmpty()) {
 			ExcelHeader header = headers.get(0);
 			FnCellStyle cellStyle = header.getCellStyle();
 			builder.cellStyle(cellStyle);
 			builder.width(header.getWidth());
 			builder.height(header.getHeight());
+			return builder;
+		}
+		return builder;
+	}
+
+	/**
+	 * 创建header
+	 *
+	 * @return
+	 */
+	public List<ExcelHeader> getHeaders() {
+		List<ExcelHeader> hs = Lists.newArrayList();
+		AtomicInteger maxColumnIndex = new AtomicInteger();
+		ExcelHeader.ExcelHeaderBuilder builder = getHeaderBuilder();
+		for (ExcelHeader prependHeader : prependHeaders) {
+			maxColumnIndex.set(Math.max(prependHeader.getColumnIndex(), maxColumnIndex.get()));
+			hs.add(prependHeader);
 		}
 		for (ExcelHeader header : headers) {
-			columnIndex.set(Math.max(header.getColumnIndex(), columnIndex.get()) + 1);
+			maxColumnIndex.set(Math.max(header.getColumnIndex(), maxColumnIndex.get()));
 			hs.add(header);
 		}
-		for (String val : simpleHeaders) {
-			ExcelHeader header = builder.columnIndex(columnIndex.getAndIncrement())
+		for (String val : appendHeaders) {
+			ExcelHeader header = builder.columnIndex(maxColumnIndex.incrementAndGet())
 					.value(val).build();
 			hs.add(header);
 		}
@@ -172,13 +195,13 @@ public class SheetConfig {
 		private String sheetName;
 		private List<ExcelPreHeader> preHeaders;
 		private List<ExcelHeader> headers;
-		private Set<String> simpleHeaders;
+		private Set<String> appendHeaders;
 		private FnCellStyle contentCellStyle;
 
 		public Builder() {
 			preHeaders = Lists.newArrayList();
 			headers = Lists.newArrayList();
-			simpleHeaders = Sets.newLinkedHashSet();
+			appendHeaders = Sets.newLinkedHashSet();
 		}
 
 		public Builder dir(String val) {
@@ -236,7 +259,7 @@ public class SheetConfig {
 		public Builder addHeaders(String... val) {
 			for (String h : val) {
 				if (StringUtils.isNotBlank(h)) {
-					simpleHeaders.add(h);
+					appendHeaders.add(h);
 				}
 			}
 			return this;

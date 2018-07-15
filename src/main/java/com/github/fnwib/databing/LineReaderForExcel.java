@@ -24,11 +24,11 @@ public class LineReaderForExcel<T> implements LineReader<T> {
 	private final LocalConfig localConfig;
 	private final TitleResolver titleResolver;
 	private final Set<PropertyConverter> converters;
-
+	@Deprecated
 	public LineReaderForExcel(Class<T> entityClass) {
 		this(entityClass, Context.INSTANCE.getContextConfig());
 	}
-
+	@Deprecated
 	public LineReaderForExcel(Class<T> entityClass, LocalConfig localConfig) {
 		this.entityClass = entityClass;
 		this.localConfig = localConfig;

@@ -1,9 +1,9 @@
-package com.github.fnwib.mapping;
+package com.github.fnwib.mapper;
 
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapping.model.BindColumn;
-import com.github.fnwib.mapping.model.MatchConfig;
+import com.github.fnwib.mapper.model.BindColumn;
+import com.github.fnwib.mapper.model.MatchConfig;
 import com.github.fnwib.util.ValueUtil;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.google.common.collect.Maps;

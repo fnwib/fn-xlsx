@@ -1,4 +1,4 @@
-package com.github.fnwib.mapping;
+package com.github.fnwib.mapper;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -6,19 +6,19 @@ import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.flat.*;
-import com.github.fnwib.mapping.cell.AbstractCellStringMapping;
-import com.github.fnwib.mapping.cell.NumberMapping;
-import com.github.fnwib.mapping.cell.SimpleMapping;
-import com.github.fnwib.mapping.cell.StringMapping;
-import com.github.fnwib.mapping.flat.LineNumMapping;
-import com.github.fnwib.mapping.model.BindColumn;
-import com.github.fnwib.mapping.model.BindProperty;
-import com.github.fnwib.mapping.model.MatchConfig;
-import com.github.fnwib.mapping.nested.NestedMapping;
+import com.github.fnwib.mapper.cell.AbstractCellStringMapping;
+import com.github.fnwib.mapper.cell.NumberMapping;
+import com.github.fnwib.mapper.cell.SimpleMapping;
+import com.github.fnwib.mapper.cell.StringMapping;
+import com.github.fnwib.mapper.flat.*;
+import com.github.fnwib.mapper.model.BindColumn;
+import com.github.fnwib.mapper.model.BindProperty;
+import com.github.fnwib.mapper.model.MatchConfig;
+import com.github.fnwib.mapper.nested.NestedMapper;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.github.fnwib.write.model.ExcelHeader;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -33,7 +33,7 @@ public class Mappings {
 	private Mappings() {
 	}
 
-	public static <T> NestedMapping<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers) {
+	public static <T> NestedMapper<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers) {
 		LongAdder level = new LongAdder();
 		level.increment();
 		return createNestedMapping(type, config, headers, Sets.newHashSet(), level);
@@ -47,7 +47,7 @@ public class Mappings {
 	 * @param <T>              嵌套类型
 	 * @return NestedMapping
 	 */
-	private static <T> NestedMapping<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns, LongAdder level) {
+	private static <T> NestedMapper<T> createNestedMapping(Class<T> type, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns, LongAdder level) {
 		if (level.intValue() > config.getMaxNestLevel()) {
 			throw new SettingException("嵌套层数超过'%s'层,当前对象为'%s'", config.getMaxNestLevel(), type);
 		}
@@ -60,18 +60,19 @@ public class Mappings {
 				.map(Optional::get)
 				.sorted(Comparator.comparing(BindProperty::getOrder))
 				.collect(Collectors.toList());
+		List<BindMapper> mappers = Lists.newArrayListWithCapacity(properties.size());
 		for (BindProperty property : properties) {
 			if (property.isNested()) {
 				level.increment();
-				NestedMapping<?> nestedMapping = createNestedMapping(property.getRawClass(), config, headers, exclusiveColumns, level);
-				property.setBindMapping(nestedMapping);
+				NestedMapper<?> nestedMapping = createNestedMapping(property.getRawClass(), config, headers, exclusiveColumns, level);
+				mappers.add(nestedMapping);
 				continue;
 			}
 			List<BindColumn> columns = match(property, config, headers, exclusiveColumns);
-			BindMapping mapping = createFlatMapping(property, columns, config);
-			property.setBindMapping(mapping);
+			FlatMapper flatMapper = createFlatMapper(property, columns, config);
+			mappers.add(flatMapper);
 		}
-		return new NestedMapping<>(javaType, properties);
+		return new NestedMapper<>(javaType, properties);
 	}
 
 	/**
@@ -100,31 +101,32 @@ public class Mappings {
 	 * @param config   LocalConfig
 	 * @return FlagMapping
 	 */
-	private static FlatMapping createFlatMapping(BindProperty property, List<BindColumn> columns, LocalConfig config) {
+	private static FlatMapper createFlatMapper(BindProperty property, List<BindColumn> columns, LocalConfig config) {
 		if (property.isLineNum()) {
-			return new LineNumMapping(columns);
+			return new LineNumMapper(columns);
 		}
-		FlatMapping mapping;
 		Collection<ValueHandler> valueHandlers = config.getContentValueHandlers();
 		valueHandlers.addAll(property.getValueHandlers());
+
+		FlatMapper mapper;
 		JavaType type = property.getType();
-		if (type.isMapLikeType()) {
-			mapping = Mappings.createMapMapping(type, columns, valueHandlers);
-		} else if (type.isCollectionLikeType()) {
-			mapping = Mappings.createCollectionMapping(type, columns, valueHandlers);
+		if (property.getType().isMapLikeType()) {
+			mapper = Mappings.createMapMapper(property, columns, valueHandlers);
+		} else if (property.getType().isCollectionLikeType()) {
+			mapper = Mappings.createCollectionMapper(property, columns, valueHandlers);
 		} else {
 			if (columns.isEmpty()) {
 				return null;
 			}
-			Optional<PrimitiveMapping> primitiveMapping = Mappings.cratePrimitiveMapping(type, columns, valueHandlers);
+			Optional<PrimitiveMapper> primitiveMapping = Mappings.cratePrimitiveMapper(type, columns, valueHandlers);
 			if (primitiveMapping.isPresent()) {
-				mapping = primitiveMapping.get();
+				mapper = primitiveMapping.get();
 			} else {
 				log.error("-> property is [{}] ,type is [{}] , 匹配到多列 index {}", property.getPropertyName(), type, columns);
 				throw new SettingException(String.format("property is %s ,type is %s , 匹配到多列", property.getPropertyName(), type));
 			}
 		}
-		return mapping;
+		return mapper;
 
 	}
 
@@ -141,42 +143,41 @@ public class Mappings {
 		return mapping;
 	}
 
-	private static AbstractMapMapping createMapMapping(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
-		JavaType keyType = type.getKeyType();
+	private static AbstractContainerMapper createMapMapper(BindProperty property, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
+		JavaType type = property.getType();
+		Class<?> rawClass = type.getKeyType().getRawClass();
 		JavaType contentType = type.getContentType();
-		AbstractMapMapping mapping;
-		Class<?> rawClass = keyType.getRawClass();
+		AbstractContainerMapper mapper;
 		if (Objects.equals(rawClass, Integer.class)) {
-			mapping = new MapIndexKeyMapping(contentType, columns, valueHandlers);
+			mapper = new MapIndexKeyMapper(property.getFullName(), contentType, columns, valueHandlers);
 		} else if (Objects.equals(rawClass, String.class)) {
-			mapping = new MapTextKeyMapping(contentType, columns, valueHandlers);
+			mapper = new MapTextKeyMapper(property.getFullName(), contentType, columns, valueHandlers);
 		} else if (Objects.equals(rawClass, Sequence.class)) {
-			mapping = new MapSequenceKeyMapping(contentType, columns, valueHandlers);
+			mapper = new MapSequenceKeyMapper(property.getFullName(), contentType, columns, valueHandlers);
 		} else {
-			String format = String.format("Map类型的key只支持 %s(cell index) | %s (cell text ) | %s (cell sequence)", Integer.class, String.class, Sequence.class);
-			throw new SettingException(format);
+			throw new SettingException("Map类型的key只支持 %s(BindColumn.index) | %s (BindColumn.text ) | %s (BindColumn.sequence)", Integer.class, String.class, Sequence.class);
 		}
-		return mapping;
+		return mapper;
 	}
 
-	private static FlatMapping createCollectionMapping(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
-		FlatMapping mapping;
+	private static AbstractContainerMapper createCollectionMapper(BindProperty property, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
+		JavaType type = property.getType();
+		AbstractContainerMapper mapper;
 		if (Cell.class.isAssignableFrom(type.getContentType().getRawClass())) {
 			if (type.getRawClass() != List.class) {
 				throw new SettingException("只支持List<Cell>", Cell.class);
 			}
-			mapping = new CollectionCellMapping(columns);
+			mapper = new CollectionCellMapper(property.getFullName(), columns);
 		} else {
-			mapping = new CollectionMapping(type.getContentType(), columns, valueHandlers);
+			mapper = new CollectionMapper(property.getFullName(), type.getContentType(), columns, valueHandlers);
 		}
-		return mapping;
+		return mapper;
 	}
 
-	private static Optional<PrimitiveMapping> cratePrimitiveMapping(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
-		PrimitiveMapping mapping;
+	private static Optional<PrimitiveMapper> cratePrimitiveMapper(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		if (columns.size() == 1) {
-			mapping = new PrimitiveMapping(type, columns.get(0), valueHandlers);
-			return Optional.of(mapping);
+			PrimitiveMapper mapper = new PrimitiveMapper(type, columns.get(0), valueHandlers);
+			return Optional.of(mapper);
 		} else {
 			return Optional.empty();
 		}

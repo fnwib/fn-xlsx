@@ -1,4 +1,4 @@
-package com.github.fnwib.mapping.model;
+package com.github.fnwib.mapper.model;
 
 import com.github.fnwib.annotation.AccessEnum;
 import com.github.fnwib.annotation.BindType;

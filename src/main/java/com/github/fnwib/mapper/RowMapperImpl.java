@@ -1,15 +1,15 @@
-package com.github.fnwib.mapping;
+package com.github.fnwib.mapper;
 
 import com.github.fnwib.databing.Context;
 import com.github.fnwib.databing.LineWriter;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.mapping.model.BindColumn;
-import com.github.fnwib.mapping.nested.NestedMapping;
+import com.github.fnwib.mapper.model.BindColumn;
+import com.github.fnwib.mapper.nested.NestedMapper;
+import com.github.fnwib.util.FnUtils;
 import com.github.fnwib.write.model.ExcelContent;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.github.fnwib.write.model.RowExcelContent;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,7 +32,7 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 	private final LocalConfig localConfig;
 
 	private Class<T> type;
-	private NestedMapping<T> mapping;
+	private NestedMapper<T> mapper;
 
 	public RowMapperImpl(Class<T> type) {
 		this(type, Context.INSTANCE.getContextConfig());
@@ -58,29 +58,19 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 
 	@Override
 	public boolean match(Row fromValue) {
-		List<ExcelHeader> headers = to(fromValue);
+		List<ExcelHeader> headers = FnUtils.to(fromValue);
 		return match(headers);
 	}
 
 	@Override
 	public boolean match(List<ExcelHeader> headers) {
-		NestedMapping<T> mapping = Mappings.createNestedMapping(type, localConfig, headers);
-		List<BindColumn> columns = mapping.getColumns();
+		NestedMapper<T> mapper = Mappings.createNestedMapping(type, localConfig, headers);
+		List<BindColumn> columns = mapper.getColumns();
 		if (columns.size() > 1) {
-			this.mapping = mapping;
+			this.mapper = mapper;
 			return true;
 		}
 		return false;
-	}
-
-	private List<ExcelHeader> to(Row row) {
-		List<ExcelHeader> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
-		for (Cell cell : row) {
-			ExcelHeader header = ExcelHeader.builder()
-					.columnIndex(cell.getColumnIndex()).value(cell.getStringCellValue()).build();
-			headers.add(header);
-		}
-		return headers;
 	}
 
 	@Override
@@ -88,12 +78,12 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 		if (isEmpty(fromValue)) {
 			return Optional.empty();
 		}
-		return mapping.getValue(fromValue);
+		return mapper.getValue(fromValue);
 	}
 
 	@Override
 	public RowExcelContent convert(T fromValue) {
-		List<ExcelContent> contents = mapping.getContents(fromValue);
+		List<ExcelContent> contents = mapper.getContents(fromValue);
 		return new RowExcelContent(contents);
 	}
 

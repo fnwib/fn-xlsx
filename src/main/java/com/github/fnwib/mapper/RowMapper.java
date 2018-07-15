@@ -1,4 +1,4 @@
-package com.github.fnwib.mapping;
+package com.github.fnwib.mapper;
 
 import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.write.model.ExcelHeader;

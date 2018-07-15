@@ -2,7 +2,8 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapping.RowMapper;
+import com.github.fnwib.mapper.RowMapper;
+import com.github.fnwib.util.FnUtils;
 import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.fn.FnSheet;
 import com.github.fnwib.write.fn.SingleSheetImpl;
@@ -50,6 +51,18 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapper<T> mapper) {
 		this.sheetConfig = sheetConfig;
 		this.mapper = mapper;
+		List<ExcelHeader> headers = sheetConfig.getHeaders();
+		boolean match = this.mapper.match(headers);
+		if (!match) {
+			throw new SettingException("未知错误");
+		}
+		this.closed = false;
+	}
+
+	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapper<T> mapper, File template) {
+		this.sheetConfig = sheetConfig;
+		this.mapper = mapper;
+		FnUtils.merge(sheetConfig,template,mapper);
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
 		boolean match = this.mapper.match(headers);
 		if (!match) {

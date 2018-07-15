@@ -1,11 +1,11 @@
-package com.github.fnwib.mapping.model;
+package com.github.fnwib.mapper.model;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.BindType;
 import com.github.fnwib.annotation.ComplexEnum;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.mapping.BindMapping;
+import com.github.fnwib.mapper.BindMapper;
 import com.github.fnwib.reflect.Property;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,7 +56,7 @@ public class BindProperty {
 	 */
 	@Setter
 	@Getter
-	private BindMapping bindMapping;
+	private BindMapper mapper;
 
 	public int getOrder() {
 		return featureConfig.getOrder();
@@ -68,7 +68,7 @@ public class BindProperty {
 	 * @return
 	 */
 	public boolean isBound() {
-		return bindMapping != null;
+		return mapper != null;
 	}
 
 	/**
@@ -116,5 +116,9 @@ public class BindProperty {
 
 	public String getPropertyName() {
 		return property.getName();
+	}
+
+	public String getFullName() {
+		return property.getRegion().getName();
 	}
 }

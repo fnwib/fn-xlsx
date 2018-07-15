@@ -1,4 +1,4 @@
-package com.github.fnwib.mapping.model;
+package com.github.fnwib.mapper.model;
 
 import lombok.Builder;
 import lombok.Getter;
