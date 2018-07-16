@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Slf4j
-public class SingleSheetImpl implements FnSheet {
+public class FnSheetImpl implements FnSheet {
 	private SheetConfig sheetConfig;
 
 	private int startRowNum;
@@ -28,7 +28,7 @@ public class SingleSheetImpl implements FnSheet {
 	@Getter
 	private Sheet sheet;
 
-	public SingleSheetImpl(SheetConfig sheetConfig) {
+	public FnSheetImpl(SheetConfig sheetConfig) {
 		this.sheetConfig = sheetConfig;
 
 		this.startRowNum = 0;

@@ -6,7 +6,7 @@ import com.github.fnwib.mapper.RowReader;
 import com.github.fnwib.util.FnUtils;
 import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.fn.FnSheet;
-import com.github.fnwib.write.fn.SingleSheetImpl;
+import com.github.fnwib.write.fn.FnSheetImpl;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.github.fnwib.write.model.RowExcelContent;
 import com.github.fnwib.write.model.SheetConfig;
@@ -69,12 +69,12 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			throw new ExcelException("已经关闭");
 		}
 		if (fnSheet == null) {
-			fnSheet = new SingleSheetImpl(sheetConfig);
+			fnSheet = new FnSheetImpl(sheetConfig);
 		}
 		if (fnSheet.canWriteSize() < size) {
 			log.debug("需要写入'{}'行, 当前sheet可写入行'{}'不足,将创建一个新sheet", size, fnSheet.canWriteSize());
 			fnSheet.flush();
-			fnSheet = new SingleSheetImpl(sheetConfig);
+			fnSheet = new FnSheetImpl(sheetConfig);
 			if (fnSheet.canWriteSize() < size) {
 				throw new SettingException("Sheet起始可写入rowNum'%s'，最大可写入rowNum '%s'。请检查配置", fnSheet.getStartRow(), sheetConfig.getMaxRowNumCanWrite());
 			}

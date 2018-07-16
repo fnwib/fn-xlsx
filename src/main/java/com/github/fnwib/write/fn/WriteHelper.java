@@ -35,23 +35,23 @@ public class WriteHelper {
 				break;
 			case ERROR:
 				cell.setCellType(CellType.ERROR);
-				cell.setCellValue(cell.getStringCellValue());
+				cell.setCellErrorValue(fromCell.getErrorCellValue());
 				break;
 			case STRING:
 				cell.setCellType(CellType.STRING);
-				cell.setCellValue(cell.getStringCellValue());
+				cell.setCellValue(fromCell.getStringCellValue());
 				break;
 			case BOOLEAN:
 				cell.setCellType(CellType.BOOLEAN);
-				cell.setCellValue(cell.getStringCellValue());
+				cell.setCellValue(fromCell.getBooleanCellValue());
 				break;
 			case FORMULA:
 				cell.setCellType(CellType.FORMULA);
-				cell.setCellValue(cell.getStringCellValue());
+				cell.setCellFormula(fromCell.getCellFormula());
 				break;
 			case NUMERIC:
-				cell.setCellType(CellType.FORMULA);
-				cell.setCellValue(cell.getNumericCellValue());
+				cell.setCellType(CellType.NUMERIC);
+				cell.setCellValue(fromCell.getNumericCellValue());
 				break;
 			default:
 				break;
