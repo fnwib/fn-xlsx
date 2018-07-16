@@ -18,9 +18,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class SheetConfig {
@@ -257,6 +258,15 @@ public class SheetConfig {
 		}
 
 		public Builder addHeaders(String... val) {
+			for (String h : val) {
+				if (StringUtils.isNotBlank(h)) {
+					appendHeaders.add(h);
+				}
+			}
+			return this;
+		}
+
+		public Builder addHeaders(Iterable<String> val) {
 			for (String h : val) {
 				if (StringUtils.isNotBlank(h)) {
 					appendHeaders.add(h);
