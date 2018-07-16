@@ -64,14 +64,27 @@ public class CollectionCellMapperTest {
 	@Test
 	public void getContents() {
 		CollectionCellMapper mapper = new CollectionCellMapper("1", columns);
-		List<Integer> value = Lists.newArrayList(null, 1, 2);
-		List<ExcelContent> contents = mapper.getContents(value);
-		Assert.assertEquals("string value to  contents", 3, contents.size());
-		contents.sort(Comparator.comparing(ExcelContent::getColumnIndex));
-		List<ExcelContent> expected = Lists.newArrayList();
-		expected.add(new ExcelContent(1, null));
-		expected.add(new ExcelContent(2, "1"));
-		expected.add(new ExcelContent(3, "2"));
-		Assert.assertEquals("map<Integer,String> to  contents", expected, contents);
+		try (Workbook sheets = new SXSSFWorkbook()) {
+			Sheet sheet = sheets.createSheet();
+			Row row = sheet.createRow(0);
+			Cell cell1 = row.createCell(1);
+			Cell cell2 = row.createCell(2);
+			cell2.setCellValue("string");
+			Cell cell3 = row.createCell(3);
+			cell3.setCellValue(new Date());
+			List<Cell> cells = Lists.newArrayList(cell1, cell2, cell3);
+			List<ExcelContent> contents = mapper.getContents(cells);
+			contents.sort(Comparator.comparing(ExcelContent::getColumnIndex));
+
+			Assert.assertEquals("string value to  contents", 3, contents.size());
+
+			List<ExcelContent> expected = Lists.newArrayList();
+			expected.add(new ExcelContent(cell1));
+			expected.add(new ExcelContent(cell2));
+			expected.add(new ExcelContent(cell3));
+			Assert.assertEquals("map<Integer,String> to  contents", expected, contents);
+		} catch (IOException e) {
+			throw new ExcelException(e);
+		}
 	}
 }

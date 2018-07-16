@@ -6,7 +6,6 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapper.BindMapper;
-import com.github.fnwib.mapper.flat.CollectionCellMapper;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.model.BindProperty;
 import com.github.fnwib.write.model.ExcelContent;
@@ -18,6 +17,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class NestedMapper<T> implements BindMapper {
 	/**
 	 * 支持List<Cell>类型 MappingHelper.listCellType
 	 */
-	private List<BindProperty> cellHandlers;
+	private List<BindProperty> afterJsonHandler;
 
 	/**
 	 * 其他
@@ -50,7 +50,7 @@ public class NestedMapper<T> implements BindMapper {
 		if (type.isPrimitive()) {
 			throw new SettingException("不支持这样的嵌套类型");
 		}
-		cellHandlers = Lists.newArrayList();
+		afterJsonHandler = Lists.newArrayList();
 		flatHandlers = Lists.newArrayList();
 		columns = Lists.newArrayList();
 		this.type = (Class<T>) type.getRawClass();
@@ -60,36 +60,35 @@ public class NestedMapper<T> implements BindMapper {
 			}
 			BindMapper mapper = bind.getMapper();
 			this.columns.addAll(mapper.getColumns());
-			if (bind.getType() == LIST_CELL_TYPE) {
-				cellHandlers.add(bind);
+			if (bind.isNested() || bind.getType() == LIST_CELL_TYPE) {
+				afterJsonHandler.add(bind);
 			} else {
 				flatHandlers.add(bind);
 			}
 		}
-		this.count = cellHandlers.size() + flatHandlers.size();
+		this.count = afterJsonHandler.size() + flatHandlers.size();
 	}
 
 	@Override
 	public List<BindColumn> getColumns() {
+		columns.sort(Comparator.comparing(BindColumn::getIndex));
 		return columns;
 	}
 
 	@Override
 	public Optional<T> getValue(Row fromValue) {
 		Map<String, Object> map = Maps.newHashMapWithExpectedSize(count);
-		for (BindProperty handler : flatHandlers) {
-			BindMapper mapper = handler.getMapper();
-			mapper.getValue(fromValue).ifPresent(v -> map.put(handler.getPropertyName(), v));
+		for (BindProperty property : flatHandlers) {
+			BindMapper mapper = property.getMapper();
+			mapper.getValue(fromValue).ifPresent(v -> map.put(property.getPropertyName(), v));
 		}
-		T value = Json.Mapper.convertValue(map, type);
-		for (BindProperty handler : cellHandlers) {
-			CollectionCellMapper mapper = (CollectionCellMapper) handler.getMapper();
-			Optional<List<Cell>> cells = mapper.getValue(fromValue);
-			if (cells.isPresent()) {
-				setValue(cells.get(), handler.getWriteMethod(), value);
-			}
+		T result = Json.Mapper.convertValue(map, type);
+		for (BindProperty property : afterJsonHandler) {
+			BindMapper mapper = property.getMapper();
+			Optional<?> value = mapper.getValue(fromValue);
+			value.ifPresent(v -> setValue(v, property.getWriteMethod(), result));
 		}
-		return Optional.of(value);
+		return Optional.of(result);
 	}
 
 	private void setValue(Object fromValue, Method writeMethod, T toValue) {
@@ -104,7 +103,7 @@ public class NestedMapper<T> implements BindMapper {
 	@Override
 	public List<ExcelContent> getContents(Object value) {
 		List<ExcelContent> result = Lists.newArrayListWithCapacity(columns.size());
-		for (BindProperty property : cellHandlers) {
+		for (BindProperty property : afterJsonHandler) {
 			BindMapper mapper = property.getMapper();
 			Object pv = getValue(value, property.getReadMethod());
 			result.addAll(mapper.getContents(pv));
