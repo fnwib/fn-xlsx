@@ -2,7 +2,7 @@ package com.github.fnwib.mapper.nested;
 
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.databing.LocalConfig;
-import com.github.fnwib.mapper.Mappings;
+import com.github.fnwib.mapper.Mappers;
 import com.github.fnwib.write.model.ExcelContent;
 import com.github.fnwib.write.model.ExcelHeader;
 import com.github.fnwib.write.model.ExcelHeaderCreater;
@@ -31,7 +31,7 @@ public class NestedMapperTest {
 	@Test
 	public void getContents() {
 		List<ExcelHeader> headers = ExcelHeaderCreater.create(new AtomicInteger(), "list 1", "list 2", "list 3", "map 1", "map 2", "map 3");
-		NestedMapper<TestNestedModel> nestedMapper = Mappings.createNestedMapper(TestNestedModel.class, new LocalConfig(), headers);
+		NestedMapper<TestNestedModel> nestedMapper = Mappers.createNestedMapper(TestNestedModel.class, new LocalConfig(), headers);
 
 		List<ExcelContent> contents = nestedMapper.getContents(get());
 		Assert.assertEquals("TestNestedModel to  contents", 6, contents.size());

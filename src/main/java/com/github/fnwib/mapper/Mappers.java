@@ -23,9 +23,9 @@ import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class Mappings {
+public class Mappers {
 
-	private Mappings() {
+	private Mappers() {
 	}
 
 	public static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<ExcelHeader> headers) {
@@ -105,14 +105,14 @@ public class Mappings {
 		FlatMapper mapper;
 		JavaType type = property.getType();
 		if (property.getType().isMapLikeType()) {
-			mapper = Mappings.createMapMapper(property, columns, valueHandlers);
+			mapper = createMapMapper(property, columns, valueHandlers);
 		} else if (property.getType().isCollectionLikeType()) {
-			mapper = Mappings.createCollectionMapper(property, columns, valueHandlers);
+			mapper = createCollectionMapper(property, columns, valueHandlers);
 		} else {
 			if (columns.isEmpty()) {
 				return null;
 			}
-			Optional<PrimitiveMapper> primitiveMapping = Mappings.cratePrimitiveMapper(type, columns, valueHandlers);
+			Optional<PrimitiveMapper> primitiveMapping = cratePrimitiveMapper(type, columns, valueHandlers);
 			if (primitiveMapping.isPresent()) {
 				mapper = primitiveMapping.get();
 			} else {
