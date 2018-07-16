@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -118,8 +119,16 @@ public class SingleSheetImpl implements FnSheet {
 	@Override
 	public void addRow(List<ExcelContent> row) {
 		startRowNum++;
-		for (ExcelContent cell : row) {
-			WriteHelper.setValue(sheet, startRowNum, cell.getColumnIndex(), cell.getValue(), contentCellStyle);
+		for (ExcelContent content : row) {
+			if (content.isCell()) {
+				Cell fromCell = content.getCell();
+				FnCellStyle style = FnCellStyles.toXSSFCellStyle(fromCell.getCellStyle());
+				Cell cell = WriteHelper.setCellValue(sheet, fromCell);
+				XSSFCellStyle cellStyle = style.createCellStyle(workbook);
+				cell.setCellStyle(cellStyle);
+			} else {
+				WriteHelper.setValue(sheet, startRowNum, content.getColumnIndex(), content.getValue(), contentCellStyle);
+			}
 		}
 	}
 
@@ -138,14 +147,14 @@ public class SingleSheetImpl implements FnSheet {
 	@Override
 	public void addMergeRow(List<RowExcelContent> rows, List<Integer> mergedRangeIndex) {
 		int begin = this.startRowNum;
-		for (RowExcelContent row : rows) {
-			addRow(row);
-		}
 		for (Integer mergeIndex : mergedRangeIndex) {
 			//从下一行开始合并
 			CellRangeAddress cellRangeAddress = new CellRangeAddress(begin + 1, begin + rows.size(),
 					mergeIndex, mergeIndex);
 			sheet.addMergedRegion(cellRangeAddress);
+		}
+		for (RowExcelContent row : rows) {
+			addRow(row);
 		}
 	}
 

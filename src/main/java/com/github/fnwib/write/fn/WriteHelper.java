@@ -1,9 +1,6 @@
 package com.github.fnwib.write.fn;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 
 public class WriteHelper {
 
@@ -27,6 +24,39 @@ public class WriteHelper {
 		Cell cell = getOrCreateCell(row, cellNum);
 		cell.setCellValue(value);
 		cell.setCellStyle(cellStyle);
+	}
+
+	public static Cell setCellValue(Sheet sheet, Cell fromCell) {
+		Row row = getOrCreateRow(sheet, fromCell.getRowIndex());
+		Cell cell = getOrCreateCell(row, fromCell.getColumnIndex());
+		switch (fromCell.getCellTypeEnum()) {
+			case _NONE:
+			case BLANK:
+				break;
+			case ERROR:
+				cell.setCellType(CellType.ERROR);
+				cell.setCellValue(cell.getStringCellValue());
+				break;
+			case STRING:
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue(cell.getStringCellValue());
+				break;
+			case BOOLEAN:
+				cell.setCellType(CellType.BOOLEAN);
+				cell.setCellValue(cell.getStringCellValue());
+				break;
+			case FORMULA:
+				cell.setCellType(CellType.FORMULA);
+				cell.setCellValue(cell.getStringCellValue());
+				break;
+			case NUMERIC:
+				cell.setCellType(CellType.FORMULA);
+				cell.setCellValue(cell.getNumericCellValue());
+				break;
+			default:
+				break;
+		}
+		return cell;
 	}
 
 	public static Row getOrCreateRow(Sheet sheet, int rowNum) {

@@ -1,5 +1,7 @@
 package com.github.fnwib.write.fn;
 
+import com.github.fnwib.exception.NotSupportedException;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -15,8 +17,19 @@ public class FnCellStyles {
 		return fnCellStyle;
 	}
 
-
-	public static FnCellStyle to(XSSFCellStyle fromCellStyle) {
+	/**
+	 * 只支持XSSFCellStyle
+	 * <p>
+	 * 如果传进来的不是
+	 *
+	 * @param val
+	 * @return
+	 */
+	public static FnCellStyle toXSSFCellStyle(CellStyle val) {
+		if (XSSFCellStyle.class != val.getClass()) {
+			throw new NotSupportedException("不支持XSSFCellStyle以外的CellStyle");
+		}
+		XSSFCellStyle fromCellStyle = (XSSFCellStyle) val;
 		XSSFFont fromCellStyleFont = fromCellStyle.getFont();
 		return (workbook -> {
 			FnCellStyle fnCellStyle = FnCellStyleType.CONTENT.getStyle();

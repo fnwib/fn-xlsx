@@ -49,37 +49,6 @@ public class CollectionCellMapper extends AbstractContainerMapper {
 			contents.add(excelContent);
 		}
 		return contents;
-//		for (Cell cell : cells) {
-//			Cell newCell = null;
-//			CellType cellType = cell.getCellTypeEnum();
-//			switch (cellType) {
-//				case _NONE:
-//				case BLANK:
-//					break;
-//				case ERROR:
-//					newCell.setCellType(CellType.ERROR);
-//					newCell.setCellValue(cell.getStringCellValue());
-//					break;
-//				case STRING:
-//					newCell.setCellType(CellType.STRING);
-//					newCell.setCellValue(cell.getStringCellValue());
-//					break;
-//				case BOOLEAN:
-//					newCell.setCellType(CellType.BOOLEAN);
-//					newCell.setCellValue(cell.getStringCellValue());
-//					break;
-//				case FORMULA:
-//					newCell.setCellType(CellType.FORMULA);
-//					newCell.setCellValue(cell.getStringCellValue());
-//					break;
-//				case NUMERIC:
-//					newCell.setCellType(CellType.FORMULA);
-//					newCell.setCellValue(cell.getNumericCellValue());
-//					break;
-//				default:
-//					break;
-//			}
-//		}
 	}
 
 }

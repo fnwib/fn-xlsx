@@ -94,7 +94,7 @@ public class ComUtils<T> {
 						.height(head.getHeight())
 						.width(sheet.getColumnWidth(cell.getColumnIndex()))
 						.value(cell.getStringCellValue())
-						.cellStyle(FnCellStyles.to(((XSSFCellStyle) cell.getCellStyle())))
+						.cellStyle(FnCellStyles.toXSSFCellStyle(((XSSFCellStyle) cell.getCellStyle())))
 						.build();
 				headers.add(header);
 				beginIndex = Math.max(cell.getColumnIndex(), beginIndex)+1;
@@ -155,7 +155,7 @@ public class ComUtils<T> {
 				ExcelPreHeader excelPreHeader = ExcelPreHeader.builder().rowNum(row.getRowNum())
 						.columnIndex(cell.getColumnIndex())
 						.value(cell.getStringCellValue())
-						.cellStyle(FnCellStyles.to(cellStyle))
+						.cellStyle(FnCellStyles.toXSSFCellStyle(cellStyle))
 						.height(height)
 						.build();
 				preHeader.add(excelPreHeader);
