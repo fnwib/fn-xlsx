@@ -20,7 +20,7 @@ public @interface AutoMapping {
 	 * DEFAULT Value
 	 * <p>
 	 * <p>
-	 * please use @LineNum
+	 * please use @com.github.fnwib.annotation.LineNum
 	 *
 	 * @return
 	 */

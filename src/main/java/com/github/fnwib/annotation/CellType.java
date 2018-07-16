@@ -2,6 +2,9 @@ package com.github.fnwib.annotation;
 
 import java.lang.annotation.*;
 
+/**
+ * com.github.fnwib.annotation.AutoMapping
+ */
 @Deprecated
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
