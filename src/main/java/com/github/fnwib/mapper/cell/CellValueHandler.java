@@ -9,4 +9,6 @@ public interface CellValueHandler {
 
 	Optional<?> getValue(int indexColumn, Row row);
 
+
+
 }

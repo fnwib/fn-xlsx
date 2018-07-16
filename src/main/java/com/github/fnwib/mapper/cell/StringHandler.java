@@ -1,16 +1,15 @@
 package com.github.fnwib.mapper.cell;
 
 import com.github.fnwib.databing.valuehandler.ValueHandler;
-import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.exception.NotSupportedException;
-import com.github.fnwib.util.ExcelUtil;
 import com.github.fnwib.util.ValueUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Collection;
 import java.util.Optional;
 
+@Slf4j
 public class StringHandler implements CellValueHandler {
 
 	private final Collection<ValueHandler> valueHandlers;
@@ -31,18 +30,14 @@ public class StringHandler implements CellValueHandler {
 			case STRING:
 				return ValueUtil.getCellValue(cell, valueHandlers);
 			case NUMERIC:
+				throw ErrorCellType.CELL_NUMERIC_TO_STRING.getException(cell);
 			case ERROR:
 			case FORMULA:
 			case BOOLEAN:
 			case _NONE:
-				String format = String.format("坐标[%s][%s]值为[%s],类型是[%s]",
-						row.getRowNum() + 1,
-						ExcelUtil.num2Column(cell.getColumnIndex() + 1),
-						cell.getStringCellValue(),
-						cell.getCellTypeEnum().name());
-				throw new ExcelException(format);
+				throw ErrorCellType.NOT_SUPPORT.getException(cell);
 			default:
-				throw new NotSupportedException(" [" + cell.getStringCellValue() + "] unknown type");
+				throw ErrorCellType.UNKNOWN_TYPE.getException(cell);
 		}
 
 	}

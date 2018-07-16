@@ -30,7 +30,7 @@ public class CollectionCellMapper extends AbstractContainerMapper {
 		List<Cell> result = Lists.newArrayListWithCapacity(columns.size());
 		for (BindColumn column : columns) {
 			Optional<Cell> value = mapping.getValue(column.getIndex(), row);
-			value.ifPresent(v -> result.add(v));
+			result.add(value.orElse(null));
 		}
 		return Optional.of(result);
 	}
@@ -39,6 +39,7 @@ public class CollectionCellMapper extends AbstractContainerMapper {
 	@SuppressWarnings("unchecked")
 	public List<ExcelContent> getContents(Object value) {
 		List<Cell> cells = Objects.nonNull(value) ? (List<Cell>) value : Collections.emptyList();
+		check(cells.size());
 		Map<Integer, Cell> values = cells.stream().filter(Objects::nonNull).collect(Collectors.toMap(Cell::getColumnIndex, c -> c));
 		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
 		for (BindColumn column : columns) {
