@@ -19,7 +19,7 @@ public enum ErrorCellType {
 	private String format;
 
 	private static final String errorType = "ErrorType : {[%s]}";
-	private static final String cell = " Cell : { 坐标[%s, %s] 值为'%s' 类型是'%s' } ";
+	private static final String cell = " Cell : { 坐标XY[%s%s] 值为'%s' 类型是'%s' } ";
 
 	ErrorCellType(String format) {
 		this.format = errorType + cell + " message : {" + format + "}";
@@ -53,8 +53,8 @@ public enum ErrorCellType {
 				val = null;
 				break;
 		}
-		return new ExcelException(format, this.name(), r,
-				ExcelUtil.num2Column(c),
+		return new ExcelException(format, this.name(),
+				ExcelUtil.num2Column(c), r,
 				Objects.isNull(val) ? "" : val.toString(),
 				typeEnum.name());
 	}
