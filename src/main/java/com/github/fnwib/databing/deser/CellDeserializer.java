@@ -3,9 +3,14 @@ package com.github.fnwib.databing.deser;
 
 import org.apache.poi.ss.usermodel.Cell;
 
+/**
+ * cell 反序列化实现
+ *
+ * @param <T>
+ */
 @FunctionalInterface
-public interface CellDeserializer<FT> {
+public interface CellDeserializer<T> {
 
-    FT deserialize(Cell cell);
+	T deserialize(Cell cell);
 
 }

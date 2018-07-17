@@ -17,11 +17,24 @@ public class CellValueHandlers {
 		Class<?> rawClass = type.getRawClass();
 		if (String.class == rawClass) {
 			return new StringHandler(valueHandlers);
-		} else if (Number.class.isAssignableFrom(rawClass)) {
+		} else if (isNumber(rawClass)) {
 			return new NumberHandler();
 		} else {
 			return new DefaultHandler();
 		}
+	}
+
+	public static boolean isNumber(Class<?> rawClass) {
+		if (Number.class.isAssignableFrom(rawClass)) {
+			return true;
+		} else if (long.class == rawClass
+				|| int.class == rawClass
+				|| short.class == rawClass
+				|| double.class == rawClass
+				|| float.class == rawClass) {
+			return true;
+		}
+		return false;
 	}
 
 }
