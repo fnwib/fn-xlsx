@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FnSheet {
 	/**
-	 * 当前已经写入的位置
+	 * 下一次写入数据的位置
 	 *
 	 * @return
 	 */

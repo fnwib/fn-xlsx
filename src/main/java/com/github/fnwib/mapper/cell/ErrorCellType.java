@@ -3,7 +3,9 @@ package com.github.fnwib.mapper.cell;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.util.ExcelUtil;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.CellType;
+
+import java.util.Objects;
 
 /**
  * 统一的错误输出
@@ -24,19 +26,37 @@ public enum ErrorCellType {
 	}
 
 	public ExcelException getException(Cell cell) {
-		if (this == UNKNOWN_TYPE) {
-			return get(cell);
-		} else {
-			return get(cell);
+		int r = cell.getRowIndex() + 1;
+		int c = cell.getColumnIndex() + 1;
+		CellType typeEnum = cell.getCellTypeEnum();
+		Object val = null;
+		switch (typeEnum) {
+			case _NONE:
+			case BLANK:
+				break;
+			case ERROR:
+				val = cell.getErrorCellValue();
+				break;
+			case STRING:
+				val = cell.getStringCellValue();
+				break;
+			case BOOLEAN:
+				val = cell.getBooleanCellValue();
+				break;
+			case FORMULA:
+				val = cell.getCellFormula();
+				break;
+			case NUMERIC:
+				val = cell.getNumericCellValue();
+				break;
+			default:
+				val = null;
+				break;
 		}
-	}
-
-	private ExcelException get(Cell cell) {
-		Row row = cell.getRow();
-		return new ExcelException(format, this.name(), row.getRowNum() + 1,
-				ExcelUtil.num2Column(cell.getColumnIndex() + 1),
-				cell.getNumericCellValue(),
-				cell.getCellTypeEnum().name());
+		return new ExcelException(format, this.name(), r,
+				ExcelUtil.num2Column(c),
+				Objects.isNull(val) ? "" : val.toString(),
+				typeEnum.name());
 	}
 
 }

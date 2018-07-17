@@ -26,8 +26,8 @@ public class WriteHelper {
 		cell.setCellStyle(cellStyle);
 	}
 
-	public static Cell setCellValue(Sheet sheet, Cell fromCell) {
-		Row row = getOrCreateRow(sheet, fromCell.getRowIndex());
+	public static Cell setCellValue(Sheet sheet, int rowNum, Cell fromCell) {
+		Row row = getOrCreateRow(sheet, rowNum);
 		Cell cell = getOrCreateCell(row, fromCell.getColumnIndex());
 		switch (fromCell.getCellTypeEnum()) {
 			case _NONE:

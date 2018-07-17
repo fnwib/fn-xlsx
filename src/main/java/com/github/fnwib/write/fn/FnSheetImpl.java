@@ -30,7 +30,6 @@ public class FnSheetImpl implements FnSheet {
 
 	public FnSheetImpl(SheetConfig sheetConfig) {
 		this.sheetConfig = sheetConfig;
-
 		this.startRowNum = 0;
 		init();
 	}
@@ -69,7 +68,7 @@ public class FnSheetImpl implements FnSheet {
 			WriteHelper.setHeightIfGtZero(row, header.getHeight());
 			Cell cell = WriteHelper.getOrCreateCell(row, header.getColumnIndex());
 			WriteHelper.setCellValue(cell, header.getValue(), cellStyle);
-			startRowNum = Math.max(header.getRowNum(), startRowNum);
+			startRowNum = Math.max(header.getRowNum(), startRowNum) + 1;
 		}
 	}
 
@@ -80,7 +79,6 @@ public class FnSheetImpl implements FnSheet {
 	 */
 	private void addHeaderRow(Sheet sheet) {
 		List<ExcelHeader> headers = sheetConfig.getHeaders();
-		startRowNum++;
 		for (ExcelHeader c : headers) {
 			FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(c.getCellStyle(), FnCellStyleType.HEADER);
 			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
@@ -90,6 +88,9 @@ public class FnSheetImpl implements FnSheet {
 			Cell cell = WriteHelper.getOrCreateCell(row, c.getColumnIndex());
 			WriteHelper.setCellValue(cell, c.getValue(), cellStyle);
 			WriteHelper.setValue(sheet, startRowNum, c.getColumnIndex(), c.getValue(), cellStyle);
+		}
+		if (!headers.isEmpty()){
+			startRowNum++;
 		}
 	}
 
@@ -118,17 +119,19 @@ public class FnSheetImpl implements FnSheet {
 
 	@Override
 	public void addRow(List<ExcelContent> row) {
-		startRowNum++;
 		for (ExcelContent content : row) {
 			if (content.isCell()) {
 				Cell fromCell = content.getCell();
 				FnCellStyle style = FnCellStyles.toXSSFCellStyle(fromCell.getCellStyle());
-				Cell cell = WriteHelper.setCellValue(sheet, fromCell);
+				Cell cell = WriteHelper.setCellValue(sheet, startRowNum, fromCell);
 				XSSFCellStyle cellStyle = style.createCellStyle(workbook);
 				cell.setCellStyle(cellStyle);
 			} else {
 				WriteHelper.setValue(sheet, startRowNum, content.getColumnIndex(), content.getValue(), contentCellStyle);
 			}
+		}
+		if (!row.isEmpty()) {
+			startRowNum++;
 		}
 	}
 
@@ -149,7 +152,7 @@ public class FnSheetImpl implements FnSheet {
 		int begin = this.startRowNum;
 		for (Integer mergeIndex : mergedRangeIndex) {
 			//从下一行开始合并
-			CellRangeAddress cellRangeAddress = new CellRangeAddress(begin + 1, begin + rows.size(),
+			CellRangeAddress cellRangeAddress = new CellRangeAddress(begin, begin - 1 + rows.size(),
 					mergeIndex, mergeIndex);
 			sheet.addMergedRegion(cellRangeAddress);
 		}
