@@ -20,6 +20,9 @@ public class CommonPathTest {
 	public void initDate() throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String dir = classLoader.getResource("test-file").getFile();
+		if (System.getProperty("os.name").startsWith("Windows")) {
+			dir = dir.substring(1);
+		}
 		Path path = Paths.get(dir, UUIDUtils.getHalfId());
 		Files.createDirectory(path);
 		basePath = path.toString();
@@ -53,7 +56,6 @@ public class CommonPathTest {
 		}
 		return headers;
 	}
-
 
 
 }
