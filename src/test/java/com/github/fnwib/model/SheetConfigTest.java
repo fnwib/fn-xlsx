@@ -1,4 +1,4 @@
-package com.github.fnwib.write.model;
+package com.github.fnwib.model;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.util.UUIDUtils;

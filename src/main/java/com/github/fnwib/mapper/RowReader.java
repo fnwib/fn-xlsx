@@ -1,8 +1,8 @@
 package com.github.fnwib.mapper;
 
 import com.github.fnwib.databing.LineReader;
-import com.github.fnwib.write.model.ExcelHeader;
-import com.github.fnwib.write.model.RowExcelContent;
+import com.github.fnwib.model.ExcelHeader;
+import com.github.fnwib.model.RowExcelContent;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;

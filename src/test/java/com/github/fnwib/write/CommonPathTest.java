@@ -1,7 +1,7 @@
 package com.github.fnwib.write;
 
+import com.github.fnwib.model.ExcelHeader;
 import com.github.fnwib.util.UUIDUtils;
-import com.github.fnwib.write.model.ExcelHeader;
 import org.junit.After;
 import org.junit.Before;
 

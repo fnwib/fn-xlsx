@@ -3,6 +3,9 @@ package com.github.fnwib.write;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.mapper.RowReader;
 import com.github.fnwib.mapper.RowReaderImpl;
+import com.github.fnwib.model.ExcelHeader;
+import com.github.fnwib.model.ExcelHeaderCreator;
+import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.read.ExcelReader;
 import com.github.fnwib.read.ExcelReaderImpl;
 import com.github.fnwib.testentity.TestEnumType;
@@ -10,9 +13,6 @@ import com.github.fnwib.testentity.TestModel;
 import com.github.fnwib.testentity.TestNested;
 import com.github.fnwib.testentity.TestNested2;
 import com.github.fnwib.util.UUIDUtils;
-import com.github.fnwib.write.model.ExcelHeader;
-import com.github.fnwib.write.model.ExcelHeaderCreater;
-import com.github.fnwib.write.model.SheetConfig;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.monitorjbl.xlsx.StreamingReader;
@@ -47,7 +47,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		values.add("Nested B");
 		values.add("Nested C");
 		values.add("Nested D");
-		return ExcelHeaderCreater.create(new AtomicInteger(), values);
+		return ExcelHeaderCreator.create(new AtomicInteger(), values);
 	}
 
 	private List<TestModel> getDataList(int length) {

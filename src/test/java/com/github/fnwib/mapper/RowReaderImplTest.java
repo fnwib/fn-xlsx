@@ -1,7 +1,7 @@
 package com.github.fnwib.mapper;
 
 import com.github.fnwib.annotation.AutoMapping;
-import com.github.fnwib.write.model.ExcelHeader;
+import com.github.fnwib.model.ExcelHeader;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;

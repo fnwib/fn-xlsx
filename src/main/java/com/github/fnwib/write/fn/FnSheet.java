@@ -1,7 +1,7 @@
 package com.github.fnwib.write.fn;
 
-import com.github.fnwib.write.model.ExcelContent;
-import com.github.fnwib.write.model.RowExcelContent;
+import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.RowExcelContent;
 
 import java.util.List;
 

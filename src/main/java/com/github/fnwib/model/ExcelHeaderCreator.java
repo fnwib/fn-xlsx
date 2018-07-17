@@ -1,4 +1,4 @@
-package com.github.fnwib.write.model;
+package com.github.fnwib.model;
 
 import com.github.fnwib.exception.SettingException;
 import com.google.common.collect.Lists;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ExcelHeaderCreater {
+public class ExcelHeaderCreator {
 
 	public static List<ExcelHeader> create(AtomicInteger incrementColumnIndex, Iterable<String> values) {
 		Objects.requireNonNull(incrementColumnIndex);

@@ -1,4 +1,4 @@
-package com.github.fnwib.write.model;
+package com.github.fnwib.model;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
@@ -90,10 +90,15 @@ public class SheetConfig {
 		this.prependHeaders.addAll(headers);
 	}
 
+	/**
+	 * 如果有传入模板就使用模板的样式如果没有模板就使用指定的样式
+	 *
+	 * @return
+	 */
 	private ExcelHeader.ExcelHeaderBuilder getHeaderBuilder() {
 		ExcelHeader.ExcelHeaderBuilder builder = ExcelHeader.builder();
 		if (!prependHeaders.isEmpty()) {
-			ExcelHeader header = headers.get(0);
+			ExcelHeader header = prependHeaders.get(0);
 			FnCellStyle cellStyle = header.getCellStyle();
 			builder.cellStyle(cellStyle);
 			builder.width(header.getWidth());

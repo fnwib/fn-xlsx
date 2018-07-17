@@ -2,7 +2,7 @@ package com.github.fnwib.mapper.flat;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.write.model.ExcelContent;
+import com.github.fnwib.model.ExcelContent;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;

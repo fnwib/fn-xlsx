@@ -1,8 +1,7 @@
-package com.github.fnwib.write.model;
+package com.github.fnwib.model;
 
 import com.github.fnwib.write.fn.FnCellStyle;
 import lombok.*;
-import org.apache.poi.ss.usermodel.CellStyle;
 
 /**
  * Excel 头信息

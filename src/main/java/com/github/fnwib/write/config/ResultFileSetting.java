@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * please user com.github.fnwib.write.model.SheetConfig
+ * please user com.github.fnwib.model.SheetConfig
  */
 @Deprecated
 public class ResultFileSetting {

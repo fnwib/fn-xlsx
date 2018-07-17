@@ -8,7 +8,7 @@ import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapper.BindMapper;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.model.BindProperty;
-import com.github.fnwib.write.model.ExcelContent;
+import com.github.fnwib.model.ExcelContent;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;

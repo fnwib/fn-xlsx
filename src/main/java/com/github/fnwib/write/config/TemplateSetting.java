@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * please user com.github.fnwib.write.model.SheetConfig
+ * please user com.github.fnwib.model.SheetConfig
  */
 @Deprecated
 public class TemplateSetting {

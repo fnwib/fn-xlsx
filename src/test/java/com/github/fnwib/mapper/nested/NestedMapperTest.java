@@ -4,9 +4,9 @@ import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.Mappers;
-import com.github.fnwib.write.model.ExcelContent;
-import com.github.fnwib.write.model.ExcelHeader;
-import com.github.fnwib.write.model.ExcelHeaderCreater;
+import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.ExcelHeader;
+import com.github.fnwib.model.ExcelHeaderCreator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
@@ -34,7 +34,7 @@ public class NestedMapperTest {
 
 	@Before
 	public void initDate() {
-		List<ExcelHeader> headers = ExcelHeaderCreater.create(new AtomicInteger(), "list 1", "list 2", "list 3", "map 1", "map 2", "map 3");
+		List<ExcelHeader> headers = ExcelHeaderCreator.create(new AtomicInteger(), "list 1", "list 2", "list 3", "map 1", "map 2", "map 3");
 		nestedMapper = Mappers.createNestedMapper(TestNestedModel.class, new LocalConfig(), headers);
 	}
 

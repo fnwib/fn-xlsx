@@ -6,7 +6,7 @@ import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandlers;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.write.model.ExcelContent;
+import com.github.fnwib.model.ExcelContent;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;

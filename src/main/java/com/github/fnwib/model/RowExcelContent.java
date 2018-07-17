@@ -1,4 +1,4 @@
-package com.github.fnwib.write.model;
+package com.github.fnwib.model;
 
 import lombok.Getter;
 

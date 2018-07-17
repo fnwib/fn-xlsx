@@ -1,7 +1,7 @@
 package com.github.fnwib.write.fn;
 
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.write.model.*;
+import com.github.fnwib.model.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
