@@ -14,7 +14,7 @@ mvn clean install
   <dependency>
     <groupId>com.github.fnwib</groupId>
     <artifactId>fn-xlsx</artifactId>
-    <version>1.1.11</version>
+    <version>1.2.0</version>
   </dependency>
 </dependencies> 
 ```
@@ -142,5 +142,11 @@ public class AutoMappingModel {
 
 ## 3.  JavaBean to Excel (待续)
 
+   
+  #####通过对象生成
+  
+   ```com.github.fnwib.write.ExcelWriterImplTest``` 
+  #####通过map生成
+  ```com.github.fnwib.write.ExcelWriterByMapTest```  
 
 
