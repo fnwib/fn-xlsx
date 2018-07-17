@@ -66,7 +66,7 @@ public class RowReaderImpl<T> implements RowReader<T> {
 	public boolean match(List<ExcelHeader> headers) {
 		NestedMapper<T> mapper = Mappers.createNestedMapper(type, localConfig, headers);
 		List<BindColumn> columns = mapper.getColumns();
-		if (columns.size() > 1) {
+		if (columns.size() > 0) {
 			this.mapper = mapper;
 			return true;
 		}
