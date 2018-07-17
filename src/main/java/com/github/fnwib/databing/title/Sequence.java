@@ -4,35 +4,39 @@ import com.google.common.base.Objects;
 
 public class Sequence {
 
-    private String value;
+	private String value;
 
-    public Sequence(String value) {
-        this.value = value;
-    }
+	public Sequence(String value) {
+		this.value = value;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public Sequence(int value) {
+		this.value = value + "";
+	}
 
-    public Integer asInt() {
-        return Integer.parseInt(value);
-    }
+	public String getValue() {
+		return value;
+	}
 
-    @Override
-    public String toString() {
-        return value;
-    }
+	public Integer asInt() {
+		return Integer.parseInt(value);
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Sequence sequence = (Sequence) o;
-        return Objects.equal(value, sequence.value);
-    }
+	@Override
+	public String toString() {
+		return value;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(value);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Sequence sequence = (Sequence) o;
+		return Objects.equal(value, sequence.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(value);
+	}
 }

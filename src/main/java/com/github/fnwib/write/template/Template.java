@@ -15,7 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-
+@Deprecated
 public abstract class Template<T> {
     LineReader<T>   lineReader;
     TemplateSetting templateSetting;

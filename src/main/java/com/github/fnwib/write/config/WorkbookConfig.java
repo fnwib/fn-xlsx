@@ -6,23 +6,22 @@ import org.apache.poi.ss.usermodel.Sheet;
 import java.io.File;
 import java.util.List;
 
+@Deprecated
 public interface WorkbookConfig {
 
-    boolean isWritten();
+	boolean isWritten();
 
-    int getTitleRowNum();
+	int getTitleRowNum();
 
-    LineWriter getWriteParser();
+	LineWriter getWriteParser();
 
-    Sheet getNextSheet();
+	Sheet getNextSheet();
 
-    void write(boolean deleteTemplateFile);
+	void write(boolean deleteTemplateFile);
 
-    boolean canWrite(int rowNum);
+	boolean canWrite(int rowNum);
 
-    List<File> getResultFiles();
-
-
+	List<File> getResultFiles();
 
 
 }

@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.Optional;
-
+@Deprecated
 public class FontBuilder {
 
     public static Builder builder() {

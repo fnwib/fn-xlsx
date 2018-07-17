@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-
+@Deprecated
 public class ExistTemplate<T> extends Template<T> {
     private static final Logger log = LoggerFactory.getLogger(ExistTemplate.class);
 
@@ -91,7 +91,7 @@ public class ExistTemplate<T> extends Template<T> {
             Row row = getRow(sheet, titleRowNum);
             int cellNum = row.getLastCellNum();
             CellStyle cellStyle = row.getCell(cellNum - 1).getCellStyle();
-            for (String title : templateSetting.getAddLastTitles()) {
+            for (String title : templateSetting.getLastTitles()) {
                 Cell cell = row.createCell(cellNum++);
                 cell.setCellStyle(cellStyle);
                 cell.setCellValue(title);

@@ -1,7 +1,7 @@
 package com.github.fnwib.write;
 
+import com.github.fnwib.testentity.TestEnumType;
 import com.github.fnwib.util.UUIDUtils;
-import model.EnumType;
 import model.WriteModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
+@Deprecated
 public class ExcelWriterImplBaseTest {
 
     File tempTemplateFile;
@@ -61,7 +61,7 @@ public class ExcelWriterImplBaseTest {
             model.setLongNum(1111111111111111111L);
             model.setAaa("AAAA");
             model.setSequence(i);
-            model.setEnumType(EnumType.A);
+            model.setEnumType(TestEnumType.A);
             model.setLocalDate(LocalDate.now());
             model.setLocalDate(LocalDate.now());
             model.setListString(mapString);
