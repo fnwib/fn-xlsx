@@ -47,7 +47,7 @@ public class NestedMapper<T> implements BindMapper {
 	private int count;
 
 	public NestedMapper(JavaType type, List<BindProperty> properties) {
-		if (type.isPrimitive()) {
+		if (!type.isConcrete()) {
 			throw new SettingException("不支持这样的嵌套类型");
 		}
 		afterJsonHandler = Lists.newArrayList();
