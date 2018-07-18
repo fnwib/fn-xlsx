@@ -26,11 +26,27 @@ public class DeserializeHandlerTest {
 			row.createCell(2).setCellValue(LocalDate.now().toString());
 			check("null", 0, row, Optional.empty());
 			check("date", 1, row, Optional.of(LocalDate.now()));
-			check("LocalDate", 1, row, Optional.of(LocalDate.now()));
+			check("LocalDate", 2, row, Optional.of(LocalDate.now()));
 		} catch (IOException e) {
 			throw new ExcelException(e);
 		}
 	}
+
+	@Test(expected = ExcelException.class)
+	public void exception() {
+		try (Workbook sheets = new SXSSFWorkbook()) {
+			Sheet sheet = sheets.createSheet();
+			Row row = sheet.createRow(0);
+			row.createCell(1).setCellValue("2017-12-13");
+			row.createCell(3).setCellValue("2017-13-13");
+			DeserializeHandler handler = new DeserializeHandler(new LocalDateCellDeserializer());
+			Optional<?> value = handler.getValue(1, row);
+			Optional<?> value2 = handler.getValue(3, row);
+		} catch (IOException e) {
+			throw new ExcelException(e);
+		}
+	}
+
 
 	private void check(String message, int column, Row row, Optional expected) {
 		DeserializeHandler handler = new DeserializeHandler(new LocalDateCellDeserializer());

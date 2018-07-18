@@ -14,6 +14,7 @@ public enum ErrorCellType {
 	UNKNOWN_TYPE("unknown type"),
 	STRING_TO_DATE("不支持文本转日期"),
 	NOT_SUPPORT("不支持的类型"),
+	WRONG_DATE("错误的日期"),
 	CELL_NUMERIC_TO_STRING("类型使用错误 | 两个解决办法 1.将Excel单元格样式改为文本  2.字段类型不要使用String");
 
 	private String format;
