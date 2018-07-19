@@ -2,7 +2,7 @@ package com.github.fnwib.mapper.flat;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public abstract class AbstractContainerMapper implements FlatMapper {
 	abstract public Optional<?> getValue(Row row);
 
 	@Override
-	abstract public List<ExcelContent> getContents(Object value);
+	abstract public List<Content> getContents(Object value);
 
 	public void check(int size) {
 		if (size > columns.size()) {

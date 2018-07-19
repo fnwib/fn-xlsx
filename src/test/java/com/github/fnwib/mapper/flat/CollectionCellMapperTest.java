@@ -2,7 +2,7 @@ package com.github.fnwib.mapper.flat;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -73,15 +73,15 @@ public class CollectionCellMapperTest {
 			Cell cell3 = row.createCell(3);
 			cell3.setCellValue(new Date());
 			List<Cell> cells = Lists.newArrayList(cell1, cell2, cell3);
-			List<ExcelContent> contents = mapper.getContents(cells);
-			contents.sort(Comparator.comparing(ExcelContent::getColumnIndex));
+			List<Content> contents = mapper.getContents(cells);
+			contents.sort(Comparator.comparing(Content::getColumnIndex));
 
 			Assert.assertEquals("string value to  contents", 3, contents.size());
 
-			List<ExcelContent> expected = Lists.newArrayList();
-			expected.add(new ExcelContent(cell1));
-			expected.add(new ExcelContent(cell2));
-			expected.add(new ExcelContent(cell3));
+			List<Content> expected = Lists.newArrayList();
+			expected.add(new Content(cell1));
+			expected.add(new Content(cell2));
+			expected.add(new Content(cell3));
 			Assert.assertEquals("map<Integer,String> to  contents", expected, contents);
 		} catch (IOException e) {
 			throw new ExcelException(e);

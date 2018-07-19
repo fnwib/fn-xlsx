@@ -3,8 +3,8 @@ package com.github.fnwib.write;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.RowReader;
-import com.github.fnwib.model.ExcelHeader;
-import com.github.fnwib.model.RowExcelContent;
+import com.github.fnwib.model.Header;
+import com.github.fnwib.model.RowContent;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.util.FnUtils;
 import com.github.fnwib.write.config.WorkbookConfig;
@@ -40,7 +40,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 		ComUtils<T> comUtils = new ComUtils<>(workbookConfig);
 		sheetConfig = comUtils.toSheetConfig();
 		reader = comUtils.getRowReader();
-		List<ExcelHeader> headers = sheetConfig.getHeaders();
+		List<Header> headers = sheetConfig.getHeaders();
 		boolean match = this.reader.match(headers);
 		if (!match) {
 			throw new SettingException("未知错误");
@@ -56,7 +56,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 		this.sheetConfig = sheetConfig;
 		this.reader = reader;
 		FnUtils.merge(sheetConfig, template, reader);
-		List<ExcelHeader> headers = sheetConfig.getHeaders();
+		List<Header> headers = sheetConfig.getHeaders();
 		boolean match = this.reader.match(headers);
 		if (!match) {
 			throw new SettingException("未知错误");
@@ -103,7 +103,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			this.write(elements.get(0));
 		} else {
 			check(elements.size());
-			List<RowExcelContent> rows = Lists.newArrayListWithCapacity(elements.size());
+			List<RowContent> rows = Lists.newArrayListWithCapacity(elements.size());
 			for (T element : elements) {
 				rows.add(reader.convert(element));
 			}

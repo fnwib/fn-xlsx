@@ -1,7 +1,7 @@
 package com.github.fnwib.mapper;
 
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
@@ -28,6 +28,6 @@ public interface BindMapper {
 	 * @param value
 	 * @return
 	 */
-	List<ExcelContent> getContents(Object value);
+	List<Content> getContents(Object value);
 
 }

@@ -11,19 +11,19 @@ import org.apache.poi.ss.usermodel.Cell;
 @EqualsAndHashCode
 @ToString
 @Getter
-public class ExcelContent {
+public class Content {
 	private int columnIndex;
 	private String value;
 
 	//保留原有cell全部信息
 	private Cell cell;
 
-	public ExcelContent(int columnIndex, String value) {
+	public Content(int columnIndex, String value) {
 		this.columnIndex = columnIndex;
 		this.value = value;
 	}
 
-	public ExcelContent(Cell cell) {
+	public Content(Cell cell) {
 		this.cell = cell;
 	}
 

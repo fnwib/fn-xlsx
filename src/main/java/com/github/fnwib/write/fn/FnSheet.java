@@ -1,7 +1,7 @@
 package com.github.fnwib.write.fn;
 
-import com.github.fnwib.model.ExcelContent;
-import com.github.fnwib.model.RowExcelContent;
+import com.github.fnwib.model.Content;
+import com.github.fnwib.model.RowContent;
 
 import java.util.List;
 
@@ -26,12 +26,12 @@ public interface FnSheet {
 	/**
 	 * 写一行数据
 	 */
-	void addRow(List<ExcelContent> row);
+	void addRow(List<Content> row);
 
 	/**
 	 * 写一行数据
 	 */
-	void addRow(RowExcelContent row);
+	void addRow(RowContent row);
 
 	/**
 	 * 写若干行合并单元格的数据
@@ -39,5 +39,5 @@ public interface FnSheet {
 	 * @param rows             若干行数据
 	 * @param mergedRangeIndex 合并单元格的columns
 	 */
-	void addMergeRow(List<RowExcelContent> rows, List<Integer> mergedRangeIndex);
+	void addMergeRow(List<RowContent> rows, List<Integer> mergedRangeIndex);
 }

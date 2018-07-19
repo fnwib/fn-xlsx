@@ -4,7 +4,7 @@ import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.model.MatchConfig;
-import com.github.fnwib.model.ExcelHeader;
+import com.github.fnwib.model.Header;
 import com.github.fnwib.util.ValueUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +32,9 @@ public class FnMatcher {
 		this.valueHandlers = localConfig.getTitleValueHandlers();
 	}
 
-	public List<BindColumn> match(List<ExcelHeader> headers, Set<Integer> ignoreColumns) {
+	public List<BindColumn> match(List<Header> headers, Set<Integer> ignoreColumns) {
 		Map<Integer, String> cells = Maps.newHashMapWithExpectedSize(headers.size());
-		for (ExcelHeader cell : headers) {
+		for (Header cell : headers) {
 			if (ignoreColumns.contains(cell.getColumnIndex())) {
 				continue;
 			}

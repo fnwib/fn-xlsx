@@ -3,8 +3,8 @@ package com.github.fnwib.write;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.mapper.RowReader;
 import com.github.fnwib.mapper.RowReaderImpl;
-import com.github.fnwib.model.ExcelHeader;
-import com.github.fnwib.model.ExcelHeaderCreator;
+import com.github.fnwib.model.Header;
+import com.github.fnwib.model.HeaderCreator;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.read.ExcelReader;
 import com.github.fnwib.read.ExcelReaderImpl;
@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExcelWriterImplTest extends CommonPathTest {
 
-	private List<ExcelHeader> getHeader() {
+	private List<Header> getHeader() {
 		List<String> values = Lists.newArrayList();
 		values.add("序号");
 		values.add("字符串");
@@ -47,7 +47,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		values.add("Nested B");
 		values.add("Nested C");
 		values.add("Nested D");
-		return ExcelHeaderCreator.create(new AtomicInteger(), values);
+		return HeaderCreator.create(new AtomicInteger(), values);
 	}
 
 	private List<TestModel> getDataList(int length) {

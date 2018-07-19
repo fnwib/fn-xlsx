@@ -1,6 +1,6 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.model.ExcelHeader;
+import com.github.fnwib.model.Header;
 import com.github.fnwib.util.UUIDUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -42,10 +42,10 @@ public class CommonPathTest {
 
 	}
 
-	protected List<ExcelHeader> getHeaders(int size) {
-		List<ExcelHeader> headers = new ArrayList<>(size);
+	protected List<Header> getHeaders(int size) {
+		List<Header> headers = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
-			ExcelHeader build = ExcelHeader.builder()
+			Header build = Header.builder()
 					.id("id:" + i)
 					.columnIndex(i)
 					.value("head " + i)

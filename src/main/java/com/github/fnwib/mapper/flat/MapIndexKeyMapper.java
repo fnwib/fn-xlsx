@@ -5,7 +5,7 @@ import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandlers;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,15 +44,15 @@ public class MapIndexKeyMapper extends AbstractContainerMapper {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ExcelContent> getContents(Object value) {
+	public List<Content> getContents(Object value) {
 		Map<Integer, String> values = value == null ? Collections.emptyMap() : (Map<Integer, String>) value;
 		check(values.size());
-		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
+		List<Content> contents = Lists.newArrayListWithCapacity(columns.size());
 		for (BindColumn column : columns) {
 			Integer index = column.getIndex();
 			String val = values.get(index);
-			ExcelContent excelContent = new ExcelContent(index, val);
-			contents.add(excelContent);
+			Content content = new Content(index, val);
+			contents.add(content);
 		}
 		return contents;
 	}

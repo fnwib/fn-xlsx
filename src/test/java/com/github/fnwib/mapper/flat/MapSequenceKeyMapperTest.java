@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;
@@ -65,13 +65,13 @@ public class MapSequenceKeyMapperTest {
 		value.put(new Sequence(1), "va");
 		value.put(new Sequence(2), null);
 		value.put(new Sequence(3), "va2");
-		List<ExcelContent> contents = mapper.getContents(value);
+		List<Content> contents = mapper.getContents(value);
 		Assert.assertEquals("map<Sequence,String> to  contents", 3, contents.size());
-		contents.sort(Comparator.comparing(ExcelContent::getColumnIndex));
-		List<ExcelContent> expected = Lists.newArrayList();
-		expected.add(new ExcelContent(1, "va"));
-		expected.add(new ExcelContent(2, null));
-		expected.add(new ExcelContent(3, "va2"));
+		contents.sort(Comparator.comparing(Content::getColumnIndex));
+		List<Content> expected = Lists.newArrayList();
+		expected.add(new Content(1, "va"));
+		expected.add(new Content(2, null));
+		expected.add(new Content(3, "va2"));
 		Assert.assertEquals("map<Sequence,String> to  contents", expected, contents);
 	}
 

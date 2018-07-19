@@ -2,7 +2,7 @@ package com.github.fnwib.mapper.flat;
 
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -48,13 +48,13 @@ public class LineNumMapper implements FlatMapper {
 	}
 
 	@Override
-	public List<ExcelContent> getContents(Object value) {
+	public List<Content> getContents(Object value) {
 		if (Objects.isNull(column)) {
 			return Collections.emptyList();
 		}
 		Integer index = column.getIndex();
 		String val = Objects.isNull(value) ? null : value.toString();
-		ExcelContent content = new ExcelContent(index, val);
+		Content content = new Content(index, val);
 		return Lists.newArrayList(content);
 	}
 }

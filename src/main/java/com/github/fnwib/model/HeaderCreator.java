@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ExcelHeaderCreator {
+public class HeaderCreator {
 
-	public static List<ExcelHeader> create(AtomicInteger incrementColumnIndex, Iterable<String> values) {
+	public static List<Header> create(AtomicInteger incrementColumnIndex, Iterable<String> values) {
 		Objects.requireNonNull(incrementColumnIndex);
 		Objects.requireNonNull(values);
 		if (incrementColumnIndex.get() < 0) {
 			throw new SettingException("columnIndex > 0");
 		}
-		List<ExcelHeader> h = Lists.newArrayList();
+		List<Header> h = Lists.newArrayList();
 		for (String value : values) {
-			ExcelHeader header = ExcelHeader.builder().columnIndex(incrementColumnIndex.getAndIncrement())
+			Header header = Header.builder().columnIndex(incrementColumnIndex.getAndIncrement())
 					.value(value)
 					.build();
 			h.add(header);
@@ -25,7 +25,7 @@ public class ExcelHeaderCreator {
 		return h;
 	}
 
-	public static List<ExcelHeader> create(AtomicInteger incrementColumnIndex, String... values) {
+	public static List<Header> create(AtomicInteger incrementColumnIndex, String... values) {
 		Objects.requireNonNull(values);
 		return create(incrementColumnIndex, Lists.newArrayList(values));
 	}

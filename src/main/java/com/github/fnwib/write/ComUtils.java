@@ -7,8 +7,8 @@ import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.RowReader;
 import com.github.fnwib.mapper.RowReaderImpl;
-import com.github.fnwib.model.ExcelHeader;
-import com.github.fnwib.model.ExcelPreHeader;
+import com.github.fnwib.model.Header;
+import com.github.fnwib.model.PreHeader;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.write.config.ResultFileSetting;
 import com.github.fnwib.write.config.TemplateSetting;
@@ -75,7 +75,7 @@ public class ComUtils<T> {
 	private void addNewCells(SheetConfig.Builder builder, TemplateSetting templateSetting) {
 		List<CellText> cellTexts = templateSetting.getCellTexts();
 		for (CellText cellText : cellTexts) {
-			ExcelPreHeader preHeader = ExcelPreHeader.builder()
+			PreHeader preHeader = PreHeader.builder()
 					.rowNum(cellText.getRowNum())
 					.columnIndex(cellText.getCellNum())
 					.value(cellText.getText())
@@ -85,12 +85,12 @@ public class ComUtils<T> {
 	}
 
 	private void createNewHeaders(SheetConfig.Builder builder, Row head, List<String> lastTitles) {
-		List<ExcelHeader> headers = Lists.newArrayList();
+		List<Header> headers = Lists.newArrayList();
 		int beginIndex = 0;
 		if (head != null) {
 			Sheet sheet = head.getSheet();
 			for (Cell cell : head) {
-				ExcelHeader header = ExcelHeader.builder().columnIndex(cell.getColumnIndex())
+				Header header = Header.builder().columnIndex(cell.getColumnIndex())
 						.height(head.getHeight())
 						.width(sheet.getColumnWidth(cell.getColumnIndex()))
 						.value(cell.getStringCellValue())
@@ -100,12 +100,12 @@ public class ComUtils<T> {
 				beginIndex = Math.max(cell.getColumnIndex(), beginIndex)+1;
 			}
 			int size = headers.size();
-			ExcelHeader beforeExcelHeader = headers.get(size - 1);
+			Header beforeHeader = headers.get(size - 1);
 			for (String value : lastTitles) {
-				ExcelHeader header = ExcelHeader.builder().columnIndex(beginIndex)
+				Header header = Header.builder().columnIndex(beginIndex)
 						.value(value)
-						.cellStyle(beforeExcelHeader.getCellStyle())
-						.width(beforeExcelHeader.getWidth())
+						.cellStyle(beforeHeader.getCellStyle())
+						.width(beforeHeader.getWidth())
 						.build();
 				headers.add(header);
 				beginIndex++;
@@ -113,7 +113,7 @@ public class ComUtils<T> {
 
 		} else {
 			for (String value : lastTitles) {
-				ExcelHeader header = ExcelHeader.builder().columnIndex(beginIndex)
+				Header header = Header.builder().columnIndex(beginIndex)
 						.value(value)
 						.build();
 				headers.add(header);
@@ -144,7 +144,7 @@ public class ComUtils<T> {
 		if (head == null) {
 			throw new SettingException("模板错误");
 		}
-		List<ExcelPreHeader> preHeader = Lists.newArrayList();
+		List<PreHeader> preHeaders = Lists.newArrayList();
 		for (Row row : preRow) {
 			short height = row.getHeight();
 			for (Cell cell : row) {
@@ -152,16 +152,16 @@ public class ComUtils<T> {
 					continue;
 				}
 				XSSFCellStyle cellStyle = (XSSFCellStyle) cell.getCellStyle();
-				ExcelPreHeader excelPreHeader = ExcelPreHeader.builder().rowNum(row.getRowNum())
+				PreHeader preHeader = PreHeader.builder().rowNum(row.getRowNum())
 						.columnIndex(cell.getColumnIndex())
 						.value(cell.getStringCellValue())
 						.cellStyle(FnCellStyles.toXSSFCellStyle(cellStyle))
 						.height(height)
 						.build();
-				preHeader.add(excelPreHeader);
+				preHeaders.add(preHeader);
 			}
 		}
-		builder.addPreHeader(preHeader);
+		builder.addPreHeader(preHeaders);
 		return head;
 
 	}

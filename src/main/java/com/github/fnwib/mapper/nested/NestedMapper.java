@@ -8,7 +8,7 @@ import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapper.BindMapper;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.model.BindProperty;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -101,8 +101,8 @@ public class NestedMapper<T> implements BindMapper {
 	}
 
 	@Override
-	public List<ExcelContent> getContents(Object value) {
-		List<ExcelContent> result = Lists.newArrayListWithCapacity(columns.size());
+	public List<Content> getContents(Object value) {
+		List<Content> result = Lists.newArrayListWithCapacity(columns.size());
 		for (BindProperty property : afterJsonHandler) {
 			BindMapper mapper = property.getMapper();
 			Object pv = getValue(value, property.getReadMethod());
@@ -111,7 +111,7 @@ public class NestedMapper<T> implements BindMapper {
 		for (BindProperty property : flatHandlers) {
 			BindMapper mapper = property.getMapper();
 			Object pv = getValue(value, property.getReadMethod());
-			List<ExcelContent> contents = mapper.getContents(pv);
+			List<Content> contents = mapper.getContents(pv);
 			result.addAll(contents);
 		}
 		return result;

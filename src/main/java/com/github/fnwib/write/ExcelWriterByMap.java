@@ -2,8 +2,8 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.model.ExcelContent;
-import com.github.fnwib.model.RowExcelContent;
+import com.github.fnwib.model.Content;
+import com.github.fnwib.model.RowContent;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.write.fn.FnSheet;
 import com.github.fnwib.write.fn.FnSheetImpl;
@@ -59,7 +59,7 @@ public class ExcelWriterByMap implements ExcelWriter<Map<String, Object>> {
 			return;
 		}
 		check(1);
-		List<ExcelContent> convert = mapping.convert(element);
+		List<Content> convert = mapping.convert(element);
 		fnSheet.addRow(convert);
 	}
 
@@ -79,10 +79,10 @@ public class ExcelWriterByMap implements ExcelWriter<Map<String, Object>> {
 			write(elements);
 		} else {
 			check(elements.size());
-			List<RowExcelContent> rows = Lists.newArrayListWithCapacity(elements.size());
+			List<RowContent> rows = Lists.newArrayListWithCapacity(elements.size());
 			for (Map<String, Object> element : elements) {
-				List<ExcelContent> convert = mapping.convert(element);
-				rows.add(new RowExcelContent(convert));
+				List<Content> convert = mapping.convert(element);
+				rows.add(new RowContent(convert));
 			}
 			fnSheet.addMergeRow(rows, mergeIndexes);
 		}

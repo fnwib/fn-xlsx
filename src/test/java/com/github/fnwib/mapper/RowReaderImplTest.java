@@ -1,7 +1,7 @@
 package com.github.fnwib.mapper;
 
 import com.github.fnwib.annotation.AutoMapping;
-import com.github.fnwib.model.ExcelHeader;
+import com.github.fnwib.model.Header;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,8 +16,8 @@ public class RowReaderImplTest {
 	public void match() {
 
 		RowReader reader = new RowReaderImpl<>(Model.class);
-		List<ExcelHeader> header = Lists.newArrayList();
-		ExcelHeader name = ExcelHeader.builder().columnIndex(0).value("name").build();
+		List<Header> header = Lists.newArrayList();
+		Header name = Header.builder().columnIndex(0).value("name").build();
 		header.add(name);
 		boolean match = reader.match(header);
 		Assert.assertTrue(match);

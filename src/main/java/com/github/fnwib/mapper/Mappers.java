@@ -11,7 +11,7 @@ import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.model.BindProperty;
 import com.github.fnwib.mapper.model.MatchConfig;
 import com.github.fnwib.mapper.nested.NestedMapper;
-import com.github.fnwib.model.ExcelHeader;
+import com.github.fnwib.model.Header;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.google.common.collect.Sets;
@@ -28,7 +28,7 @@ public class Mappers {
 	private Mappers() {
 	}
 
-	public static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<ExcelHeader> headers) {
+	public static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<Header> headers) {
 		LongAdder level = new LongAdder();
 		level.increment();
 		return createNestedMapper(type, config, headers, Sets.newHashSet(), level);
@@ -42,7 +42,7 @@ public class Mappers {
 	 * @param <T>              嵌套类型
 	 * @return NestedMapping
 	 */
-	private static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns, LongAdder level) {
+	private static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<Header> headers, Set<Integer> exclusiveColumns, LongAdder level) {
 		if (level.intValue() > config.getMaxNestLevel()) {
 			throw new SettingException("嵌套层数超过'%s'层,当前对象为'%s'", config.getMaxNestLevel(), type);
 		}
@@ -78,7 +78,7 @@ public class Mappers {
 	 * @param exclusiveColumns 独占模式的列
 	 * @return 匹配到的列集合
 	 */
-	private static List<BindColumn> match(BindProperty property, LocalConfig config, List<ExcelHeader> headers, Set<Integer> exclusiveColumns) {
+	private static List<BindColumn> match(BindProperty property, LocalConfig config, List<Header> headers, Set<Integer> exclusiveColumns) {
 		MatchConfig matchConfig = property.getMatchConfig();
 		FnMatcher matcher = new FnMatcher(matchConfig, config);
 		if (property.isExclusive()) {

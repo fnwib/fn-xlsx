@@ -4,9 +4,9 @@ import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.Mappers;
-import com.github.fnwib.model.ExcelContent;
-import com.github.fnwib.model.ExcelHeader;
-import com.github.fnwib.model.ExcelHeaderCreator;
+import com.github.fnwib.model.Content;
+import com.github.fnwib.model.Header;
+import com.github.fnwib.model.HeaderCreator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
@@ -34,7 +34,7 @@ public class NestedMapperTest {
 
 	@Before
 	public void initDate() {
-		List<ExcelHeader> headers = ExcelHeaderCreator.create(new AtomicInteger(), "list 1", "list 2", "list 3", "map 1", "map 2", "map 3");
+		List<Header> headers = HeaderCreator.create(new AtomicInteger(), "list 1", "list 2", "list 3", "map 1", "map 2", "map 3");
 		nestedMapper = Mappers.createNestedMapper(TestNestedModel.class, new LocalConfig(), headers);
 	}
 
@@ -83,16 +83,16 @@ public class NestedMapperTest {
 		map.put(5, "m3");
 		object.setMap(map);
 
-		List<ExcelContent> contents = nestedMapper.getContents(object);
+		List<Content> contents = nestedMapper.getContents(object);
 		Assert.assertEquals("TestNestedModel to  contents", 6, contents.size());
-		contents.sort(Comparator.comparing(ExcelContent::getColumnIndex));
-		List<ExcelContent> expected = Lists.newArrayList();
-		expected.add(new ExcelContent(0, null));
-		expected.add(new ExcelContent(1, "val2"));
-		expected.add(new ExcelContent(2, "val3"));
-		expected.add(new ExcelContent(3, "m1"));
-		expected.add(new ExcelContent(4, null));
-		expected.add(new ExcelContent(5, "m3"));
+		contents.sort(Comparator.comparing(Content::getColumnIndex));
+		List<Content> expected = Lists.newArrayList();
+		expected.add(new Content(0, null));
+		expected.add(new Content(1, "val2"));
+		expected.add(new Content(2, "val3"));
+		expected.add(new Content(3, "m1"));
+		expected.add(new Content(4, null));
+		expected.add(new Content(5, "m3"));
 
 
 		Assert.assertEquals("TestNestedModel to  contents", expected, contents);

@@ -5,7 +5,7 @@ import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandlers;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -39,11 +39,11 @@ public class PrimitiveMapper implements FlatMapper {
 	}
 
 	@Override
-	public List<ExcelContent> getContents(Object value) {
-		List<ExcelContent> contents = Lists.newArrayListWithCapacity(1);
+	public List<Content> getContents(Object value) {
+		List<Content> contents = Lists.newArrayListWithCapacity(1);
 		Integer index = column.getIndex();
 		String val = Objects.isNull(value) ? null : value.toString();
-		contents.add(new ExcelContent(index, val));
+		contents.add(new Content(index, val));
 		return contents;
 	}
 }

@@ -44,11 +44,11 @@ public class SheetConfig {
 	@Getter
 	private String sheetName;
 	@Getter
-	private List<ExcelPreHeader> preHeaders;
+	private List<PreHeader> preHeaders;
 	// Template
-	private List<ExcelHeader> prependHeaders;
+	private List<Header> prependHeaders;
 	// 优先添加
-	private List<ExcelHeader> headers;
+	private List<Header> headers;
 	// LinkedHashSet 如果headers不为空 就去header的第一个元素的配置
 	private Set<String> appendHeaders;
 	/**
@@ -86,8 +86,12 @@ public class SheetConfig {
 		this.contentCellStyle = builder.contentCellStyle;
 	}
 
-	public void prependHeaders(List<ExcelHeader> headers) {
+	public void prependHeaders(List<Header> headers) {
 		this.prependHeaders.addAll(headers);
+	}
+
+	public void apendPreHeaders(List<PreHeader> headers) {
+		this.preHeaders.addAll(headers);
 	}
 
 	/**
@@ -95,10 +99,10 @@ public class SheetConfig {
 	 *
 	 * @return
 	 */
-	private ExcelHeader.ExcelHeaderBuilder getHeaderBuilder() {
-		ExcelHeader.ExcelHeaderBuilder builder = ExcelHeader.builder();
+	private Header.HeaderBuilder getHeaderBuilder() {
+		Header.HeaderBuilder builder = Header.builder();
 		if (!prependHeaders.isEmpty()) {
-			ExcelHeader header = prependHeaders.get(0);
+			Header header = prependHeaders.get(0);
 			FnCellStyle cellStyle = header.getCellStyle();
 			builder.cellStyle(cellStyle);
 			builder.width(header.getWidth());
@@ -106,7 +110,7 @@ public class SheetConfig {
 			return builder;
 		}
 		if (!headers.isEmpty()) {
-			ExcelHeader header = headers.get(0);
+			Header header = headers.get(0);
 			FnCellStyle cellStyle = header.getCellStyle();
 			builder.cellStyle(cellStyle);
 			builder.width(header.getWidth());
@@ -121,20 +125,20 @@ public class SheetConfig {
 	 *
 	 * @return
 	 */
-	public List<ExcelHeader> getHeaders() {
-		List<ExcelHeader> hs = Lists.newArrayList();
+	public List<Header> getHeaders() {
+		List<Header> hs = Lists.newArrayList();
 		AtomicInteger maxColumnIndex = new AtomicInteger();
-		ExcelHeader.ExcelHeaderBuilder builder = getHeaderBuilder();
-		for (ExcelHeader prependHeader : prependHeaders) {
+		Header.HeaderBuilder builder = getHeaderBuilder();
+		for (Header prependHeader : prependHeaders) {
 			maxColumnIndex.set(Math.max(prependHeader.getColumnIndex(), maxColumnIndex.get()));
 			hs.add(prependHeader);
 		}
-		for (ExcelHeader header : headers) {
+		for (Header header : headers) {
 			maxColumnIndex.set(Math.max(header.getColumnIndex(), maxColumnIndex.get()));
 			hs.add(header);
 		}
 		for (String val : appendHeaders) {
-			ExcelHeader header = builder.columnIndex(maxColumnIndex.incrementAndGet())
+			Header header = builder.columnIndex(maxColumnIndex.incrementAndGet())
 					.value(val).build();
 			hs.add(header);
 		}
@@ -142,12 +146,12 @@ public class SheetConfig {
 		return hs;
 	}
 
-	private void checkRepeatHead(List<ExcelHeader> headers) {
-		Map<String, ExcelHeader> map = Maps.newHashMapWithExpectedSize(headers.size());
-		for (ExcelHeader header : headers) {
+	private void checkRepeatHead(List<Header> headers) {
+		Map<String, Header> map = Maps.newHashMapWithExpectedSize(headers.size());
+		for (Header header : headers) {
 			String key = header.getValue().toLowerCase();
 			if (map.containsKey(key)) {
-				ExcelHeader exist = map.get(key);
+				Header exist = map.get(key);
 				throw new ExcelException("存在重复的title,index [%s,%s] value [%s] ", exist.getColumnIndex(), header.getColumnIndex(), header.getValue());
 			}
 			map.put(key, header);
@@ -199,8 +203,8 @@ public class SheetConfig {
 		private String fileName;
 		private int maxRowNumCanWrite;
 		private String sheetName;
-		private List<ExcelPreHeader> preHeaders;
-		private List<ExcelHeader> headers;
+		private List<PreHeader> preHeaders;
+		private List<Header> headers;
 		private Set<String> appendHeaders;
 		private FnCellStyle contentCellStyle;
 
@@ -230,31 +234,31 @@ public class SheetConfig {
 			return this;
 		}
 
-		public Builder addPreHeader(ExcelPreHeader val) {
+		public Builder addPreHeader(PreHeader val) {
 			preHeaders.add(val);
 			return this;
 		}
 
 		public Builder addPreHeader(int rowNum, int columnIndex, String value) {
-			ExcelPreHeader preHeader = ExcelPreHeader.builder().rowNum(rowNum).columnIndex(columnIndex).value(value).build();
+			PreHeader preHeader = PreHeader.builder().rowNum(rowNum).columnIndex(columnIndex).value(value).build();
 			preHeaders.add(preHeader);
 			return this;
 		}
 
-		public Builder addPreHeader(List<ExcelPreHeader> val) {
+		public Builder addPreHeader(List<PreHeader> val) {
 			preHeaders.addAll(val);
 			return this;
 		}
 
 		/**
-		 * addHeaders(List<ExcelHeader> val)
+		 * addHeaders(List<Header> val)
 		 * 优先级大于 addHeaders(String... val)
 		 *
 		 * @param val
 		 * @return
 		 */
-		public Builder addHeaders(List<ExcelHeader> val) {
-			for (ExcelHeader h : val) {
+		public Builder addHeaders(List<Header> val) {
+			for (Header h : val) {
 				if (StringUtils.isNotBlank(h.getValue())) {
 					headers.add(h);
 				}

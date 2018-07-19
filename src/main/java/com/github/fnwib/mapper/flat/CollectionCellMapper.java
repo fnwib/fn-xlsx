@@ -2,7 +2,7 @@ package com.github.fnwib.mapper.flat;
 
 import com.github.fnwib.mapper.cell.RawCellMapping;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,16 +37,16 @@ public class CollectionCellMapper extends AbstractContainerMapper {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ExcelContent> getContents(Object value) {
+	public List<Content> getContents(Object value) {
 		List<Cell> cells = Objects.nonNull(value) ? (List<Cell>) value : Collections.emptyList();
 		check(cells.size());
 		Map<Integer, Cell> values = cells.stream().filter(Objects::nonNull).collect(Collectors.toMap(Cell::getColumnIndex, c -> c));
-		List<ExcelContent> contents = Lists.newArrayListWithCapacity(columns.size());
+		List<Content> contents = Lists.newArrayListWithCapacity(columns.size());
 		for (BindColumn column : columns) {
 			Integer index = column.getIndex();
 			Cell cell = values.get(index);
-			ExcelContent excelContent = new ExcelContent(cell);
-			contents.add(excelContent);
+			Content content = new Content(cell);
+			contents.add(content);
 		}
 		return contents;
 	}

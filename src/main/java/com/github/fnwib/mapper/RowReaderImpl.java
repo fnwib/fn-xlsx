@@ -6,9 +6,9 @@ import com.github.fnwib.databing.LocalConfig;
 import com.github.fnwib.exception.NotSupportedException;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.nested.NestedMapper;
-import com.github.fnwib.model.ExcelContent;
-import com.github.fnwib.model.ExcelHeader;
-import com.github.fnwib.model.RowExcelContent;
+import com.github.fnwib.model.Content;
+import com.github.fnwib.model.Header;
+import com.github.fnwib.model.RowContent;
 import com.github.fnwib.util.FnUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,12 +58,12 @@ public class RowReaderImpl<T> implements RowReader<T> {
 
 	@Override
 	public boolean match(Row fromValue) {
-		List<ExcelHeader> headers = FnUtils.to(fromValue);
+		List<Header> headers = FnUtils.toHeader(fromValue);
 		return match(headers);
 	}
 
 	@Override
-	public boolean match(List<ExcelHeader> headers) {
+	public boolean match(List<Header> headers) {
 		NestedMapper<T> mapper = Mappers.createNestedMapper(type, localConfig, headers);
 		List<BindColumn> columns = mapper.getColumns();
 		if (columns.size() > 0) {
@@ -82,9 +82,9 @@ public class RowReaderImpl<T> implements RowReader<T> {
 	}
 
 	@Override
-	public RowExcelContent convert(T fromValue) {
-		List<ExcelContent> contents = mapper.getContents(fromValue);
-		return new RowExcelContent(contents);
+	public RowContent convert(T fromValue) {
+		List<Content> contents = mapper.getContents(fromValue);
+		return new RowContent(contents);
 	}
 
 	@Override

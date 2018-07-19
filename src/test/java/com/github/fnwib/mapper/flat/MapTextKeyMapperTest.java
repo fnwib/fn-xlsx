@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.github.fnwib.util.UUIDUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -76,13 +76,13 @@ public class MapTextKeyMapperTest {
 		value.put(key1, "va");
 		value.put(key2, "va1");
 		value.put(key3, "va2");
-		List<ExcelContent> contents = mapping.getContents(value);
+		List<Content> contents = mapping.getContents(value);
 		Assert.assertEquals("map<String,String> to  contents", 3, contents.size());
-		contents.sort(Comparator.comparing(ExcelContent::getColumnIndex));
-		List<ExcelContent> expected = Lists.newArrayList();
-		expected.add(new ExcelContent(1, "va"));
-		expected.add(new ExcelContent(2, "va1"));
-		expected.add(new ExcelContent(3, "va2"));
+		contents.sort(Comparator.comparing(Content::getColumnIndex));
+		List<Content> expected = Lists.newArrayList();
+		expected.add(new Content(1, "va"));
+		expected.add(new Content(2, "va1"));
+		expected.add(new Content(3, "va2"));
 		Assert.assertEquals("map<String,String> to  contents", expected, contents);
 	}
 }

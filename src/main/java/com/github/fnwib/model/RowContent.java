@@ -8,11 +8,11 @@ import java.util.List;
  * EXCEL 内容
  */
 @Getter
-public class RowExcelContent {
+public class RowContent {
 
-	private List<ExcelContent> row;
+	private List<Content> row;
 
-	public RowExcelContent(List<ExcelContent> row) {
+	public RowContent(List<Content> row) {
 		this.row = row;
 	}
 }

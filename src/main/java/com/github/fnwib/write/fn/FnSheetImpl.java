@@ -2,6 +2,7 @@ package com.github.fnwib.write.fn;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.model.*;
+import com.github.fnwib.model.Header;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -60,16 +61,20 @@ public class FnSheetImpl implements FnSheet {
 	 * @param sheet
 	 */
 	private void addPreHeader(Sheet sheet) {
-		List<ExcelPreHeader> headers = sheetConfig.getPreHeaders();
-		for (ExcelPreHeader header : headers) {
+		List<PreHeader> headers = sheetConfig.getPreHeaders();
+		if (headers.isEmpty()) {
+			return;
+		}
+		for (PreHeader header : headers) {
 			FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(header.getCellStyle(), FnCellStyleType.PRR_HEADER);
 			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
 			Row row = WriteHelper.getOrCreateRow(sheet, header.getRowNum());
 			WriteHelper.setHeightIfGtZero(row, header.getHeight());
 			Cell cell = WriteHelper.getOrCreateCell(row, header.getColumnIndex());
 			WriteHelper.setCellValue(cell, header.getValue(), cellStyle);
-			startRowNum = Math.max(header.getRowNum(), startRowNum) + 1;
 		}
+		int max = headers.stream().mapToInt(PreHeader::getRowNum).max().getAsInt();
+		startRowNum = Math.max(max, startRowNum) + 1;
 	}
 
 	/**
@@ -78,8 +83,11 @@ public class FnSheetImpl implements FnSheet {
 	 * @param sheet
 	 */
 	private void addHeaderRow(Sheet sheet) {
-		List<ExcelHeader> headers = sheetConfig.getHeaders();
-		for (ExcelHeader c : headers) {
+		List<Header> headers = sheetConfig.getHeaders();
+		if (headers.isEmpty()) {
+			return;
+		}
+		for (Header c : headers) {
 			FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(c.getCellStyle(), FnCellStyleType.HEADER);
 			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
 			WriteHelper.setColumnWidthIfGtZero(sheet, c.getColumnIndex(), c.getWidth());
@@ -89,9 +97,7 @@ public class FnSheetImpl implements FnSheet {
 			WriteHelper.setCellValue(cell, c.getValue(), cellStyle);
 			WriteHelper.setValue(sheet, startRowNum, c.getColumnIndex(), c.getValue(), cellStyle);
 		}
-		if (!headers.isEmpty()){
-			startRowNum++;
-		}
+		startRowNum++;
 	}
 
 	@Override
@@ -118,8 +124,11 @@ public class FnSheetImpl implements FnSheet {
 	}
 
 	@Override
-	public void addRow(List<ExcelContent> row) {
-		for (ExcelContent content : row) {
+	public void addRow(List<Content> row) {
+		if (row.isEmpty()) {
+			return;
+		}
+		for (Content content : row) {
 			if (content.isCell()) {
 				Cell fromCell = content.getCell();
 				FnCellStyle style = FnCellStyles.toXSSFCellStyle(fromCell.getCellStyle());
@@ -130,14 +139,12 @@ public class FnSheetImpl implements FnSheet {
 				WriteHelper.setValue(sheet, startRowNum, content.getColumnIndex(), content.getValue(), contentCellStyle);
 			}
 		}
-		if (!row.isEmpty()) {
-			startRowNum++;
-		}
+		startRowNum++;
 	}
 
 	@Override
-	public void addRow(RowExcelContent row) {
-		List<ExcelContent> cells = row.getRow();
+	public void addRow(RowContent row) {
+		List<Content> cells = row.getRow();
 		addRow(cells);
 	}
 
@@ -148,7 +155,7 @@ public class FnSheetImpl implements FnSheet {
 	 * @param mergedRangeIndex 合并的列
 	 */
 	@Override
-	public void addMergeRow(List<RowExcelContent> rows, List<Integer> mergedRangeIndex) {
+	public void addMergeRow(List<RowContent> rows, List<Integer> mergedRangeIndex) {
 		int begin = this.startRowNum;
 		for (Integer mergeIndex : mergedRangeIndex) {
 			//从下一行开始合并
@@ -156,7 +163,7 @@ public class FnSheetImpl implements FnSheet {
 					mergeIndex, mergeIndex);
 			sheet.addMergedRegion(cellRangeAddress);
 		}
-		for (RowExcelContent row : rows) {
+		for (RowContent row : rows) {
 			addRow(row);
 		}
 	}

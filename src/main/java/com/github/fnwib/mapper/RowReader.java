@@ -1,8 +1,8 @@
 package com.github.fnwib.mapper;
 
 import com.github.fnwib.databing.LineReader;
-import com.github.fnwib.model.ExcelHeader;
-import com.github.fnwib.model.RowExcelContent;
+import com.github.fnwib.model.Header;
+import com.github.fnwib.model.RowContent;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public interface RowReader<T> extends LineReader<T> {
 	 */
 	boolean match(Row fromValue);
 
-	boolean match(List<ExcelHeader> headers);
+	boolean match(List<Header> headers);
 
 	/**
 	 * row convert to T
@@ -45,6 +45,6 @@ public interface RowReader<T> extends LineReader<T> {
 	 *
 	 * @param fromValue value
 	 */
-	RowExcelContent convert(T fromValue);
+	RowContent convert(T fromValue);
 
 }

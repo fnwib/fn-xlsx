@@ -1,21 +1,21 @@
 package com.github.fnwib.model;
 
 import com.github.fnwib.write.fn.FnCellStyle;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 /**
- * EXCEL 头上面的特殊值
+ * Excel 头信息
+ * 根据id 与 cellIndex 映射
  */
+@ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
-public class ExcelPreHeader {
-	private int rowNum;
+public class Header {
+	private String id;
 	private int columnIndex;
 	private String value;
 	private FnCellStyle cellStyle;
 	private short height;
+	private int width;
 }

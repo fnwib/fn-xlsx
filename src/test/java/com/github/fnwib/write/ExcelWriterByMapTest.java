@@ -1,8 +1,8 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.model.ExcelContent;
-import com.github.fnwib.model.ExcelHeader;
-import com.github.fnwib.model.ExcelPreHeader;
+import com.github.fnwib.model.Content;
+import com.github.fnwib.model.Header;
+import com.github.fnwib.model.PreHeader;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.util.UUIDUtils;
 import com.google.common.collect.Lists;
@@ -31,13 +31,13 @@ public class ExcelWriterByMapTest extends CommonPathTest {
 
 	@Test
 	public void write() {
-		List<ExcelHeader> headers = getHeaders(10);
+		List<Header> headers = getHeaders(10);
 		SheetConfig config = SheetConfig.builder()
 				.dir(basePath)
 				.fileName("test")
 				.maxRowNumCanWrite(5)
 				.sheetName("test-sheet")
-				.addPreHeader(ExcelPreHeader.builder().rowNum(0).columnIndex(0).value("标题").build())
+				.addPreHeader(PreHeader.builder().rowNum(0).columnIndex(0).value("标题").build())
 				.addHeaders(headers)
 				.build();
 		Mapping mapping = new MappingImpl(headers);
@@ -51,13 +51,13 @@ public class ExcelWriterByMapTest extends CommonPathTest {
 
 	@Test
 	public void writeMergedRegion() {
-		List<ExcelHeader> headers = getHeaders(10);
+		List<Header> headers = getHeaders(10);
 		SheetConfig config = SheetConfig.builder()
 				.dir(basePath)
 				.fileName("test")
 				.maxRowNumCanWrite(5)
 				.sheetName("test-sheet")
-				.addPreHeader(ExcelPreHeader.builder().rowNum(0).columnIndex(0).value("标题").build())
+				.addPreHeader(PreHeader.builder().rowNum(0).columnIndex(0).value("标题").build())
 				.addHeaders(headers)
 				.build();
 		Mapping mapping = new MappingImpl(headers);
@@ -76,20 +76,20 @@ public class ExcelWriterByMapTest extends CommonPathTest {
 
 		Map<String, Integer> ss;
 
-		public MappingImpl(List<ExcelHeader> headers) {
-			ss = headers.stream().collect(Collectors.toMap(ExcelHeader::getId, ExcelHeader::getColumnIndex));
+		public MappingImpl(List<Header> headers) {
+			ss = headers.stream().collect(Collectors.toMap(Header::getId, Header::getColumnIndex));
 		}
 
 		@Override
-		public List<ExcelContent> convert(Map<String, Object> map) {
-			List<ExcelContent> contents = Lists.newArrayListWithCapacity(map.size());
+		public List<Content> convert(Map<String, Object> map) {
+			List<Content> contents = Lists.newArrayListWithCapacity(map.size());
 			map.forEach((k, v) -> {
 				Integer integer = ss.get(k);
 				if (integer == null) {
 					throw new RuntimeException();
 				}
 				if (v.getClass() == String.class) {
-					ExcelContent content = new ExcelContent(integer, v.toString());
+					Content content = new Content(integer, v.toString());
 					contents.add(content);
 				}
 			});

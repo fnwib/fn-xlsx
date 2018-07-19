@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -67,13 +67,13 @@ public class CollectionMapperTest {
 		JavaType contentType = typeFactory.constructType(String.class);
 		CollectionMapper mapper = new CollectionMapper("1", contentType, columns, Collections.emptyList());
 		List<Integer> value = Lists.newArrayList(null, 1, 2);
-		List<ExcelContent> contents = mapper.getContents(value);
+		List<Content> contents = mapper.getContents(value);
 		Assert.assertEquals("string value to  contents", 3, contents.size());
-		contents.sort(Comparator.comparing(ExcelContent::getColumnIndex));
-		List<ExcelContent> expected = Lists.newArrayList();
-		expected.add(new ExcelContent(1, null));
-		expected.add(new ExcelContent(2, "1"));
-		expected.add(new ExcelContent(3, "2"));
+		contents.sort(Comparator.comparing(Content::getColumnIndex));
+		List<Content> expected = Lists.newArrayList();
+		expected.add(new Content(1, null));
+		expected.add(new Content(2, "1"));
+		expected.add(new Content(3, "2"));
 		Assert.assertEquals("List<String> to  contents", expected, contents);
 	}
 }

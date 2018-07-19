@@ -1,6 +1,6 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 
 import java.util.List;
 import java.util.Map;
@@ -11,5 +11,5 @@ import java.util.Map;
 @FunctionalInterface
 public interface Mapping {
 
-	List<ExcelContent> convert(Map<String, Object> map);
+	List<Content> convert(Map<String, Object> map);
 }

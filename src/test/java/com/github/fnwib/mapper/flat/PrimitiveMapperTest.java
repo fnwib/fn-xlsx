@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -54,8 +54,8 @@ public class PrimitiveMapperTest {
 		JavaType javaType = typeFactory.constructType(String.class);
 		BindColumn column = new BindColumn(1, "test -", "1");
 		PrimitiveMapper mapping = new PrimitiveMapper(javaType, column, Collections.emptyList());
-		List<ExcelContent> contents = mapping.getContents("va");
+		List<Content> contents = mapping.getContents("va");
 		Assert.assertEquals("string value to  contents", 1, contents.size());
-		Assert.assertEquals("string value to  contents", new ExcelContent(1, "va"), contents.get(0));
+		Assert.assertEquals("string value to  contents", new Content(1, "va"), contents.get(0));
 	}
 }

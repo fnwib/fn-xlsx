@@ -1,8 +1,8 @@
 package com.github.fnwib.write.fn;
 
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.model.ExcelContent;
-import com.github.fnwib.model.ExcelPreHeader;
+import com.github.fnwib.model.Content;
+import com.github.fnwib.model.PreHeader;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.CommonPathTest;
@@ -60,7 +60,7 @@ public class FnSheetImplTest extends CommonPathTest {
 	 */
 	@Test
 	public void getSheet2() {
-		ExcelPreHeader test = ExcelPreHeader.builder()
+		PreHeader test = PreHeader.builder()
 				.rowNum(1).columnIndex(1).value("TEST").build();
 		SheetConfig config = SheetConfig.builder()
 				.dir(basePath)
@@ -163,14 +163,14 @@ public class FnSheetImplTest extends CommonPathTest {
 			string.setCellValue("val");
 			string.setCellStyle(style.createCellStyle(sheets));
 
-			List<ExcelContent> contents = Lists.newArrayList();
-			contents.add(new ExcelContent(none));
-			contents.add(new ExcelContent(blank));
-			contents.add(new ExcelContent(error));
-			contents.add(new ExcelContent(bool));
-			contents.add(new ExcelContent(formula));
-			contents.add(new ExcelContent(numeric));
-			contents.add(new ExcelContent(string));
+			List<Content> contents = Lists.newArrayList();
+			contents.add(new Content(none));
+			contents.add(new Content(blank));
+			contents.add(new Content(error));
+			contents.add(new Content(bool));
+			contents.add(new Content(formula));
+			contents.add(new Content(numeric));
+			contents.add(new Content(string));
 			fnSheet.addRow(contents);
 			fnSheet.flush();
 			File file = Files.list(Paths.get(basePath)).map(Path::toFile).findFirst().orElse(null);

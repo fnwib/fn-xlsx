@@ -2,7 +2,7 @@ package com.github.fnwib.mapper.flat;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.ExcelContent;
+import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -57,8 +57,8 @@ public class LineNumMapperTest {
 	@Test
 	public void getContents() {
 		LineNumMapper mapper = new LineNumMapper(columns);
-		List<ExcelContent> contents = mapper.getContents(1);
+		List<Content> contents = mapper.getContents(1);
 		Assert.assertEquals("string value to  contents", 1, contents.size());
-		Assert.assertEquals("string value to  contents", new ExcelContent(1, "1"), contents.get(0));
+		Assert.assertEquals("string value to  contents", new Content(1, "1"), contents.get(0));
 	}
 }

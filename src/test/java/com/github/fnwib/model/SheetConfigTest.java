@@ -11,7 +11,7 @@ public class SheetConfigTest extends CommonPathTest {
 
 	@Test(expected = ExcelException.class)
 	public void check() {
-		ExcelHeader build = ExcelHeader.builder()
+		Header build = Header.builder()
 				.columnIndex(1)
 				.value("head")
 				.build();
@@ -25,7 +25,7 @@ public class SheetConfigTest extends CommonPathTest {
 
 	@Test(expected = ExcelException.class)
 	public void check2() {
-		ExcelHeader build = ExcelHeader.builder()
+		Header build = Header.builder()
 				.columnIndex(1)
 				.value("HEAD")
 				.build();

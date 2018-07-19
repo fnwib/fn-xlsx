@@ -2,8 +2,10 @@ package com.github.fnwib.util;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.RowReader;
-import com.github.fnwib.model.ExcelHeader;
+import com.github.fnwib.model.Header;
+import com.github.fnwib.model.PreHeader;
 import com.github.fnwib.model.SheetConfig;
+import com.github.fnwib.write.fn.FnCellStyles;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -18,12 +20,50 @@ import java.util.List;
 
 @Slf4j
 public class FnUtils {
-
-	public static List<ExcelHeader> to(Row row) {
-		List<ExcelHeader> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
+	/**
+	 * 只做匹配使用，不需要样式
+	 *
+	 * @param row
+	 * @return
+	 */
+	public static List<Header> toHeader(Row row) {
+		List<Header> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
 		for (Cell cell : row) {
-			ExcelHeader header = ExcelHeader.builder()
-					.columnIndex(cell.getColumnIndex()).value(cell.getStringCellValue()).build();
+			Header header = Header.builder()
+					.columnIndex(cell.getColumnIndex())
+					.value(cell.getStringCellValue())
+					.build();
+			headers.add(header);
+		}
+		return headers;
+	}
+
+	private static List<Header> toHeaderWithStyle(Row row) {
+		List<Header> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
+		for (Cell cell : row) {
+			Header header = Header.builder()
+					.columnIndex(cell.getColumnIndex())
+					.value(cell.getStringCellValue())
+					.height(row.getHeight())
+					.width(row.getSheet().getColumnWidth(cell.getColumnIndex()))
+					.cellStyle(FnCellStyles.toXSSFCellStyle(cell.getCellStyle()))
+					.build();
+			headers.add(header);
+		}
+		return headers;
+	}
+
+	private static List<PreHeader> toPreHeaderWithStyle(Row row) {
+		List<PreHeader> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
+		for (Cell cell : row) {
+			PreHeader header = PreHeader.builder()
+					.rowNum(row.getRowNum())
+					.columnIndex(cell.getColumnIndex())
+					.value(cell.getStringCellValue())
+					.height(row.getHeight())
+					.width(row.getSheet().getColumnWidth(cell.getColumnIndex()))
+					.cellStyle(FnCellStyles.toXSSFCellStyle(cell.getCellStyle()))
+					.build();
 			headers.add(header);
 		}
 		return headers;
@@ -42,9 +82,12 @@ public class FnUtils {
 				}
 				boolean match = reader.match(row);
 				if (match) {
-					List<ExcelHeader> headers = to(row);
+					List<Header> headers = toHeaderWithStyle(row);
 					config.prependHeaders(headers);
 					return;
+				} else {
+					List<PreHeader> headers = toPreHeaderWithStyle(row);
+					config.apendPreHeaders(headers);
 				}
 			}
 			throw new ExcelException("模板错误");
