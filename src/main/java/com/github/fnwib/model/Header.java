@@ -1,6 +1,7 @@
 package com.github.fnwib.model;
 
 import com.github.fnwib.write.fn.FnCellStyle;
+import com.github.fnwib.write.fn.FnDataValidation;
 import lombok.*;
 
 /**
@@ -16,6 +17,7 @@ public class Header {
 	private int columnIndex;
 	private String value;
 	private FnCellStyle cellStyle;
+	private FnDataValidation dataValidation;
 	private short height;
 	private int width;
 }

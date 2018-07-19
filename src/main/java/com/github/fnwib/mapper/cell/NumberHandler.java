@@ -1,6 +1,7 @@
 package com.github.fnwib.mapper.cell;
 
 import com.github.fnwib.util.ValueUtil;
+import com.monitorjbl.xlsx.impl.StreamingRow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -22,6 +23,9 @@ public class NumberHandler implements CellValueHandler {
 			case BLANK:
 				return Optional.empty();
 			case NUMERIC:
+				if (row.getClass() == StreamingRow.class) {
+					return Optional.of(cell.getStringCellValue());
+				}
 				return Optional.of(cell.getNumericCellValue() + StringUtils.EMPTY);
 			case STRING:
 				return ValueUtil.getCellValue(cell);

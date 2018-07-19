@@ -1,12 +1,10 @@
 package com.github.fnwib.model;
 
-import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.config.FileNameProducer;
 import com.github.fnwib.write.fn.FnCellStyle;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,14 +40,13 @@ public class SheetConfig {
 	private int maxRowNumCanWrite;
 	@Getter
 	private String sheetName;
+
+	/**
+	 * 补充模板内容 先获取 view 进行修改
+	 */
 	@Getter
-	private List<PreHeader> preHeaders;
-	// Template
-	private List<Header> prependHeaders;
-	// 优先添加
-	private List<Header> headers;
-	// LinkedHashSet 如果headers不为空 就去header的第一个元素的配置
-	private Set<String> appendHeaders;
+	private SheetTemplateView view;
+
 	/**
 	 * head以下所有的默认使用
 	 */
@@ -79,45 +75,8 @@ public class SheetConfig {
 		filename = builder.fileName;
 		maxRowNumCanWrite = builder.maxRowNumCanWrite;
 		sheetName = builder.sheetName;
-		preHeaders = builder.preHeaders;
-		prependHeaders = Lists.newArrayList();
-		headers = builder.headers;
-		appendHeaders = builder.appendHeaders;
+		view = new SheetTemplateView(builder.preHeaders, builder.headers, Lists.newArrayList(builder.appendHeaders));
 		this.contentCellStyle = builder.contentCellStyle;
-	}
-
-	public void prependHeaders(List<Header> headers) {
-		this.prependHeaders.addAll(headers);
-	}
-
-	public void apendPreHeaders(List<PreHeader> headers) {
-		this.preHeaders.addAll(headers);
-	}
-
-	/**
-	 * 如果有传入模板就使用模板的样式如果没有模板就使用指定的样式
-	 *
-	 * @return
-	 */
-	private Header.HeaderBuilder getHeaderBuilder() {
-		Header.HeaderBuilder builder = Header.builder();
-		if (!prependHeaders.isEmpty()) {
-			Header header = prependHeaders.get(0);
-			FnCellStyle cellStyle = header.getCellStyle();
-			builder.cellStyle(cellStyle);
-			builder.width(header.getWidth());
-			builder.height(header.getHeight());
-			return builder;
-		}
-		if (!headers.isEmpty()) {
-			Header header = headers.get(0);
-			FnCellStyle cellStyle = header.getCellStyle();
-			builder.cellStyle(cellStyle);
-			builder.width(header.getWidth());
-			builder.height(header.getHeight());
-			return builder;
-		}
-		return builder;
 	}
 
 	/**
@@ -126,36 +85,11 @@ public class SheetConfig {
 	 * @return
 	 */
 	public List<Header> getHeaders() {
-		List<Header> hs = Lists.newArrayList();
-		AtomicInteger maxColumnIndex = new AtomicInteger();
-		Header.HeaderBuilder builder = getHeaderBuilder();
-		for (Header prependHeader : prependHeaders) {
-			maxColumnIndex.set(Math.max(prependHeader.getColumnIndex(), maxColumnIndex.get()));
-			hs.add(prependHeader);
-		}
-		for (Header header : headers) {
-			maxColumnIndex.set(Math.max(header.getColumnIndex(), maxColumnIndex.get()));
-			hs.add(header);
-		}
-		for (String val : appendHeaders) {
-			Header header = builder.columnIndex(maxColumnIndex.incrementAndGet())
-					.value(val).build();
-			hs.add(header);
-		}
-		checkRepeatHead(hs);
-		return hs;
+		return view.getHeaders();
 	}
 
-	private void checkRepeatHead(List<Header> headers) {
-		Map<String, Header> map = Maps.newHashMapWithExpectedSize(headers.size());
-		for (Header header : headers) {
-			String key = header.getValue().toLowerCase();
-			if (map.containsKey(key)) {
-				Header exist = map.get(key);
-				throw new ExcelException("存在重复的title,index [%s,%s] value [%s] ", exist.getColumnIndex(), header.getColumnIndex(), header.getValue());
-			}
-			map.put(key, header);
-		}
+	public List<PreHeader> getPreHeaders() {
+		return view.getPreHeaders();
 	}
 
 	/**

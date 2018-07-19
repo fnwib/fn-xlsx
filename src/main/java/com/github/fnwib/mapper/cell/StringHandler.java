@@ -2,6 +2,7 @@ package com.github.fnwib.mapper.cell;
 
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.util.ValueUtil;
+import com.monitorjbl.xlsx.impl.StreamingRow;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,8 +31,10 @@ public class StringHandler implements CellValueHandler {
 			case STRING:
 				return ValueUtil.getCellValue(cell, valueHandlers);
 			case NUMERIC:
+				if (row.getClass() == StreamingRow.class) {
+					return ValueUtil.getCellValue(cell, valueHandlers);
+				}
 				throw ErrorCellType.CELL_NUMERIC_TO_STRING.getException(cell);
-//				return Optional.of(cell.getNumericCellValue() + StringUtils.EMPTY);
 			case ERROR:
 			case FORMULA:
 			case BOOLEAN:

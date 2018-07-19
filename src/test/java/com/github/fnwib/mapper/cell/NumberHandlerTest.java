@@ -9,10 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
 
 public class NumberHandlerTest {
 
@@ -23,8 +20,10 @@ public class NumberHandlerTest {
 			Row row = sheet.createRow(0);
 			row.createCell(0);
 			row.createCell(1).setCellValue("1");
+			row.createCell(2).setCellValue(1);
 			check("null", 0, row, Optional.empty());
 			check("int 1", 1, row, Optional.of("1"));
+			check("int 1", 2, row, Optional.of("1.0"));
 		} catch (IOException e) {
 			throw new ExcelException(e);
 		}

@@ -96,6 +96,9 @@ public class FnSheetImpl implements FnSheet {
 			Cell cell = WriteHelper.getOrCreateCell(row, c.getColumnIndex());
 			WriteHelper.setCellValue(cell, c.getValue(), cellStyle);
 			WriteHelper.setValue(sheet, startRowNum, c.getColumnIndex(), c.getValue(), cellStyle);
+			if (c.getDataValidation() != null) {
+				c.getDataValidation().createDataValidation(cell, sheet, sheetConfig.getMaxRowNumCanWrite());
+			}
 		}
 		startRowNum++;
 	}
