@@ -90,6 +90,15 @@ public class BindProperty {
 	}
 
 	/**
+	 * 是否只读
+	 *
+	 * @return
+	 */
+	public boolean isReadOnly() {
+		return featureConfig.isReadonly();
+	}
+
+	/**
 	 * 是否为行号读取
 	 *
 	 * @return

@@ -82,7 +82,7 @@ public @interface AutoMapping {
 	int order() default Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Nested 嵌套类型(最多两层)
+	 * Nested 嵌套类型
 	 * Flat  非嵌套类型
 	 *
 	 * @return
@@ -90,9 +90,10 @@ public @interface AutoMapping {
 	ComplexEnum complex() default ComplexEnum.Flat;
 
 	/**
-	 * 读写属性配置
+	 * true 属性不参与序列化
+	 * false 属性参与序列化
 	 *
-	 * @return
+	 * @return 是否参与序列化的配置
 	 */
-	AccessEnum rw() default AccessEnum.READ_WRITE;
+	boolean readonly() default false;
 }

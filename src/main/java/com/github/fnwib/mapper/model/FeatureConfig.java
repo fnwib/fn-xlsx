@@ -1,6 +1,5 @@
 package com.github.fnwib.mapper.model;
 
-import com.github.fnwib.annotation.AccessEnum;
 import com.github.fnwib.annotation.BindType;
 import com.github.fnwib.annotation.ComplexEnum;
 import lombok.Builder;
@@ -32,7 +31,7 @@ public class FeatureConfig {
 	private BindType bindType;
 
 	/**
-	 * 读写配置
+	 * 只读
 	 */
-	private AccessEnum rw;
+	private boolean readonly;
 }

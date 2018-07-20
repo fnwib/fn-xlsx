@@ -61,6 +61,7 @@ public class NestedMapperTest {
 			map.put(3, "m1");
 			map.put(5, "m3");
 			object.setMap(map);
+			object.setMap2(map);
 
 			check("nested", row, Optional.of(object));
 		} catch (IOException e) {
@@ -82,6 +83,7 @@ public class NestedMapperTest {
 		map.put(4, null);
 		map.put(5, "m3");
 		object.setMap(map);
+		object.setMap2(map);
 
 		List<Content> contents = nestedMapper.getContents(object);
 		Assert.assertEquals("TestNestedModel to  contents", 6, contents.size());
@@ -107,6 +109,8 @@ public class NestedMapperTest {
 		private List<String> list;
 		@AutoMapping(prefix = "map", value = "\\d+")
 		private Map<Integer, String> map;
+		@AutoMapping(prefix = "map", value = "\\d+", readonly = true)
+		private Map<Integer, String> map2;
 	}
 
 }

@@ -28,6 +28,13 @@ public class Mappers {
 	private Mappers() {
 	}
 
+	/**
+	 * @param type
+	 * @param config
+	 * @param headers
+	 * @param <T>
+	 * @return
+	 */
 	public static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<Header> headers) {
 		LongAdder level = new LongAdder();
 		level.increment();

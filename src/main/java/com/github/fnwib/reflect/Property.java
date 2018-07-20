@@ -7,8 +7,8 @@ import com.github.fnwib.databing.title.match.TitleMatcherImpl;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.model.BindProperty;
-import com.github.fnwib.mapper.model.MatchConfig;
 import com.github.fnwib.mapper.model.FeatureConfig;
+import com.github.fnwib.mapper.model.MatchConfig;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 
@@ -74,7 +74,7 @@ public class Property {
 				.order(mapping.order())
 				.complex(mapping.complex())
 				.bindType(mapping.bindType())
-				.rw(mapping.rw())
+				.readonly(mapping.readonly())
 				.build();
 		BindProperty param = BindProperty.builder()
 				.property(this)
@@ -101,7 +101,7 @@ public class Property {
 				.order(mapping.order())
 				.complex(mapping.complex())
 				.bindType(mapping.bindType())
-				.rw(mapping.rw())
+				.readonly(mapping.readonly())
 				.build();
 		BindProperty param = BindProperty.builder()
 				.property(this)

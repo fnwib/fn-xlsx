@@ -104,11 +104,17 @@ public class NestedMapper<T> implements BindMapper {
 	public List<Content> getContents(Object value) {
 		List<Content> result = Lists.newArrayListWithCapacity(columns.size());
 		for (BindProperty property : afterJsonHandler) {
+			if (property.isReadOnly()) {
+				continue;
+			}
 			BindMapper mapper = property.getMapper();
 			Object pv = getValue(value, property.getReadMethod());
 			result.addAll(mapper.getContents(pv));
 		}
 		for (BindProperty property : flatHandlers) {
+			if (property.isReadOnly()) {
+				continue;
+			}
 			BindMapper mapper = property.getMapper();
 			Object pv = getValue(value, property.getReadMethod());
 			List<Content> contents = mapper.getContents(pv);
