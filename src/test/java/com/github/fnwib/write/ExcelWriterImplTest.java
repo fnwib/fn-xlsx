@@ -1,8 +1,8 @@
 package com.github.fnwib.write;
 
 import com.github.fnwib.databing.LocalConfig;
-import com.github.fnwib.mapper.RowReader;
-import com.github.fnwib.mapper.RowReaderImpl;
+import com.github.fnwib.mapper.RowMapper;
+import com.github.fnwib.mapper.RowMapperImpl;
 import com.github.fnwib.model.Header;
 import com.github.fnwib.model.HeaderCreator;
 import com.github.fnwib.model.SheetConfig;
@@ -92,12 +92,12 @@ public class ExcelWriterImplTest extends CommonPathTest {
 				.build();
 		LocalConfig localConfig = new LocalConfig();
 		localConfig.setMaxNestLevel(3);
-		RowReader<TestModel> rowReader = new RowReaderImpl<>(TestModel.class, localConfig);
-		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, rowReader);
+		RowMapper<TestModel> mapper = new RowMapperImpl<>(TestModel.class, localConfig);
+		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, mapper);
 		List<TestModel> source = getDataList(6);
 		writer.write(source);
 		List<File> files = writer.getFiles();
-		List<TestModel> target = read(files, rowReader);
+		List<TestModel> target = read(files, mapper);
 		Assert.assertSame("集合长度不一致", source.size(), target.size());
 		for (int i = 0; i < source.size(); i++) {
 			TestModel sourceModel = source.get(i);
@@ -107,11 +107,11 @@ public class ExcelWriterImplTest extends CommonPathTest {
 
 	}
 
-	private List<TestModel> read(List<File> files, RowReader<TestModel> rowReader) {
+	private List<TestModel> read(List<File> files, RowMapper<TestModel> mapper) {
 		List<TestModel> target = Lists.newArrayList();
 		for (File file2 : files) {
 			Workbook workbook = StreamingReader.builder().bufferSize(1024).rowCacheSize(10).open(file2);
-			ExcelReader<TestModel> reader = new ExcelReaderImpl<>(rowReader, workbook, 0);
+			ExcelReader<TestModel> reader = new ExcelReaderImpl<>(mapper, workbook, 0);
 			List<TestModel> data = reader.fetchAllData();
 			target.addAll(data);
 			String preTitle = reader.getPreTitle(0, 0);
@@ -133,8 +133,8 @@ public class ExcelWriterImplTest extends CommonPathTest {
 				.build();
 		LocalConfig localConfig = new LocalConfig();
 		localConfig.setMaxNestLevel(3);
-		RowReader<TestModel> rowMapper = new RowReaderImpl<>(TestModel.class, localConfig);
-		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, rowMapper);
+		RowMapper<TestModel> mapper = new RowMapperImpl<>(TestModel.class, localConfig);
+		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, mapper);
 
 		List<TestModel> source = getDataList(6);
 
@@ -143,7 +143,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		writer.writeMergedRegion(source.subList(3, source.size()), Arrays.asList(0, 1, 2));
 
 		List<File> files = writer.getFiles();
-		List<TestModel> target = read(files, rowMapper);
+		List<TestModel> target = read(files, mapper);
 		Assert.assertSame("集合长度不一致", source.size(), target.size());
 		for (int i = 0; i < source.size(); i++) {
 			TestModel sourceModel = source.get(i);

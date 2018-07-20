@@ -1,6 +1,6 @@
 package com.github.fnwib.reflect;
 
-import model.WriteModel;
+import com.github.fnwib.testentity.WriteModel;
 import org.junit.Assert;
 import org.junit.Test;
 

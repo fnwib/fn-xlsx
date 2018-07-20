@@ -1,7 +1,7 @@
 package com.github.fnwib.util;
 
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.mapper.RowReader;
+import com.github.fnwib.mapper.RowMapper;
 import com.github.fnwib.model.Header;
 import com.github.fnwib.model.PreHeader;
 import com.github.fnwib.model.SheetConfig;
@@ -99,7 +99,7 @@ public class FnUtils {
 		return headers;
 	}
 
-	public static <T> void merge(SheetConfig config, File template, RowReader<T> reader) {
+	public static <T> void merge(SheetConfig config, File template,  RowMapper<T> mapper) {
 		try {
 			if (template == null) {
 				return;
@@ -108,10 +108,10 @@ public class FnUtils {
 			XSSFWorkbook workbook = new XSSFWorkbook(template);
 			XSSFSheet sheet = workbook.getSheetAt(0);
 			for (Row row : sheet) {
-				if (reader.isEmpty(row)) {
+				if (mapper.isEmpty(row)) {
 					continue;
 				}
-				boolean match = reader.match(row);
+				boolean match = mapper.match(row);
 				if (match) {
 					List<Header> headers = toHeaderWithStyle(row);
 					view.prependHeaders(headers);

@@ -14,7 +14,7 @@ mvn clean install
   <dependency>
     <groupId>com.github.fnwib</groupId>
     <artifactId>fn-xlsx</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.4</version>
   </dependency>
 </dependencies> 
 ```
@@ -59,7 +59,7 @@ Workbook workbook = new XSSFWorkbook(file);
 
 *  简单使用
 ```
-LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.class);
+RowMapper<AutoMappingModel> parser = new RowMapperImpl<>(AutoMappingModel.class);
 Workbook workbook = null;
 boolean matched = false;
 for (Sheet sheet : workbook) {
@@ -81,7 +81,7 @@ for (Sheet sheet : workbook) {
 ```
 * 使用ExcelReader读取
 ```
-LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.class);
+RowMapper<AutoMappingModel> parser = new RowMapperImpl<>(AutoMappingModel.class);
 ExcelReader<AutoMappingModel> reader = new ExcelReaderImpl<>(parser, workbook, 0);
 while (reader.hasNext()){
     List<AutoMappingModel> models = reader.fetchData(500);

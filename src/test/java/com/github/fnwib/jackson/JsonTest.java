@@ -1,7 +1,7 @@
 package com.github.fnwib.jackson;
 
+import com.github.fnwib.testentity.AutoMappingModel;
 import com.google.common.collect.Lists;
-import model.AutoMappingModel;
 import org.junit.Assert;
 import org.junit.Test;
 

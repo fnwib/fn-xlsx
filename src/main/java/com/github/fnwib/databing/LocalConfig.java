@@ -1,6 +1,5 @@
 package com.github.fnwib.databing;
 
-import com.github.fnwib.databing.title.TitleResolver;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.google.common.collect.Lists;
 
@@ -83,10 +82,6 @@ public class LocalConfig {
 			valueHandlers.add(valueHandler);
 		}
 		return valueHandlers;
-	}
-
-	public TitleResolver getTitleResolver() {
-		return new TitleResolver(readContentValueHandlers, titleValueHandlers);
 	}
 
 }

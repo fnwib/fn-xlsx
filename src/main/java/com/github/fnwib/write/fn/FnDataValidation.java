@@ -6,7 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 
 public final class FnDataValidation {
 
-	private String[] pos;
+	private final String[] pos;
 
 	public FnDataValidation(String[] pos) {
 		this.pos = pos;

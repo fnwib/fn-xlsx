@@ -2,12 +2,11 @@ package com.github.fnwib.write;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
-import com.github.fnwib.mapper.RowReader;
+import com.github.fnwib.mapper.RowMapper;
 import com.github.fnwib.model.Header;
 import com.github.fnwib.model.RowContent;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.util.FnUtils;
-import com.github.fnwib.write.config.WorkbookConfig;
 import com.github.fnwib.write.fn.FnSheet;
 import com.github.fnwib.write.fn.FnSheetImpl;
 import com.google.common.collect.Lists;
@@ -31,33 +30,20 @@ import java.util.stream.Collectors;
 public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 
 	private final SheetConfig sheetConfig;
-	private RowReader<T> reader;
+	private RowMapper<T> mapper;
 	private FnSheet fnSheet;
 	private boolean closed;
 
-	@Deprecated
-	public ExcelWriterImpl(WorkbookConfig workbookConfig) {
-		ComUtils<T> comUtils = new ComUtils<>(workbookConfig);
-		sheetConfig = comUtils.toSheetConfig();
-		reader = comUtils.getRowReader();
-		List<Header> headers = sheetConfig.getHeaders();
-		boolean match = this.reader.match(headers);
-		if (!match) {
-			throw new SettingException("未知错误");
-		}
-		this.closed = false;
+	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapper<T> mapper) {
+		this(sheetConfig, mapper, null);
 	}
 
-	public ExcelWriterImpl(SheetConfig sheetConfig, RowReader<T> reader) {
-		this(sheetConfig, reader, null);
-	}
-
-	public ExcelWriterImpl(SheetConfig sheetConfig, RowReader<T> reader, File template) {
+	public ExcelWriterImpl(SheetConfig sheetConfig, RowMapper<T> mapper, File template) {
 		this.sheetConfig = sheetConfig;
-		this.reader = reader;
-		FnUtils.merge(sheetConfig, template, reader);
+		this.mapper = mapper;
+		FnUtils.merge(sheetConfig, template, mapper);
 		List<Header> headers = sheetConfig.getHeaders();
-		boolean match = this.reader.match(headers);
+		boolean match = this.mapper.match(headers);
 		if (!match) {
 			throw new SettingException("未知错误");
 		}
@@ -85,7 +71,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	@Override
 	public void write(T element) {
 		check(1);
-		fnSheet.addRow(reader.convert(element));
+		fnSheet.addRow(mapper.convert(element));
 	}
 
 	@Override
@@ -105,7 +91,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			check(elements.size());
 			List<RowContent> rows = Lists.newArrayListWithCapacity(elements.size());
 			for (T element : elements) {
-				rows.add(reader.convert(element));
+				rows.add(mapper.convert(element));
 			}
 			fnSheet.addMergeRow(rows, mergedRangeIndexes);
 		}

@@ -1,4 +1,4 @@
-package model;
+package com.github.fnwib.testentity;
 
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 

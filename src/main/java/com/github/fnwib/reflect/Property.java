@@ -2,8 +2,6 @@ package com.github.fnwib.reflect;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.*;
-import com.github.fnwib.databing.title.match.TitleMatcher;
-import com.github.fnwib.databing.title.match.TitleMatcherImpl;
 import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.model.BindProperty;
@@ -36,19 +34,6 @@ public class Property {
 		this.field = Objects.requireNonNull(field);
 		this.fieldType = Objects.requireNonNull(fieldType);
 		this.propertyDescriptor = Objects.requireNonNull(propertyDescriptor);
-	}
-
-	public Optional<TitleMatcher> getTitleMatcher() {
-		CellType cellType = field.getAnnotation(CellType.class);
-		AutoMapping mapping = field.getAnnotation(AutoMapping.class);
-		if (mapping != null) {
-			return Optional.of(new TitleMatcherImpl(mapping));
-		} else {
-			if (cellType != null) {
-				return Optional.of(new TitleMatcherImpl(cellType));
-			}
-		}
-		return Optional.empty();
 	}
 
 	public Optional<BindProperty> toBindParam() {

@@ -1,4 +1,4 @@
-package model;
+package com.github.fnwib.testentity;
 
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;

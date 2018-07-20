@@ -40,8 +40,8 @@ public class DeserializeHandlerTest {
 			row.createCell(1).setCellValue("2017-12-13");
 			row.createCell(3).setCellValue("2017-13-13");
 			DeserializeHandler handler = new DeserializeHandler(new LocalDateCellDeserializer());
-			Optional<?> value = handler.getValue(1, row);
-			Optional<?> value2 = handler.getValue(3, row);
+			handler.getValue(1, row);
+			handler.getValue(3, row);
 		} catch (IOException e) {
 			throw new ExcelException(e);
 		}

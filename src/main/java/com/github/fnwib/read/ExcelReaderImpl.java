@@ -1,8 +1,8 @@
 package com.github.fnwib.read;
 
-import com.github.fnwib.databing.LineReader;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.NotSupportedException;
+import com.github.fnwib.mapper.RowMapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,13 +23,13 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 	//记录TITLE前的数据
 	private final List<Row> preHeaders;
 
-	private final LineReader<T> parser;
+	private final RowMapper<T> parser;
 
 	private final Workbook workbook;
 	private final Iterator<Row> iterator;
 	private final int max;
 
-	public ExcelReaderImpl(LineReader<T> parser, Workbook workbook, int sheetNum) {
+	public ExcelReaderImpl(RowMapper<T> parser, Workbook workbook, int sheetNum) {
 		this.parser = parser;
 		this.workbook = workbook;
 		Sheet sheet = workbook.getSheetAt(Math.max(sheetNum, 0));
@@ -121,7 +121,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 	}
 
 	@Override
-	public List fetchAllData() {
+	public List<T> fetchAllData() {
 		return readList(-1);
 	}
 
@@ -133,7 +133,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 		return readList(length);
 	}
 
-
+	@Override
 	public void close() {
 		try {
 			workbook.close();
