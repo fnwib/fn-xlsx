@@ -1,7 +1,7 @@
 package com.github.fnwib.mapper.nested;
 
 import com.github.fnwib.annotation.AutoMapping;
-import com.github.fnwib.databing.LocalConfig;
+import com.github.fnwib.context.LocalConfig;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.Mappers;
 import com.github.fnwib.model.Content;

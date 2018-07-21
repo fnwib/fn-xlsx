@@ -2,11 +2,11 @@ package com.github.fnwib.reflect;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.*;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.model.BindProperty;
 import com.github.fnwib.mapper.model.FeatureConfig;
 import com.github.fnwib.mapper.model.MatchConfig;
+import com.github.fnwib.plugin.ValueHandler;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 

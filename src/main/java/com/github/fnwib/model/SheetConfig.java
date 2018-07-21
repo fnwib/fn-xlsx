@@ -2,7 +2,6 @@ package com.github.fnwib.model;
 
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.util.UUIDUtils;
-import com.github.fnwib.write.config.FileNameProducer;
 import com.github.fnwib.write.fn.FnCellStyle;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

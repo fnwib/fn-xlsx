@@ -1,6 +1,6 @@
 package com.github.fnwib.testentity;
 
-import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.plugin.ValueHandler;
 
 public class ToUpperHandler implements ValueHandler {
 

@@ -1,12 +1,11 @@
-package com.github.fnwib.databing.ser;
+package com.github.fnwib.context;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.github.fnwib.databing.ser.Serializer;
+import com.github.fnwib.plugin.ser.Serializer;
 import com.github.fnwib.reflect.BeanResolver;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class SerializerConfig {
 

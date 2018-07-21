@@ -1,4 +1,4 @@
-package com.github.fnwib.databing.title;
+package com.github.fnwib.jackson;
 
 import com.google.common.base.Objects;
 

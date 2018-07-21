@@ -2,8 +2,8 @@ package com.github.fnwib.mapper.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.github.fnwib.databing.title.Sequence;
 import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.jackson.Sequence;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;

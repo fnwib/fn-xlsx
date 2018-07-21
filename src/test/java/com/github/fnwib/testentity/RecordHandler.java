@@ -1,6 +1,6 @@
 package com.github.fnwib.testentity;
 
-import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.plugin.ValueHandler;
 import com.google.common.base.Joiner;
 
 import java.text.Collator;

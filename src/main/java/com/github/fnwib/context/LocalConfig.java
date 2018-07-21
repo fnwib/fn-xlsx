@@ -1,6 +1,6 @@
-package com.github.fnwib.databing;
+package com.github.fnwib.context;
 
-import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.plugin.ValueHandler;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;

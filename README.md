@@ -93,7 +93,7 @@ while (reader.hasNext()){
 
 ####  预处理表头 (表头都按String处理)
 ```
-com.github.fnwib.databing.valuehandler.ValueHandler trim = (s) -> s.trim();
+com.github.fnwib.plugin.ValueHandler trim = (s) -> s.trim();
 LocalConfig localConfig = new LocalConfig();
 localConfig.registerTitleValueHandlers(trim); // 注册表头字符串处理器
 LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.class, localConfig);
@@ -102,7 +102,7 @@ LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.
 ####  预处理内容（只处理cell类型是文本）
   ##### 全局配置
 ```
-com.github.fnwib.databing.valuehandler.ValueHandler trim = (s) -> s.trim(); 
+com.github.fnwib.plugin.ValueHandler trim = (s) -> s.trim(); 
 LocalConfig localConfig = new LocalConfig();
 localConfig.registerReadContentValueHandlers(trim);
 LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.class, localConfig);

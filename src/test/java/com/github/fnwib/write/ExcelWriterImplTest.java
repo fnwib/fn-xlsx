@@ -1,6 +1,6 @@
 package com.github.fnwib.write;
 
-import com.github.fnwib.databing.LocalConfig;
+import com.github.fnwib.context.LocalConfig;
 import com.github.fnwib.mapper.RowMapper;
 import com.github.fnwib.mapper.RowMapperImpl;
 import com.github.fnwib.model.Header;

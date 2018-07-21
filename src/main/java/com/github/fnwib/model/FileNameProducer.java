@@ -1,4 +1,4 @@
-package com.github.fnwib.write.config;
+package com.github.fnwib.model;
 
 @FunctionalInterface
 public interface FileNameProducer {

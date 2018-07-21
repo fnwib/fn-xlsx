@@ -1,4 +1,4 @@
-package com.github.fnwib.databing.ser;
+package com.github.fnwib.plugin.ser;
 
 import java.util.Optional;
 

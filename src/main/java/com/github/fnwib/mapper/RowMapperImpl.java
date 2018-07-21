@@ -1,7 +1,7 @@
 package com.github.fnwib.mapper;
 
-import com.github.fnwib.databing.Context;
-import com.github.fnwib.databing.LocalConfig;
+import com.github.fnwib.context.Context;
+import com.github.fnwib.context.LocalConfig;
 import com.github.fnwib.mapper.nested.NestedMapper;
 import com.github.fnwib.model.Content;
 import com.github.fnwib.model.Header;

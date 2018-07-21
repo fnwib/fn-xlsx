@@ -3,7 +3,7 @@ package com.github.fnwib.testentity;
 import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
-import com.github.fnwib.databing.title.Sequence;
+import com.github.fnwib.jackson.Sequence;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

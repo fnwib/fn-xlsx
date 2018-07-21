@@ -1,6 +1,6 @@
 package com.github.fnwib.mapper.cell;
 
-import com.github.fnwib.databing.deser.CellDeserializer;
+import com.github.fnwib.plugin.deser.CellDeserializer;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 

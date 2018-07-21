@@ -1,6 +1,6 @@
 package com.github.fnwib.mapper.model;
 
-import com.github.fnwib.databing.title.Sequence;
+import com.github.fnwib.jackson.Sequence;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

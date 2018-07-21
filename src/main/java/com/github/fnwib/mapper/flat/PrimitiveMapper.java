@@ -1,11 +1,11 @@
 package com.github.fnwib.mapper.flat;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.github.fnwib.databing.valuehandler.ValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandler;
 import com.github.fnwib.mapper.cell.CellValueHandlers;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.model.Content;
+import com.github.fnwib.plugin.ValueHandler;
 import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Row;
 

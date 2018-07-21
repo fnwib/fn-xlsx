@@ -3,7 +3,6 @@ package com.github.fnwib.jackson;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.github.fnwib.databing.title.Sequence;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

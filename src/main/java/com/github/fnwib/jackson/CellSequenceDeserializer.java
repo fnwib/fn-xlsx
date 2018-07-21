@@ -2,7 +2,6 @@ package com.github.fnwib.jackson;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
-import com.github.fnwib.databing.title.Sequence;
 
 import java.io.IOException;
 

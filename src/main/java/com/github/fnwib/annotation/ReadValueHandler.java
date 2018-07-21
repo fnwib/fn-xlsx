@@ -1,6 +1,6 @@
 package com.github.fnwib.annotation;
 
-import com.github.fnwib.databing.valuehandler.ValueHandler;
+import com.github.fnwib.plugin.ValueHandler;
 
 import java.lang.annotation.*;
 

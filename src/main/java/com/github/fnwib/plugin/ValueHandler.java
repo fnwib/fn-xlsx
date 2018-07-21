@@ -4,8 +4,7 @@ package com.github.fnwib.plugin;
  * 处理读取的cell字符串
  */
 @FunctionalInterface
-public interface StringHandler {
+public interface ValueHandler {
 
-	String convert(String value);
-
+    String convert(String value);
 }

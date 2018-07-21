@@ -1,4 +1,4 @@
-package com.github.fnwib.databing.deser;
+package com.github.fnwib.plugin.deser;
 
 import com.github.fnwib.mapper.cell.ErrorCellType;
 import com.github.fnwib.util.ValueUtil;
