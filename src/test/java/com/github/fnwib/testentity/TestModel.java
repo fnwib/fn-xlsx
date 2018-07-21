@@ -2,7 +2,7 @@ package com.github.fnwib.testentity;
 
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.ComplexEnum;
-import com.github.fnwib.annotation.LineNum;
+import com.github.fnwib.annotation.Operation;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class TestModel {
-	@LineNum
+	@AutoMapping(operation = Operation.LINE_NUM)
 	private Integer lineNum;
 	@AutoMapping("序号")
 	private Integer sequence;

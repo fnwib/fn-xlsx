@@ -1,6 +1,6 @@
 package com.github.fnwib.testentity;
 
-import com.github.fnwib.annotation.CellType;
+import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
 import com.github.fnwib.jackson.Sequence;
@@ -19,51 +19,51 @@ import java.util.Map;
 @Getter
 @Setter
 public class AutoMappingModel {
-	@CellType(operation = Operation.LINE_NUM)
+	@AutoMapping(operation = Operation.LINE_NUM)
 	private Integer lineNum;
 
 	@ReadValueHandler({ToUpperHandler.class})
-	@CellType(title = "Text One")
+	@AutoMapping("Text One")
 	private String text1;
-	@CellType(prefix = "Text (2)")
+	@AutoMapping(prefix = "Text (2)")
 	private String text2;
 
 	@ReadValueHandler({RecordHandler.class})
-	@CellType(title = "Text Reorder")
+	@AutoMapping("Text Reorder")
 	private String text3;
 
-	@CellType(title = "integer")
+	@AutoMapping("integer")
 	private Integer intNum;
-	@CellType(title = "long")
+	@AutoMapping("long")
 	private Long longNum;
-	@CellType(title = "float")
+	@AutoMapping("float")
 	private Float floatNum;
-	@CellType(title = "double")
+	@AutoMapping("double")
 	private Double doubleNum;
-	@CellType(title = "bigDecimal")
+	@AutoMapping("bigDecimal")
 	private BigDecimal bigDecimal;
 
-	@CellType(title = "Number Null")
+	@AutoMapping("Number Null")
 	private Integer intNumNull;
 
-	@CellType(prefix = "LocalDate null", title = "\\d")
+	@AutoMapping(prefix = "LocalDate null", value = "\\d")
 	private List<LocalDate> localDateHasNull;
-	@CellType(prefix = "LocalDate", title = "\\d+")
+	@AutoMapping(prefix = "LocalDate", value = "\\d+")
 	private List<LocalDate> localDateList;
 
-	@CellType(prefix = "Map", title = "\\d+")
+	@AutoMapping(prefix = "Map", value = "\\d+")
 	private Map<Sequence, String> intKeyMap;
 
-	@CellType(prefix = "Map", title = "[A-Z]")
+	@AutoMapping(prefix = "Map", value = "[A-Z]")
 	private Map<Integer, String> stringKeyMap;
 
-	@CellType(prefix = "Map", title = "1", suffix = "(Chinese Name)")
+	@AutoMapping(prefix = "Map", value = "1", suffix = "(Chinese Name)")
 	private Map<Integer, String> intKeyMap2;
 
-	@CellType(prefix = "Map", title = "\\d+", suffix = "(Chinese Name)", exclude = "1")
+	@AutoMapping(prefix = "Map", value = "\\d+", suffix = "(Chinese Name)", exclude = "1")
 	private Map<Integer, String> intKeyMap3;
 
-	@CellType(title = "Excel no match")
+	@AutoMapping("Excel no match")
 	private Map<Integer, String> noMatchMap;
 
 

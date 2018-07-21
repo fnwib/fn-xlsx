@@ -1,7 +1,9 @@
 package com.github.fnwib.reflect;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.github.fnwib.annotation.*;
+import com.github.fnwib.annotation.AutoMapping;
+import com.github.fnwib.annotation.CellType;
+import com.github.fnwib.annotation.ReadValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.model.BindProperty;
 import com.github.fnwib.mapper.model.FeatureConfig;
@@ -68,10 +70,6 @@ public class Property {
 				.matchConfig(matchConfig)
 				.featureConfig(featureConfig)
 				.build();
-		LineNum lineNum = field.getAnnotation(LineNum.class);
-		if (Objects.nonNull(lineNum)) {
-			param.setOperation(Operation.LINE_NUM);
-		}
 		return Optional.of(param);
 
 	}
@@ -95,10 +93,6 @@ public class Property {
 				.matchConfig(matchConfig)
 				.featureConfig(featureConfig)
 				.build();
-		LineNum lineNum = field.getAnnotation(LineNum.class);
-		if (Objects.nonNull(lineNum)) {
-			param.setOperation(Operation.LINE_NUM);
-		}
 		return Optional.of(param);
 
 	}

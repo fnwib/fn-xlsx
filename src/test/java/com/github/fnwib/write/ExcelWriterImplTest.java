@@ -102,6 +102,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		for (int i = 0; i < source.size(); i++) {
 			TestModel sourceModel = source.get(i);
 			TestModel targetModel = target.get(i);
+			sourceModel.setLineNum(targetModel.getLineNum());
 			Assert.assertEquals("Equals", sourceModel, targetModel);
 		}
 
@@ -148,6 +149,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		for (int i = 0; i < source.size(); i++) {
 			TestModel sourceModel = source.get(i);
 			TestModel targetModel = target.get(i);
+			sourceModel.setLineNum(targetModel.getLineNum());
 			Assert.assertTrue("Equals", Objects.deepEquals(sourceModel, targetModel));
 		}
 

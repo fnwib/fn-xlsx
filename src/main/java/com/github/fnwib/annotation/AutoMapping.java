@@ -20,8 +20,6 @@ public @interface AutoMapping {
 	 * DEFAULT Value
 	 * <p>
 	 * <p>
-	 * please use @com.github.fnwib.annotation.LineNum
-	 *
 	 * @return
 	 */
 	@Deprecated
