@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.util.*;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,9 +35,7 @@ public class Mappers {
 	 * @return
 	 */
 	public static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<Header> headers) {
-		LongAdder level = new LongAdder();
-		level.increment();
-		return createNestedMapper(type, config, headers, Sets.newHashSet(), level);
+		return createNestedMapper(type, config, headers, Sets.newHashSet(), 1);
 	}
 
 	/**
@@ -49,8 +46,8 @@ public class Mappers {
 	 * @param <T>              嵌套类型
 	 * @return NestedMapping
 	 */
-	private static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<Header> headers, Set<Integer> exclusiveColumns, LongAdder level) {
-		if (level.intValue() > config.getMaxNestLevel()) {
+	private static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<Header> headers, Set<Integer> exclusiveColumns, int level) {
+		if (level > config.getMaxNestLevel()) {
 			throw new SettingException("嵌套层数超过'%s'层,当前对象为'%s'", config.getMaxNestLevel(), type);
 		}
 		JavaType javaType = TypeFactory.defaultInstance().constructType(type);
@@ -64,8 +61,7 @@ public class Mappers {
 				.collect(Collectors.toList());
 		for (BindProperty property : properties) {
 			if (property.isNested()) {
-				level.increment();
-				NestedMapper<?> nestedMapping = createNestedMapper(property.getRawClass(), config, headers, exclusiveColumns, level);
+				NestedMapper<?> nestedMapping = createNestedMapper(property.getRawClass(), config, headers, exclusiveColumns, level++);
 				property.setMapper(nestedMapping);
 				continue;
 			}
