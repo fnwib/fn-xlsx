@@ -39,6 +39,4 @@ public class TestModel {
 	private TestEnumType enumType;
 	@AutoMapping(complex = ComplexEnum.Nested, order = 1)
 	private TestNested testNested;
-	@AutoMapping(complex = ComplexEnum.Nested, order = 2)
-	private TestNested2 testNested2;
 }
