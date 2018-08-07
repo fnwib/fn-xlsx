@@ -94,7 +94,9 @@ public class ExcelWriterByMap implements ExcelWriter<Map<String, Object>> {
 			return;
 		}
 		closed = true;
-		fnSheet.flush();
+		if (fnSheet != null) {
+			fnSheet.flush();
+		}
 	}
 
 	@Override

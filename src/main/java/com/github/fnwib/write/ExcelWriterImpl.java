@@ -103,7 +103,9 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			return;
 		}
 		closed = true;
-		fnSheet.flush();
+		if (fnSheet != null) {
+			fnSheet.flush();
+		}
 	}
 
 	@Override
@@ -118,5 +120,6 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			return Collections.emptyList();
 		}
 	}
+
 }
 
