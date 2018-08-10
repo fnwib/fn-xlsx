@@ -52,11 +52,7 @@ public class Property {
 	}
 
 	private Optional<BindProperty> toBindParam(AutoMapping mapping) {
-		MatchConfig matchConfig = MatchConfig.builder().title(mapping.value())
-				.suffix(mapping.suffix())
-				.prefix(mapping.prefix())
-				.exclude(mapping.exclude())
-				.build();
+		MatchConfig matchConfig = new MatchConfig(mapping.prefix(), mapping.value(), mapping.suffix(), mapping.exclude());
 		FeatureConfig featureConfig = FeatureConfig.builder()
 				.order(mapping.order())
 				.complex(mapping.complex())
@@ -75,11 +71,7 @@ public class Property {
 	}
 
 	private Optional<BindProperty> toBindParam(CellType mapping) {
-		MatchConfig matchConfig = MatchConfig.builder().title(mapping.title())
-				.suffix(mapping.suffix())
-				.prefix(mapping.prefix())
-				.exclude(mapping.exclude())
-				.build();
+		MatchConfig matchConfig = new MatchConfig(mapping.prefix(), mapping.title(), mapping.suffix(), mapping.exclude());
 		FeatureConfig featureConfig = FeatureConfig.builder()
 				.order(mapping.order())
 				.complex(mapping.complex())

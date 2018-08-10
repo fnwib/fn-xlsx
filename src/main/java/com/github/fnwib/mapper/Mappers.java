@@ -85,7 +85,11 @@ public class Mappers {
 		MatchConfig matchConfig = property.getMatchConfig();
 		FnMatcher matcher = new FnMatcher(matchConfig, config);
 		if (property.isExclusive()) {
-			return matcher.match(headers, exclusiveColumns);
+			List<BindColumn> columns = matcher.match(headers, exclusiveColumns);
+			for (BindColumn column : columns) {
+				exclusiveColumns.add(column.getIndex());
+			}
+			return columns;
 		}
 		return matcher.match(headers, Collections.emptySet());
 	}
