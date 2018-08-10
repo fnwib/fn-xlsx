@@ -33,6 +33,14 @@ public class MatchConfig {
 	private String exclude;
 	private Pattern excludePattern;
 
+	/**
+	 * 不能使用trim 会影响正则表达式
+	 *
+	 * @param prefix
+	 * @param middle
+	 * @param suffix
+	 * @param exclude
+	 */
 	public MatchConfig(String prefix, String middle, String suffix, String exclude) {
 		this.prefix = Objects.isNull(prefix) ? StringUtils.EMPTY : prefix;
 		this.middle = Objects.isNull(middle) ? StringUtils.EMPTY : middle;

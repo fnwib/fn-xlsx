@@ -2,7 +2,6 @@ package com.github.fnwib.reflect;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.annotation.AutoMapping;
-import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.ReadValueHandler;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.model.BindProperty;
@@ -43,35 +42,15 @@ public class Property {
 		if (mapping != null) {
 			return toBindParam(mapping);
 		}
-
-		CellType cellType = field.getAnnotation(CellType.class);
-		if (cellType != null) {
-			return toBindParam(cellType);
-		}
 		return Optional.empty();
 	}
 
 	private Optional<BindProperty> toBindParam(AutoMapping mapping) {
-		MatchConfig matchConfig = new MatchConfig(mapping.prefix(), mapping.value(), mapping.suffix(), mapping.exclude());
-		FeatureConfig featureConfig = FeatureConfig.builder()
-				.order(mapping.order())
-				.complex(mapping.complex())
-				.bindType(mapping.bindType())
-				.readonly(mapping.readonly())
+		MatchConfig matchConfig = MatchConfig.builder().middle(mapping.value())
+				.suffix(mapping.suffix())
+				.prefix(mapping.prefix())
+				.exclude(mapping.exclude())
 				.build();
-		BindProperty param = BindProperty.builder()
-				.property(this)
-				.operation(mapping.operation())
-				.valueHandlers(getValueHandlers())
-				.matchConfig(matchConfig)
-				.featureConfig(featureConfig)
-				.build();
-		return Optional.of(param);
-
-	}
-
-	private Optional<BindProperty> toBindParam(CellType mapping) {
-		MatchConfig matchConfig = new MatchConfig(mapping.prefix(), mapping.title(), mapping.suffix(), mapping.exclude());
 		FeatureConfig featureConfig = FeatureConfig.builder()
 				.order(mapping.order())
 				.complex(mapping.complex())
