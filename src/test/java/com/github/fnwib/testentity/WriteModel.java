@@ -2,7 +2,6 @@ package com.github.fnwib.testentity;
 
 
 import com.github.fnwib.annotation.AutoMapping;
-import com.github.fnwib.annotation.CellType;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.annotation.ReadValueHandler;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class WriteModel {
-	@CellType(operation = Operation.LINE_NUM)
+	@AutoMapping(operation = Operation.LINE_NUM)
 	private Integer lineNum;
 	@AutoMapping("序号")
 	private Integer sequence;
@@ -29,15 +28,13 @@ public class WriteModel {
 	private LocalDate localDate;
 	@AutoMapping(prefix = "MAP", value = "\\d+")
 	private List<String> listNumber;
-	@CellType(title = "MAP [A-Z]")
+	@AutoMapping("MAP [A-Z]")
 	private List<String> listString;
 
 	@AutoMapping("MAP [A-Z] null")
-	@CellType(title = "MAP [A-Z] null")
 	private Map<Integer, String> mapNull;
 
 	@AutoMapping("Excel no match")
-	@CellType(title = "Excel no match")
 	private Map<Integer, String> noMatchMap;
 
 	@AutoMapping("AAA")
