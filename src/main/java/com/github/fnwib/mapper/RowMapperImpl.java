@@ -5,7 +5,6 @@ import com.github.fnwib.context.LocalConfig;
 import com.github.fnwib.mapper.nested.NestedMapper;
 import com.github.fnwib.model.Content;
 import com.github.fnwib.model.Header;
-import com.github.fnwib.model.RowContent;
 import com.github.fnwib.util.FnUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -100,9 +99,9 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 	}
 
 	@Override
-	public RowContent convert(T fromValue) {
-		List<Content> contents = mapper.getContents(fromValue);
-		return new RowContent(contents);
+	public List<Content> convert(T fromValue) {
+		return mapper.getContents(fromValue);
 	}
+
 
 }

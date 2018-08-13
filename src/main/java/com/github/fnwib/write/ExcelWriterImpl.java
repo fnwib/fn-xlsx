@@ -3,6 +3,7 @@ package com.github.fnwib.write;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.mapper.RowMapper;
+import com.github.fnwib.model.Content;
 import com.github.fnwib.model.Header;
 import com.github.fnwib.model.RowContent;
 import com.github.fnwib.model.SheetConfig;
@@ -91,7 +92,8 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			check(elements.size());
 			List<RowContent> rows = Lists.newArrayListWithCapacity(elements.size());
 			for (T element : elements) {
-				rows.add(mapper.convert(element));
+				List<Content> contents = mapper.convert(element);
+				rows.add(new RowContent(contents));
 			}
 			fnSheet.addMergeRow(rows, mergedRangeIndexes);
 		}

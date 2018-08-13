@@ -1,7 +1,7 @@
 package com.github.fnwib.mapper;
 
+import com.github.fnwib.model.Content;
 import com.github.fnwib.model.Header;
-import com.github.fnwib.model.RowContent;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
@@ -44,6 +44,6 @@ public interface RowMapper<T> {
 	 *
 	 * @param fromValue value
 	 */
-	RowContent convert(T fromValue);
+	List<Content> convert(T fromValue);
 
 }
