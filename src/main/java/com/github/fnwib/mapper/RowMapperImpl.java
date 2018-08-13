@@ -34,7 +34,11 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 	private int skip;
 
 	public RowMapperImpl(Class<T> type) {
-		this(type, Context.INSTANCE.getContextConfig());
+		this(type, Context.INSTANCE.getContextConfig(), -1);
+	}
+
+	public RowMapperImpl(Class<T> type, int skip) {
+		this(type, Context.INSTANCE.getContextConfig(), skip);
 	}
 
 	public RowMapperImpl(Class<T> type, LocalConfig localConfig) {

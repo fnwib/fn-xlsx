@@ -15,7 +15,7 @@ public class RowMapperImplTest {
 
 	@Test
 	public void match() {
-		RowMapperImpl<RowMapperBo> mapper = new RowMapperImpl<>(RowMapperBo.class, new LocalConfig()).skip(1);
+		RowMapperImpl<RowMapperBo> mapper = new RowMapperImpl<>(RowMapperBo.class, new LocalConfig(), 1);
 		List<Header> headers = HeaderCreator.create(new AtomicInteger(), "value", "value1", "value");
 		boolean match = mapper.match(headers);
 		Assert.assertTrue("", match);
