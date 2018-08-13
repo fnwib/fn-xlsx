@@ -16,7 +16,6 @@ import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,12 +83,12 @@ public class Mappers {
 	private static List<BindColumn> match(BindProperty property, LocalConfig config, List<Header> headers, Set<Integer> exclusiveColumns) {
 		MatchConfig matchConfig = property.getMatchConfig();
 		FnMatcher matcher = new FnMatcher(matchConfig, config);
-		if (property.isShared()) {
-			return matcher.match(headers, Collections.emptySet());
-		}
+
 		List<BindColumn> columns = matcher.match(headers, exclusiveColumns);
-		for (BindColumn column : columns) {
-			exclusiveColumns.add(column.getIndex());
+		if (!property.isShared()) {
+			for (BindColumn column : columns) {
+				exclusiveColumns.add(column.getIndex());
+			}
 		}
 		return columns;
 
@@ -151,16 +150,7 @@ public class Mappers {
 
 	private static AbstractContainerMapper createCollectionMapper(BindProperty property, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		JavaType type = property.getType();
-		AbstractContainerMapper mapper;
-		if (Cell.class.isAssignableFrom(type.getContentType().getRawClass())) {
-			if (type.getRawClass() != List.class) {
-				throw new SettingException("只支持List<Cell>", Cell.class);
-			}
-			mapper = new CollectionCellMapper(property.getFullName(), columns);
-		} else {
-			mapper = new CollectionMapper(property.getFullName(), type.getContentType(), columns, valueHandlers);
-		}
-		return mapper;
+		return  new CollectionMapper(property.getFullName(), type.getContentType(), columns, valueHandlers);
 	}
 
 	private static Optional<PrimitiveMapper> cratePrimitiveMapper(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {

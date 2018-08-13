@@ -1,7 +1,6 @@
 package com.github.fnwib.mapper.nested;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
@@ -12,7 +11,6 @@ import com.github.fnwib.model.Content;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,9 +26,6 @@ import java.util.Optional;
 @Slf4j
 public class NestedMapper<T> implements BindMapper {
 
-	private static final JavaType LIST_CELL_TYPE = TypeFactory.defaultInstance().constructCollectionType(List.class, Cell.class);
-
-
 	private List<BindColumn> columns;
 	private Class<T> type;
 	/**
@@ -42,9 +37,6 @@ public class NestedMapper<T> implements BindMapper {
 	 * 其他
 	 */
 	private List<BindProperty> flatHandlers;
-
-	//有效的绑定的属性
-	private int count;
 
 	public NestedMapper(JavaType type, List<BindProperty> properties) {
 		if (!type.isConcrete()) {
@@ -60,13 +52,12 @@ public class NestedMapper<T> implements BindMapper {
 			}
 			BindMapper mapper = bind.getMapper();
 			this.columns.addAll(mapper.getColumns());
-			if (bind.isNested() || bind.getType() == LIST_CELL_TYPE) {
+			if (bind.isNested()) {
 				afterJsonHandler.add(bind);
 			} else {
 				flatHandlers.add(bind);
 			}
 		}
-		this.count = afterJsonHandler.size() + flatHandlers.size();
 	}
 
 	@Override
@@ -77,7 +68,7 @@ public class NestedMapper<T> implements BindMapper {
 
 	@Override
 	public Optional<T> getValue(Row fromValue) {
-		Map<String, Object> map = Maps.newHashMapWithExpectedSize(count);
+		Map<String, Object> map = Maps.newHashMapWithExpectedSize(flatHandlers.size());
 		for (BindProperty property : flatHandlers) {
 			BindMapper mapper = property.getMapper();
 			mapper.getValue(fromValue).ifPresent(v -> map.put(property.getPropertyName(), v));
