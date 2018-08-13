@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -132,15 +131,7 @@ public class FnSheetImpl implements FnSheet {
 			return;
 		}
 		for (Content content : row) {
-			if (content.isCell()) {
-				Cell fromCell = content.getCell();
-				FnCellStyle style = FnCellStyles.toXSSFCellStyle(fromCell.getCellStyle());
-				Cell cell = WriteHelper.setCellValue(sheet, startRowNum, fromCell);
-				XSSFCellStyle cellStyle = style.createCellStyle(workbook);
-				cell.setCellStyle(cellStyle);
-			} else {
-				WriteHelper.setValue(sheet, startRowNum, content.getColumnIndex(), content.getValue(), contentCellStyle);
-			}
+			WriteHelper.setValue(sheet, startRowNum, content.getColumnIndex(), content.getValue(), contentCellStyle);
 		}
 		startRowNum++;
 	}
