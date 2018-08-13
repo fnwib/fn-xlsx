@@ -29,20 +29,20 @@ public class LocalConfig {
 		return maxNestLevel;
 	}
 
-	private synchronized void registerReadContentValueHandler(ValueHandler valueHandler) {
+	private void registerReadContentValueHandler(ValueHandler valueHandler) {
 		if (readContentValueHandlers.contains(valueHandler)) {
 			return;
 		}
 		readContentValueHandlers.add(valueHandler);
 	}
 
-	public synchronized void registerReadContentValueHandlers(Collection<ValueHandler> valueHandlers) {
+	public void registerReadContentValueHandlers(Collection<ValueHandler> valueHandlers) {
 		for (ValueHandler valueHandler : valueHandlers) {
 			registerReadContentValueHandler(valueHandler);
 		}
 	}
 
-	public synchronized void registerReadContentValueHandlers(ValueHandler... valueHandlers) {
+	public void registerReadContentValueHandlers(ValueHandler... valueHandlers) {
 		for (ValueHandler valueHandler : valueHandlers) {
 			registerReadContentValueHandler(valueHandler);
 		}
@@ -56,7 +56,7 @@ public class LocalConfig {
 		return valueHandlers;
 	}
 
-	private synchronized void registerTitleValueHandler(ValueHandler valueHandler) {
+	private void registerTitleValueHandler(ValueHandler valueHandler) {
 		if (titleValueHandlers.contains(valueHandler)) {
 			return;
 		}
@@ -64,13 +64,13 @@ public class LocalConfig {
 	}
 
 
-	public synchronized void registerTitleValueHandlers(Collection<ValueHandler> valueHandlers) {
+	public void registerTitleValueHandlers(Collection<ValueHandler> valueHandlers) {
 		for (ValueHandler valueHandler : valueHandlers) {
 			registerTitleValueHandler(valueHandler);
 		}
 	}
 
-	public synchronized void registerTitleValueHandlers(ValueHandler... valueHandlers) {
+	public void registerTitleValueHandlers(ValueHandler... valueHandlers) {
 		for (ValueHandler valueHandler : valueHandlers) {
 			registerTitleValueHandler(valueHandler);
 		}
