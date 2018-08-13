@@ -26,9 +26,7 @@ public @interface AutoMapping {
 	Operation operation() default Operation.DEFAULT;
 
 	/**
-	 * 是否独占绑定结果
-	 *
-	 * @return 默认共享
+	 * @return true 共享 ,false 这个属性绑定的列不会与其他属性绑定
 	 */
 	boolean shared() default true;
 
