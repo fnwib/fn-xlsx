@@ -54,7 +54,7 @@ public class Property {
 		FeatureConfig featureConfig = FeatureConfig.builder()
 				.order(mapping.order())
 				.complex(mapping.complex())
-				.bindType(mapping.bindType())
+				.shared(mapping.shared())
 				.readonly(mapping.readonly())
 				.build();
 		BindProperty param = BindProperty.builder()

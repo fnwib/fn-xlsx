@@ -20,9 +20,9 @@ public @interface AutoMapping {
 	 * DEFAULT Value
 	 * <p>
 	 * <p>
+	 *
 	 * @return
 	 */
-	@Deprecated
 	Operation operation() default Operation.DEFAULT;
 
 	/**
@@ -30,7 +30,7 @@ public @interface AutoMapping {
 	 *
 	 * @return 默认共享
 	 */
-	BindType bindType() default BindType.Nonexclusive;
+	boolean shared() default true;
 
 
 	/**

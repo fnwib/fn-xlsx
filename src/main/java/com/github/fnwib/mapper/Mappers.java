@@ -84,14 +84,15 @@ public class Mappers {
 	private static List<BindColumn> match(BindProperty property, LocalConfig config, List<Header> headers, Set<Integer> exclusiveColumns) {
 		MatchConfig matchConfig = property.getMatchConfig();
 		FnMatcher matcher = new FnMatcher(matchConfig, config);
-		if (property.isExclusive()) {
-			List<BindColumn> columns = matcher.match(headers, exclusiveColumns);
-			for (BindColumn column : columns) {
-				exclusiveColumns.add(column.getIndex());
-			}
-			return columns;
+		if (property.isShared()) {
+			return matcher.match(headers, Collections.emptySet());
 		}
-		return matcher.match(headers, Collections.emptySet());
+		List<BindColumn> columns = matcher.match(headers, exclusiveColumns);
+		for (BindColumn column : columns) {
+			exclusiveColumns.add(column.getIndex());
+		}
+		return columns;
+
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package com.github.fnwib.mapper.model;
 
-import com.github.fnwib.annotation.BindType;
 import com.github.fnwib.annotation.ComplexEnum;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,9 +25,9 @@ public class FeatureConfig {
 	private ComplexEnum complex;
 
 	/**
-	 * 绑定模式 : 共享  or  独占
+	 * 绑定模式 : true 共享  or  false  独占
 	 */
-	private BindType bindType;
+	private boolean shared;
 
 	/**
 	 * 只读

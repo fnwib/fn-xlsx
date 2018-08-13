@@ -1,7 +1,6 @@
 package com.github.fnwib.mapper.model;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.github.fnwib.annotation.BindType;
 import com.github.fnwib.annotation.ComplexEnum;
 import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.mapper.BindMapper;
@@ -81,12 +80,12 @@ public class BindProperty {
 	}
 
 	/**
-	 * 是否为独占模式
+	 * 列是否共享
 	 *
 	 * @return
 	 */
-	public boolean isExclusive() {
-		return featureConfig.getBindType() == BindType.Exclusive;
+	public boolean isShared() {
+		return featureConfig.isShared();
 	}
 
 	/**
