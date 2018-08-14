@@ -1,8 +1,6 @@
 package com.github.fnwib.mapper.nested;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapper.BindMapper;
 import com.github.fnwib.mapper.model.BindColumn;
@@ -38,14 +36,11 @@ public class NestedMapper<T> implements BindMapper {
 	 */
 	private List<BindProperty> flatHandlers;
 
-	public NestedMapper(JavaType type, List<BindProperty> properties) {
-		if (!type.isConcrete()) {
-			throw new SettingException("不支持这样的嵌套类型");
-		}
+	public NestedMapper(Class<T> type, List<BindProperty> properties) {
 		afterJsonHandler = Lists.newArrayList();
 		flatHandlers = Lists.newArrayList();
 		columns = Lists.newArrayList();
-		this.type = (Class<T>) type.getRawClass();
+		this.type = type;
 		for (BindProperty bind : properties) {
 			if (!bind.isBound()) {
 				continue;
@@ -84,6 +79,9 @@ public class NestedMapper<T> implements BindMapper {
 
 	private void setValue(Object fromValue, Method writeMethod, T toValue) {
 		try {
+			if (writeMethod == null) {
+				return;
+			}
 			writeMethod.invoke(toValue, fromValue);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			log.error("{} set value error {}", toValue.getClass(), e);
@@ -116,6 +114,9 @@ public class NestedMapper<T> implements BindMapper {
 
 	private Object getValue(Object fromValue, Method readValue) {
 		try {
+			if (readValue == null) {
+				return null;
+			}
 			return readValue.invoke(fromValue);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			log.error("{} set value error {}", fromValue.getClass(), e);

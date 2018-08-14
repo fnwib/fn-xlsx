@@ -1,7 +1,6 @@
 package com.github.fnwib.mapper;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.fnwib.context.LocalConfig;
 import com.github.fnwib.exception.SettingException;
 import com.github.fnwib.jackson.Sequence;
@@ -46,12 +45,9 @@ public class Mappers {
 	 * @return NestedMapping
 	 */
 	private static <T> NestedMapper<T> createNestedMapper(Class<T> type, LocalConfig config, List<Header> headers, Set<Integer> exclusiveColumns, int level) {
+		canSupport(type);
 		if (level > config.getMaxNestLevel()) {
 			throw new SettingException("嵌套层数超过'%s'层,当前对象为'%s'", config.getMaxNestLevel(), type);
-		}
-		JavaType javaType = TypeFactory.defaultInstance().constructType(type);
-		if (type.isPrimitive()) {
-			throw new SettingException("不支持这样的嵌套类型");
 		}
 		List<BindProperty> properties = BeanResolver.INSTANCE.getProperties(type).stream().map(Property::toBindParam)
 				.filter(Optional::isPresent)
@@ -68,7 +64,20 @@ public class Mappers {
 			FlatMapper flatMapper = createFlatMapper(property, columns, config);
 			property.setMapper(flatMapper);
 		}
-		return new NestedMapper<>(javaType, properties);
+		return new NestedMapper<>(type, properties);
+	}
+
+	public static void canSupport(Class<?> type) {
+		if (type.isPrimitive()) {
+			throw new SettingException("不支持基本类型'%s'", type);
+		}
+		if (type.isInterface()) {
+			throw new SettingException("不支持 abstract、interface'%s'", type);
+		}
+		List<Property> properties = BeanResolver.INSTANCE.getProperties(type);
+		if (properties.isEmpty()) {
+			throw new SettingException("%s 不支持没有getter、setter的类");
+		}
 	}
 
 	/**
@@ -150,7 +159,7 @@ public class Mappers {
 
 	private static AbstractContainerMapper createCollectionMapper(BindProperty property, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
 		JavaType type = property.getType();
-		return  new CollectionMapper(property.getFullName(), type.getContentType(), columns, valueHandlers);
+		return new CollectionMapper(property.getFullName(), type.getContentType(), columns, valueHandlers);
 	}
 
 	private static Optional<PrimitiveMapper> cratePrimitiveMapper(JavaType type, List<BindColumn> columns, Collection<ValueHandler> valueHandlers) {
