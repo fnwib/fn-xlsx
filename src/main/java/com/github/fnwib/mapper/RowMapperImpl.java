@@ -75,7 +75,7 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 
 	@Override
 	public boolean match(Row fromValue) {
-		List<Header> headers = FnUtils.toHeader(fromValue);
+		List<Header> headers = FnUtils.toHeaders(fromValue);
 		return match(headers);
 	}
 

@@ -32,7 +32,7 @@ public class FnUtils {
 	 * @param row
 	 * @return
 	 */
-	public static List<Header> toHeader(Row row) {
+	public static List<Header> toHeaders(Row row) {
 		List<Header> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
 		for (Cell cell : row) {
 			Header header = Header.builder()
@@ -99,7 +99,7 @@ public class FnUtils {
 		return headers;
 	}
 
-	public static <T> void merge(SheetConfig config, File template,  RowMapper<T> mapper) {
+	public static <T> void merge(SheetConfig config, File template, RowMapper<T> mapper) {
 		try {
 			if (template == null) {
 				return;
