@@ -72,7 +72,8 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 	@Override
 	public void write(T element) {
 		check(1);
-		fnSheet.addRow(mapper.convert(element));
+		List<Content> contents = mapper.convert(element);
+		fnSheet.addRow(new RowContent(contents));
 	}
 
 	@Override

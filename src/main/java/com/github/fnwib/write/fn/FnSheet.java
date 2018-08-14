@@ -1,6 +1,5 @@
 package com.github.fnwib.write.fn;
 
-import com.github.fnwib.model.Content;
 import com.github.fnwib.model.RowContent;
 
 import java.util.List;
@@ -22,11 +21,6 @@ public interface FnSheet {
 	 * 当前sheet还可以写多少行
 	 */
 	int canWriteSize();
-
-	/**
-	 * 写一行数据
-	 */
-	void addRow(List<Content> row);
 
 	/**
 	 * 写一行数据

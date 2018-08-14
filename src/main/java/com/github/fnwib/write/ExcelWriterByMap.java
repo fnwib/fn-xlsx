@@ -60,7 +60,7 @@ public class ExcelWriterByMap implements ExcelWriter<Map<String, Object>> {
 		}
 		check(1);
 		List<Content> convert = mapping.convert(element);
-		fnSheet.addRow(convert);
+		fnSheet.addRow(new RowContent(convert));
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -126,20 +127,22 @@ public class FnSheetImpl implements FnSheet {
 	}
 
 	@Override
-	public void addRow(List<Content> row) {
+	public void addRow(RowContent row) {
 		if (row.isEmpty()) {
 			return;
 		}
-		for (Content content : row) {
+		List<Cell> cells = row.getCells();
+		for (Cell fromCell : cells) {
+			FnCellStyle style = FnCellStyles.toXSSFCellStyle(fromCell.getCellStyle());
+			Cell cell = WriteHelper.setCellValue(sheet, startRowNum, fromCell);
+			XSSFCellStyle cellStyle = style.createCellStyle(workbook);
+			cell.setCellStyle(cellStyle);
+		}
+		List<Content> contents = row.getContents();
+		for (Content content : contents) {
 			WriteHelper.setValue(sheet, startRowNum, content.getColumnIndex(), content.getValue(), contentCellStyle);
 		}
 		startRowNum++;
-	}
-
-	@Override
-	public void addRow(RowContent row) {
-		List<Content> cells = row.getRow();
-		addRow(cells);
 	}
 
 	/**

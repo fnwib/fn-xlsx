@@ -1,20 +1,27 @@
 package com.github.fnwib.write.fn;
 
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.model.PreHeader;
+import com.github.fnwib.model.RowContent;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.CommonPathTest;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -128,6 +135,84 @@ public class FnSheetImplTest extends CommonPathTest {
 
 	@Test
 	public void addRow() {
+		int rowNum = 0;
+		SheetConfig config = SheetConfig.builder().dir(basePath).build();
+		FnSheetImpl fnSheet = new FnSheetImpl(config);
+		FnCellStyle style = new DefaultHeaderCellStyleImpl();
+		try {
+			Workbook sheets = new XSSFWorkbook();
+			Sheet fromSheet = sheets.createSheet();
+			Row fromRow = fromSheet.createRow(rowNum);
+
+			Cell none = fromRow.createCell(0);
+			none.setCellStyle(style.createCellStyle(sheets));
+			Cell blank = fromRow.createCell(1);
+			blank.setCellStyle(style.createCellStyle(sheets));
+			Cell error = fromRow.createCell(2);
+			error.setCellErrorValue((FormulaError.NAME.getCode()));
+			error.setCellStyle(style.createCellStyle(sheets));
+			Cell bool = fromRow.createCell(3);
+			bool.setCellValue(true);
+			bool.setCellStyle(style.createCellStyle(sheets));
+			Cell formula = fromRow.createCell(4);
+			formula.setCellFormula("A1+B1");
+			formula.setCellStyle(style.createCellStyle(sheets));
+			Cell numeric = fromRow.createCell(5);
+			numeric.setCellValue(11);
+			numeric.setCellStyle(style.createCellStyle(sheets));
+			Cell string = fromRow.createCell(6);
+			string.setCellValue("val");
+			string.setCellStyle(style.createCellStyle(sheets));
+
+			List<Cell> cells = Lists.newArrayList();
+			cells.add(none);
+			cells.add(blank);
+			cells.add(error);
+			cells.add(bool);
+			cells.add(formula);
+			cells.add(numeric);
+			cells.add(string);
+			RowContent rowContent = new RowContent(cells, Collections.emptyList());
+			fnSheet.addRow(rowContent);
+			fnSheet.flush();
+			File file = Files.list(Paths.get(basePath)).map(Path::toFile).findFirst().orElse(null);
+			Workbook workbook = new XSSFWorkbook(file);
+			Sheet toSheet = workbook.getSheetAt(0);
+			Row toRow = toSheet.getRow(rowNum);
+			for (int i = 0; i < cells.size(); i++) {
+				Cell fromCell = cells.get(i);
+				Cell toCell = toRow.getCell(i);
+				switch (fromCell.getCellTypeEnum()) {
+					case _NONE:
+					case BLANK:
+						Assert.assertEquals("_NONE || BLANK", fromCell.getStringCellValue(), toCell.getStringCellValue());
+						break;
+					case ERROR:
+						Assert.assertEquals("ERROR", fromCell.getErrorCellValue(), toCell.getErrorCellValue());
+						break;
+					case STRING:
+						Assert.assertEquals("STRING", fromCell.getStringCellValue(), toCell.getStringCellValue());
+						break;
+					case BOOLEAN:
+						Assert.assertEquals("BOOLEAN", fromCell.getBooleanCellValue(), toCell.getBooleanCellValue());
+						break;
+					case FORMULA:
+						Assert.assertEquals("FORMULA", fromCell.getCellFormula(), toCell.getCellFormula());
+						break;
+					case NUMERIC:
+						BigDecimal fromNumber = new BigDecimal(fromCell.getNumericCellValue());
+						BigDecimal toNumber = new BigDecimal(toCell.getNumericCellValue());
+						Assert.assertEquals("NUMERIC", fromNumber, toNumber);
+						break;
+					default:
+						break;
+				}
+
+			}
+			workbook.close();
+		} catch (IOException | InvalidFormatException e) {
+			throw new ExcelException(e);
+		}
 	}
 
 	@Test
