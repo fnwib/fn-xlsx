@@ -8,6 +8,11 @@ import java.util.List;
 
 /**
  * EXCEL 内容
+ * <p>
+ * 优先写cells
+ * 也就是说如果columnIndex重复contents的内容会覆盖cell的内容
+ * <p>
+ * 因此在创建该对象时候做一下检查
  */
 @Getter
 public class RowContent {
