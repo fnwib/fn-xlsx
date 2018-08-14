@@ -6,11 +6,13 @@ import com.github.fnwib.mapper.nested.NestedMapper;
 import com.github.fnwib.model.Content;
 import com.github.fnwib.model.Header;
 import com.github.fnwib.util.FnUtils;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
  * 对象与POI ROW的转换关系实现
  * <p>
  * 1 对象的最大嵌套层数由LocalConfig配置
- * 2 匹配跳过的列配置
+ * 2 匹配跳过的列配置 小于等于 skip的列均被忽略
  *
  * @param <T>
  */
@@ -56,16 +58,14 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 	}
 
 	@Override
-	public int getSkip() {
-		return skip;
-	}
-
-	@Override
 	public boolean isEmpty(Row row) {
 		if (row == null) {
 			return true;
 		}
 		for (Cell cell : row) {
+			if (cell.getColumnIndex() <= skip) {
+				continue;
+			}
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())) {
 				return false;
 			}
@@ -101,6 +101,21 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 	@Override
 	public List<Content> convert(T fromValue) {
 		return mapper.getContents(fromValue);
+	}
+
+	@Override
+	public List<Cell> getLteSkip(Row row) {
+		if (skip == -1) {
+			return Collections.emptyList();
+		}
+		List<Cell> cells = Lists.newArrayListWithExpectedSize(skip);
+		for (Cell cell : row) {
+			if (cell.getColumnIndex() > skip) {
+				continue;
+			}
+			cells.add(cell);
+		}
+		return cells;
 	}
 
 
