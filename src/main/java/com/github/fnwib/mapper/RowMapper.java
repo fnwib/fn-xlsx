@@ -11,6 +11,12 @@ import java.util.Optional;
  * row 转对象的实现
  */
 public interface RowMapper<T> {
+
+	/**
+	 * @return 跳过的columnIndex default -1
+	 */
+	int getSkip();
+
 	/**
 	 * 判断当前row是否为空行
 	 *

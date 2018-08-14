@@ -30,7 +30,7 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 
 	private final Class<T> type;
 	private NestedMapper<T> mapper;
-	private int skip;
+	private final int skip;
 
 	public RowMapperImpl(Class<T> type) {
 		this(type, Context.INSTANCE.getContextConfig(), -1);
@@ -47,7 +47,7 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 	/**
 	 * @param type
 	 * @param localConfig
-	 * @param skip        匹配时候跳过的列索引(columnIndex)  default -1  form 0
+	 * @param skip        匹配时候跳过的列索引(columnIndex)  default -1
 	 */
 	public RowMapperImpl(Class<T> type, LocalConfig localConfig, int skip) {
 		this.type = type;
@@ -55,9 +55,9 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 		this.skip = Math.max(skip, -1);
 	}
 
-	public RowMapperImpl<T> skip(int skip) {
-		this.skip = Math.max(skip, -1);
-		return this;
+	@Override
+	public int getSkip() {
+		return skip;
 	}
 
 	@Override
