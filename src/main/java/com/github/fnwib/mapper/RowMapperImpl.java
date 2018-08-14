@@ -98,17 +98,13 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 		return mapper.getValue(fromValue);
 	}
 
-	@Override
-	public List<Content> convert(T fromValue) {
-		return mapper.getContents(fromValue);
-	}
 
 	@Override
-	public List<Cell> getLteSkip(Row row) {
+	public List<Cell> getSkipCells(Row row) {
 		if (skip == -1) {
 			return Collections.emptyList();
 		}
-		List<Cell> cells = Lists.newArrayListWithExpectedSize(skip);
+		List<Cell> cells = Lists.newArrayListWithExpectedSize(skip + 1);
 		for (Cell cell : row) {
 			if (cell.getColumnIndex() > skip) {
 				continue;
@@ -116,6 +112,12 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 			cells.add(cell);
 		}
 		return cells;
+	}
+
+
+	@Override
+	public List<Content> convert(T fromValue) {
+		return mapper.getContents(fromValue);
 	}
 
 

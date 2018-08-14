@@ -18,8 +18,8 @@ public interface RowMapper<T> {
 	 * <p>
 	 * 只检查大于skip的列
 	 *
-	 * @param fromValue
-	 * @return
+	 * @param fromValue poi row
+	 * @return row是否为空
 	 */
 	boolean isEmpty(Row fromValue);
 
@@ -29,21 +29,23 @@ public interface RowMapper<T> {
 	 * DFS 绑定
 	 *
 	 * @param fromValue poi row
-	 * @return
+	 * @return 是否匹配成功
 	 */
 	boolean match(Row fromValue);
 
 	boolean match(List<Header> headers);
 
 	/**
-	 * row convert to T
-	 * <p>
-	 * skip 之后的cell 转成T
-	 *
 	 * @param fromValue poi row
-	 * @return
+	 * @return skip 之后的cell 转成T
 	 */
 	Optional<T> convert(Row fromValue);
+
+	/**
+	 * @param row poi row
+	 * @return 小于等于skip的cells
+	 */
+	List<Cell> getSkipCells(Row row);
 
 	/**
 	 * T to contents
@@ -52,9 +54,4 @@ public interface RowMapper<T> {
 	 */
 	List<Content> convert(T fromValue);
 
-	/**
-	 * @param row
-	 * @return 小于等于skip的cells
-	 */
-	List<Cell> getLteSkip(Row row);
 }
