@@ -1,5 +1,8 @@
 package com.github.fnwib.write;
 
+import com.github.fnwib.annotation.AutoMapping;
+import com.github.fnwib.annotation.ComplexEnum;
+import com.github.fnwib.annotation.Operation;
 import com.github.fnwib.context.LocalConfig;
 import com.github.fnwib.mapper.RowMapper;
 import com.github.fnwib.mapper.RowMapperImpl;
@@ -9,13 +12,11 @@ import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.read.ExcelReader;
 import com.github.fnwib.read.ExcelReaderImpl;
 import com.github.fnwib.testentity.TestEnumType;
-import com.github.fnwib.testentity.TestModel;
-import com.github.fnwib.testentity.TestNested;
-import com.github.fnwib.testentity.TestNested2;
 import com.github.fnwib.util.UUIDUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.monitorjbl.xlsx.StreamingReader;
+import lombok.*;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
 import org.junit.Test;
@@ -153,6 +154,63 @@ public class ExcelWriterImplTest extends CommonPathTest {
 			Assert.assertTrue("Equals", Objects.deepEquals(sourceModel, targetModel));
 		}
 
+	}
+
+	@ToString
+	@EqualsAndHashCode
+	@Getter
+	@Setter
+	public static class TestModel {
+		@AutoMapping(operation = Operation.LINE_NUM)
+		private Integer lineNum;
+		@AutoMapping("序号")
+		private Integer sequence;
+		@AutoMapping("字符串")
+		private String string;
+		@AutoMapping("数字")
+		private Integer intNum;
+		@AutoMapping("日期")
+		private LocalDate localDate;
+		@AutoMapping(prefix = "集合", value = "\\d+")
+		private List<String> list;
+		@AutoMapping(prefix = "集合2", value = "\\d+")
+		private List<String> list2;
+		@AutoMapping("MAP [A-Z] null")
+		private Map<Integer, String> mapNull;
+		@AutoMapping("Excel no match")
+		private Map<Integer, String> noMatchMap;
+		@AutoMapping("枚举")
+		private TestEnumType enumType;
+		@AutoMapping(complex = ComplexEnum.Nested, order = 1)
+		private TestNested testNested;
+	}
+
+	@ToString
+	@Getter
+	@Setter
+	@EqualsAndHashCode
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public  static  class TestNested {
+		@AutoMapping("Nested B")
+		private String bb;
+		@AutoMapping("Nested A")
+		private String aa;
+		@AutoMapping(complex = ComplexEnum.Nested, order = 1)
+		private TestNested2 testNested2;
+	}
+
+	@ToString
+	@Getter
+	@Setter
+	@EqualsAndHashCode
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public  static class TestNested2 {
+		@AutoMapping("Nested C")
+		private String bb;
+		@AutoMapping("Nested D")
+		private String aa;
 	}
 
 }
