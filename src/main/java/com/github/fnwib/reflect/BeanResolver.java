@@ -25,8 +25,6 @@ public enum BeanResolver {
 
 	INSTANCE;
 	private static final Logger log = LoggerFactory.getLogger(BeanResolver.class);
-	@Deprecated
-	public static final TypeFactory typeFactory = TypeFactory.defaultInstance();
 
 	private final Map<Class<?>, List<Property>> types = new ConcurrentHashMap<>();
 
@@ -96,6 +94,7 @@ public enum BeanResolver {
 
 	private void resolve(final Class<?> region, final Class<?> clazz, List<Property> properties) {
 		try {
+			TypeFactory typeFactory = TypeFactory.defaultInstance();
 			Field[] fields = clazz.getDeclaredFields();
 			PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz)
 					.getPropertyDescriptors();
