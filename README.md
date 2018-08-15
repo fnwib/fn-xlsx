@@ -89,9 +89,9 @@ while (reader.hasNext()){
 }
 ```
 
-### 4  数据预处理配置
+### 4  数据格式化处理配置
 
-####  预处理表头 (表头都按String处理)
+####  格式化表头 (表头都按String处理)
 ```
 com.github.fnwib.plugin.ValueHandler trim = (s) -> s.trim();
 LocalConfig localConfig = new LocalConfig();
@@ -99,7 +99,7 @@ localConfig.registerTitleValueHandlers(trim); // 注册表头字符串处理器
 LineReader<AutoMappingModel> parser = new LineReaderForExcel<>(AutoMappingModel.class, localConfig);
 ```
 
-####  预处理内容（只处理cell类型是文本）
+####  格式化内容（只处理cell类型是文本）
   ##### 全局配置
 ```
 com.github.fnwib.plugin.ValueHandler trim = (s) -> s.trim(); 
