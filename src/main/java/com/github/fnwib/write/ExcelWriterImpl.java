@@ -106,9 +106,10 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 			return;
 		}
 		closed = true;
-		if (fnSheet != null) {
-			fnSheet.flush();
+		if (fnSheet == null) {
+			fnSheet = new FnSheetImpl(sheetConfig);
 		}
+		fnSheet.flush();
 	}
 
 	@Override
