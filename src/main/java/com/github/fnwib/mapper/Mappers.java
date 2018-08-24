@@ -76,7 +76,7 @@ public class Mappers {
 		}
 		List<Property> properties = BeanResolver.INSTANCE.getProperties(type);
 		if (properties.isEmpty()) {
-			throw new SettingException("%s 不支持没有getter、setter的类");
+			throw new SettingException("%s 不支持没有getter、setter的类", type);
 		}
 	}
 
