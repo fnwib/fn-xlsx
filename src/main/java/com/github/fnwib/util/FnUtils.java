@@ -32,7 +32,7 @@ public class FnUtils {
 	 * @param row
 	 * @return
 	 */
-	public static List<Header> toHeaders(Row row) {
+	public static List<Header> toHeadersWithoutStyle(Row row) {
 		List<Header> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
 		for (Cell cell : row) {
 			Header header = Header.builder()
@@ -45,7 +45,7 @@ public class FnUtils {
 	}
 
 
-	private static List<Header> toHeaderWithStyle(Row row) {
+	public static List<Header> toHeaderWithStyle(Row row) {
 		List<? extends DataValidation> validations = row.getSheet().getDataValidations();
 		List<Header> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
 		for (Cell cell : row) {
@@ -83,7 +83,7 @@ public class FnUtils {
 		return null;
 	}
 
-	private static List<PreHeader> toPreHeaderWithStyle(Row row) {
+	public static List<PreHeader> toPreHeaderWithStyle(Row row) {
 		List<PreHeader> headers = Lists.newArrayListWithCapacity(row.getLastCellNum());
 		for (Cell cell : row) {
 			PreHeader header = PreHeader.builder()
