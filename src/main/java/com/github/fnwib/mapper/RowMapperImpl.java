@@ -117,6 +117,9 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 
 	@Override
 	public List<Content> convert(T fromValue) {
+		if (fromValue == null) {
+			return Collections.emptyList();
+		}
 		return mapper.getContents(fromValue);
 	}
 
