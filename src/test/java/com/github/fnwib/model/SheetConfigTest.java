@@ -1,6 +1,5 @@
 package com.github.fnwib.model;
 
-import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.util.UUIDUtils;
 import com.github.fnwib.write.CommonPathTest;
 import com.google.common.collect.Lists;
@@ -9,7 +8,7 @@ import org.junit.Test;
 
 public class SheetConfigTest extends CommonPathTest {
 
-	@Test(expected = ExcelException.class)
+	@Test
 	public void check() {
 		Header build = Header.builder()
 				.columnIndex(1)
@@ -23,7 +22,7 @@ public class SheetConfigTest extends CommonPathTest {
 		Assert.assertNotNull(config.getHeaders());
 	}
 
-	@Test(expected = ExcelException.class)
+	@Test
 	public void check2() {
 		Header build = Header.builder()
 				.columnIndex(1)
