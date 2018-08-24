@@ -101,7 +101,7 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 
 	@Override
 	public List<Cell> getSkipCells(Row row) {
-		if (skip == -1 || isEmpty(row)) {
+		if (skip == -1) {
 			return Collections.emptyList();
 		}
 		List<Cell> cells = Lists.newArrayListWithExpectedSize(skip + 1);
