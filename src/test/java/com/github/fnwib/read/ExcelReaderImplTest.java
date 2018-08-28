@@ -35,7 +35,7 @@ public class ExcelReaderImplTest {
 		LocalConfig localConfig = new LocalConfig();
 		localConfig.registerReadContentValueHandlers(valueHandler, valueHandler2);
 		localConfig.registerTitleValueHandlers(valueHandler, valueHandler2);
-		RowMapper<AutoMappingModel> parser = new RowMapperImpl<>(AutoMappingModel.class, localConfig);
+		RowMapper<AutoMappingModel> parser = new RowMapperImpl<>(AutoMappingModel.class, localConfig, 0, Integer.MAX_VALUE);
 		reader = new ExcelReaderImpl<>(parser, workbook, 0);
 	}
 

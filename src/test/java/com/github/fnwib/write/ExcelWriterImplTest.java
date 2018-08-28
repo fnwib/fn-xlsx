@@ -93,7 +93,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 				.build();
 		LocalConfig localConfig = new LocalConfig();
 		localConfig.setMaxNestLevel(3);
-		RowMapper<TestModel> mapper = new RowMapperImpl<>(TestModel.class, localConfig);
+		RowMapper<TestModel> mapper = new RowMapperImpl<>(TestModel.class, localConfig, 0, Integer.MAX_VALUE);
 		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, mapper);
 		List<TestModel> source = getDataList(6);
 		writer.write(source);
@@ -135,7 +135,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 				.build();
 		LocalConfig localConfig = new LocalConfig();
 		localConfig.setMaxNestLevel(3);
-		RowMapper<TestModel> mapper = new RowMapperImpl<>(TestModel.class, localConfig);
+		RowMapper<TestModel> mapper = new RowMapperImpl<>(TestModel.class, localConfig, 0, Integer.MAX_VALUE);
 		ExcelWriter<TestModel> writer = new ExcelWriterImpl<>(config, mapper);
 
 		List<TestModel> source = getDataList(6);
@@ -191,7 +191,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 	@EqualsAndHashCode
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public  static  class TestNested {
+	public static class TestNested {
 		@AutoMapping("Nested B")
 		private String bb;
 		@AutoMapping("Nested A")
@@ -206,7 +206,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 	@EqualsAndHashCode
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public  static class TestNested2 {
+	public static class TestNested2 {
 		@AutoMapping("Nested C")
 		private String bb;
 		@AutoMapping("Nested D")

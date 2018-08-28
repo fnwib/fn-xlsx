@@ -2,7 +2,6 @@ package com.github.fnwib.mapper;
 
 import com.github.fnwib.model.Content;
 import com.github.fnwib.model.Header;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
@@ -14,9 +13,17 @@ import java.util.Optional;
 public interface RowMapper<T> {
 
 	/**
+	 * 创建一个新的RowMapper
+	 *
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	RowMapper<T> of(int from, int to);
+
+	/**
 	 * 判断当前row是否为空行
 	 * <p>
-	 * 只检查大于skip的列
 	 *
 	 * @param fromValue poi row
 	 * @return row是否为空
@@ -40,12 +47,6 @@ public interface RowMapper<T> {
 	 * @return skip 之后的cell 转成T
 	 */
 	Optional<T> convert(Row fromValue);
-
-	/**
-	 * @param row poi row
-	 * @return 小于等于skip的cells
-	 */
-	List<Cell> getSkipCells(Row row);
 
 	/**
 	 * T to contents

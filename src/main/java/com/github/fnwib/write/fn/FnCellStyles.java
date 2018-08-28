@@ -37,12 +37,16 @@ public class FnCellStyles {
 		return (workbook -> {
 			FnCellStyle fnCellStyle = FnCellStyleType.CONTENT.getStyle();
 			XSSFCellStyle toCellStyle = fnCellStyle.createCellStyle(workbook);
+
+			toCellStyle.setDataFormat(fromCellStyle.getDataFormat());
+
 			Font font = workbook.createFont();
 			font.setFontName(fromCellStyleFont.getFontName());
 			font.setFontHeightInPoints(fromCellStyleFont.getFontHeightInPoints());
 			font.setFontHeight(fromCellStyleFont.getFontHeight());
 			font.setColor(fromCellStyleFont.getColor());
 			toCellStyle.setFont(font);
+
 			XSSFColor color1 = fromCellStyle.getFillBackgroundColorColor();
 			XSSFColor color2 = fromCellStyle.getFillForegroundColorColor();
 			FillPatternType patternEnum = fromCellStyle.getFillPatternEnum();
