@@ -48,9 +48,9 @@ public class FnSheetImpl implements FnSheet {
 		} else {
 			sheet = workbook.createSheet(sheetConfig.getSheetName());
 		}
+		this.cellStyleFactory = new FnCellStyleFactory(workbook);
 		addPreHeader(sheet);
 		addHeaderRow(sheet);
-		this.cellStyleFactory = new FnCellStyleFactory(workbook);
 		this.contentCellStyle = cellStyleFactory.getOrDefault(sheetConfig.getContentCellStyle(), FnCellStyleType.CONTENT);
 	}
 
@@ -107,6 +107,7 @@ public class FnSheetImpl implements FnSheet {
 			if (workbook != null) {
 				workbook.write(outputStream);
 				outputStream.close();
+				workbook.close();
 			}
 		} catch (IOException e) {
 			log.error("error {}", e);

@@ -6,7 +6,7 @@ import com.github.fnwib.model.Header;
 import com.github.fnwib.model.PreHeader;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.model.SheetTemplateView;
-import com.github.fnwib.write.fn.FnCellStyles;
+import com.github.fnwib.write.fn.FnCellStyleType;
 import com.github.fnwib.write.fn.FnDataValidation;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,7 @@ public class FnUtils {
 					.value(cell.getStringCellValue())
 					.height(row.getHeight())
 					.width(row.getSheet().getColumnWidth(cell.getColumnIndex()))
-					.cellStyle(FnCellStyles.toXSSFCellStyle(cell.getCellStyle()))
+					.cellStyle(FnCellStyleType.toFnCellStyle(cell.getCellStyle()))
 					.dataValidation(getFnDataValidation(cell.getRowIndex(), cell.getColumnIndex(), validations))
 					.build();
 			headers.add(header);
@@ -92,7 +92,7 @@ public class FnUtils {
 					.value(cell.getStringCellValue())
 					.height(row.getHeight())
 					.width(row.getSheet().getColumnWidth(cell.getColumnIndex()))
-					.cellStyle(FnCellStyles.toXSSFCellStyle(cell.getCellStyle()))
+					.cellStyle(FnCellStyleType.toFnCellStyle(cell.getCellStyle()))
 					.build();
 			headers.add(header);
 		}
