@@ -4,34 +4,44 @@ import com.github.fnwib.exception.NotSupportedException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
-/**
- * 工具类
- */
-public class FnCellStyles {
+import java.util.HashMap;
+import java.util.Map;
 
-	public static FnCellStyle getOrDefault(FnCellStyle fnCellStyle, FnCellStyleType type) {
-		if (fnCellStyle == null) {
-			return type.getStyle();
-		}
-		return fnCellStyle;
+public class FnCellStyleFactory {
+	private Workbook workbook;
+	private Map<CellStyle, CellStyle> cellStyleMap;
+
+	public FnCellStyleFactory(Workbook workbook) {
+		this.workbook = workbook;
+		cellStyleMap = new HashMap<>();
 	}
 
-	/**
-	 * 只支持XSSFCellStyle
-	 * <p>
-	 * 如果传进来的不是
-	 *
-	 * @param val
-	 * @return
-	 */
-	public static FnCellStyle toXSSFCellStyle(CellStyle val) {
+
+	public CellStyle getOrDefault(FnCellStyle fnCellStyle, FnCellStyleType type) {
+		if (fnCellStyle == null) {
+			return type.getStyle().createCellStyle(workbook);
+		}
+		return fnCellStyle.createCellStyle(workbook);
+	}
+
+	public CellStyle copyCellStyle(CellStyle val) {
 		if (XSSFCellStyle.class != val.getClass()) {
 			throw new NotSupportedException("不支持XSSFCellStyle以外的CellStyle");
 		}
+		if (cellStyleMap.containsKey(val)) {
+			return cellStyleMap.get(val);
+		}
+		XSSFCellStyle cellStyle = toFnCellStyle(val).createCellStyle(workbook);
+		cellStyleMap.put(val, cellStyle);
+		return cellStyle;
+	}
+
+	private FnCellStyle toFnCellStyle(CellStyle val) {
 		XSSFCellStyle fromCellStyle = (XSSFCellStyle) val;
 		XSSFFont fromCellStyleFont = fromCellStyle.getFont();
 		return (workbook -> {
@@ -39,7 +49,6 @@ public class FnCellStyles {
 			XSSFCellStyle toCellStyle = fnCellStyle.createCellStyle(workbook);
 
 			toCellStyle.setDataFormat(fromCellStyle.getDataFormat());
-
 			Font font = workbook.createFont();
 			font.setFontName(fromCellStyleFont.getFontName());
 			font.setFontHeightInPoints(fromCellStyleFont.getFontHeightInPoints());

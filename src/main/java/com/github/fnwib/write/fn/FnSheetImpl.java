@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,6 +22,7 @@ public class FnSheetImpl implements FnSheet {
 
 	private int startRowNum;
 	private CellStyle contentCellStyle;
+	private FnCellStyleFactory cellStyleFactory;
 
 	private FileOutputStream outputStream;
 	private Workbook workbook;
@@ -50,8 +50,8 @@ public class FnSheetImpl implements FnSheet {
 		}
 		addPreHeader(sheet);
 		addHeaderRow(sheet);
-		FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(sheetConfig.getContentCellStyle(), FnCellStyleType.CONTENT);
-		this.contentCellStyle = fnCellStyle.createCellStyle(workbook);
+		this.cellStyleFactory = new FnCellStyleFactory(workbook);
+		this.contentCellStyle = cellStyleFactory.getOrDefault(sheetConfig.getContentCellStyle(), FnCellStyleType.CONTENT);
 	}
 
 
@@ -66,8 +66,7 @@ public class FnSheetImpl implements FnSheet {
 			return;
 		}
 		for (PreHeader header : headers) {
-			FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(header.getCellStyle(), FnCellStyleType.PRR_HEADER);
-			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
+			CellStyle cellStyle = cellStyleFactory.getOrDefault(header.getCellStyle(), FnCellStyleType.PRR_HEADER);
 			Row row = WriteHelper.getOrCreateRow(sheet, header.getRowNum());
 			WriteHelper.setHeightIfGtZero(row, header.getHeight());
 			Cell cell = WriteHelper.getOrCreateCell(row, header.getColumnIndex());
@@ -88,8 +87,7 @@ public class FnSheetImpl implements FnSheet {
 			return;
 		}
 		for (Header c : headers) {
-			FnCellStyle fnCellStyle = FnCellStyles.getOrDefault(c.getCellStyle(), FnCellStyleType.HEADER);
-			CellStyle cellStyle = fnCellStyle.createCellStyle(workbook);
+			CellStyle cellStyle = cellStyleFactory.getOrDefault(c.getCellStyle(), FnCellStyleType.HEADER);
 			WriteHelper.setColumnWidthIfGtZero(sheet, c.getColumnIndex(), c.getWidth());
 			Row row = WriteHelper.getOrCreateRow(sheet, startRowNum);
 			WriteHelper.setHeightIfGtZero(row, c.getHeight());
@@ -133,9 +131,8 @@ public class FnSheetImpl implements FnSheet {
 		}
 		List<Cell> cells = row.getCells();
 		for (Cell fromCell : cells) {
-			FnCellStyle style = FnCellStyles.toXSSFCellStyle(fromCell.getCellStyle());
 			Cell cell = WriteHelper.setCellValue(sheet, startRowNum, fromCell);
-			XSSFCellStyle cellStyle = style.createCellStyle(workbook);
+			CellStyle cellStyle = cellStyleFactory.copyCellStyle(fromCell.getCellStyle());
 			cell.setCellStyle(cellStyle);
 		}
 		List<Content> contents = row.getContents();
