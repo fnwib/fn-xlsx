@@ -29,6 +29,7 @@ public class Property {
 	private final Field field;
 	private final JavaType fieldType;
 	private final PropertyDescriptor propertyDescriptor;
+	private Collection<ValueHandler> valueHandlers;
 
 	public Property(Class<?> region, Field field, JavaType fieldType, PropertyDescriptor propertyDescriptor) {
 		this.region = Objects.requireNonNull(region);
@@ -69,6 +70,9 @@ public class Property {
 	}
 
 	public Collection<ValueHandler> getValueHandlers() {
+		if (valueHandlers != null) {
+			return valueHandlers;
+		}
 		ReadValueHandler handler = field.getAnnotation(ReadValueHandler.class);
 		if (handler == null) {
 			return Collections.emptyList();
@@ -88,6 +92,7 @@ public class Property {
 				throw new SettingException(h.getName() + " not support multi args constructor");
 			}
 		}
+		this.valueHandlers = valueHandlers;
 		return valueHandlers;
 	}
 
