@@ -70,30 +70,29 @@ public class Property {
 	}
 
 	public Collection<ValueHandler> getValueHandlers() {
-		if (valueHandlers != null) {
-			return valueHandlers;
-		}
 		ReadValueHandler handler = field.getAnnotation(ReadValueHandler.class);
 		if (handler == null) {
 			return Collections.emptyList();
 		}
-		Collection<ValueHandler> valueHandlers = Lists.newArrayListWithCapacity(handler.value().length);
-		for (Class<? extends ValueHandler> h : handler.value()) {
-			Constructor<?>[] constructors = h.getConstructors();
-			if (constructors.length == 1) {
-				Constructor<?> constructor = constructors[0];
-				try {
-					ValueHandler valueHandler = (ValueHandler) constructor.newInstance();
-					valueHandlers.add(valueHandler);
-				} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-					throw new SettingException(h.getName() + " no found non args constructor");
+		if (valueHandlers == null) {
+			Collection<ValueHandler> valueHandlers = Lists.newArrayListWithCapacity(handler.value().length);
+			for (Class<? extends ValueHandler> h : handler.value()) {
+				Constructor<?>[] constructors = h.getConstructors();
+				if (constructors.length == 1) {
+					Constructor<?> constructor = constructors[0];
+					try {
+						ValueHandler valueHandler = (ValueHandler) constructor.newInstance();
+						valueHandlers.add(valueHandler);
+					} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+						throw new SettingException(h.getName() + " no found non args constructor");
+					}
+				} else {
+					throw new SettingException(h.getName() + " not support multi args constructor");
 				}
-			} else {
-				throw new SettingException(h.getName() + " not support multi args constructor");
 			}
+			this.valueHandlers = valueHandlers;
 		}
-		this.valueHandlers = valueHandlers;
-		return valueHandlers;
+		return Lists.newArrayList(valueHandlers);
 	}
 
 	/**
