@@ -182,7 +182,7 @@ public class FnSheetImplTest extends CommonPathTest {
 			for (int i = 0; i < cells.size(); i++) {
 				Cell fromCell = cells.get(i);
 				Cell toCell = toRow.getCell(i);
-				switch (fromCell.getCellTypeEnum()) {
+				switch (fromCell.getCellType()) {
 					case _NONE:
 					case BLANK:
 						Assert.assertEquals("_NONE || BLANK", fromCell.getStringCellValue(), toCell.getStringCellValue());

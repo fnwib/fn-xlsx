@@ -39,7 +39,7 @@ public class LocalDateCellDeserializer implements CellDeserializer<LocalDate> {
 		if (cell == null) {
 			return null;
 		}
-		switch (cell.getCellTypeEnum()) {
+		switch (cell.getCellType()) {
 			case BLANK:
 			case _NONE:
 				return null;

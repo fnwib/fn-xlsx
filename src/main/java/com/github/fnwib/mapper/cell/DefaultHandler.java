@@ -23,7 +23,7 @@ public class DefaultHandler implements CellValueHandler {
 		if (cell == null) {
 			return Optional.empty();
 		}
-		switch (cell.getCellTypeEnum()) {
+		switch (cell.getCellType()) {
 			case BLANK:
 			case _NONE:
 				return Optional.empty();

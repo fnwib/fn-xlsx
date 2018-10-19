@@ -29,7 +29,7 @@ public class WriteHelper {
 	public static Cell setCellValue(Sheet sheet, int rowNum, Cell fromCell) {
 		Row row = getOrCreateRow(sheet, rowNum);
 		Cell cell = getOrCreateCell(row, fromCell.getColumnIndex());
-		switch (fromCell.getCellTypeEnum()) {
+		switch (fromCell.getCellType()) {
 			case _NONE:
 			case BLANK:
 				break;

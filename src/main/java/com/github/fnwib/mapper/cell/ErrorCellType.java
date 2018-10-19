@@ -28,7 +28,7 @@ public enum ErrorCellType {
 	public ExcelException getException(Cell cell) {
 		int r = cell.getRowIndex() + 1;
 		int c = cell.getColumnIndex() + 1;
-		CellType typeEnum = cell.getCellTypeEnum();
+		CellType typeEnum = cell.getCellType();
 		Object val = null;
 		switch (typeEnum) {
 			case _NONE:
