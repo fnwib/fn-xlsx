@@ -2,11 +2,9 @@ package com.github.fnwib.jackson;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 @EqualsAndHashCode
-@ToString
 public class Sequence {
 
 	private String value;
@@ -21,6 +19,15 @@ public class Sequence {
 
 	public Integer asInt() {
 		return Integer.parseInt(value);
+	}
+
+	/**
+	 * @return
+	 * @see CellSequenceDeserializer
+	 */
+	@Override
+	public String toString() {
+		return value;
 	}
 
 }

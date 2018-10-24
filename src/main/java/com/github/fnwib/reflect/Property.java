@@ -133,5 +133,11 @@ public class Property {
 		return propertyDescriptor.getWriteMethod();
 	}
 
-
+	@Override
+	public String toString() {
+		return "Property{" +
+				"field=" + field.getName() +
+				", fieldType=" + fieldType.toString() +
+				'}';
+	}
 }

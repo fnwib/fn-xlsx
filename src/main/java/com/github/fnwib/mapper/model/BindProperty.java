@@ -129,4 +129,13 @@ public class BindProperty {
 	public String getFullName() {
 		return property.getRegion().getName() + "." + property.getName();
 	}
+
+
+	@Override
+	public String toString() {
+		return "BindProperty{" +
+				"propertyName=" + property.getName() +
+				"type=" + property.getFieldType().toString() +
+				'}';
+	}
 }
