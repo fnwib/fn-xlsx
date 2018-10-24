@@ -11,7 +11,7 @@ public class DefaultContentCellStyleImpl implements FnCellStyle {
 		cellStyle.setBorderLeft(BorderStyle.THIN);
 		cellStyle.setBorderRight(BorderStyle.THIN);
 		cellStyle.setBorderBottom(BorderStyle.THIN);
-		cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+		cellStyle.setAlignment(HorizontalAlignment.CENTER);
 		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		cellStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("text"));
 		return cellStyle;

@@ -11,18 +11,30 @@ import java.util.Objects;
  * 统一的错误输出
  */
 public enum ErrorCellType {
+	/**
+	 * unknown type
+	 */
 	UNKNOWN_TYPE("unknown type"),
+	/**
+	 * 不支持文本转日期
+	 */
 	STRING_TO_DATE("不支持文本转日期"),
+	/**
+	 * 不支持的类型
+	 */
 	NOT_SUPPORT("不支持的类型"),
+	/**
+	 * 错误的日期
+	 */
 	WRONG_DATE("错误的日期");
 
 	private String format;
 
-	private static final String errorType = "ErrorType : {[%s]}";
-	private static final String cell = " Cell : { 坐标XY[%s%s] 值为'%s' 类型是'%s' } ";
+	private static final String ERROR_TYPE = "ErrorType : {[%s]}";
+	private static final String CELL = " Cell : { 坐标XY[%s%s] 值为'%s' 类型是'%s' } ";
 
 	ErrorCellType(String format) {
-		this.format = errorType + cell + " message : {" + format + "}";
+		this.format = ERROR_TYPE + CELL + " message : {" + format + "}";
 	}
 
 	public ExcelException getException(Cell cell) {

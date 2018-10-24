@@ -18,9 +18,11 @@ import java.util.Optional;
 
 @Slf4j
 public class ExcelReaderImpl<T> implements ExcelReader<T> {
-	private int TITLE = -1;
+	private int title = -1;
 
-	//记录TITLE前的数据
+	/**
+	 * 记录TITLE前的数据
+	 */
 	private final List<Row> preHeaders;
 
 	private final RowMapper<T> parser;
@@ -40,7 +42,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
 	@Override
 	public String getPreTitle(int rowNum, int cellNum) {
-		if (TITLE == -1) {
+		if (title == -1) {
 			findTitle();
 		}
 		if (rowNum >= preHeaders.size() || rowNum < 0) {
@@ -64,7 +66,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
 	@Override
 	public boolean findTitle(int num) {
-		if (TITLE != -1) {
+		if (title != -1) {
 			return true;
 		}
 		while (iterator.hasNext()) {
@@ -74,7 +76,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 			}
 			boolean match = parser.match(row);
 			if (match) {
-				TITLE = row.getRowNum();
+				title = row.getRowNum();
 				return true;
 			} else {
 				preHeaders.add(row);
@@ -89,7 +91,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 	}
 
 	private List<T> readList(int length) {
-		if (TITLE == -1 && !findTitle()) {
+		if (title == -1 && !findTitle()) {
 			throw new ExcelException("模版错误");
 		}
 		int counter = 0;

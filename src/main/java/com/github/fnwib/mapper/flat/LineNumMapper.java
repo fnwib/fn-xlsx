@@ -17,6 +17,8 @@ import java.util.Optional;
  * 如果被绑定列 可以将改值写出到
  */
 public class LineNumMapper implements FlatMapper {
+
+	private static final int MAX_MATCH_SIZE = 2;
 	private BindColumn column;
 
 	public LineNumMapper() {
@@ -25,7 +27,7 @@ public class LineNumMapper implements FlatMapper {
 
 
 	public LineNumMapper(List<BindColumn> columns) {
-		if (columns.size() > 2) {
+		if (columns.size() > MAX_MATCH_SIZE) {
 			throw new SettingException("LineNum匹配到多列");
 		}
 		if (columns.isEmpty()) {

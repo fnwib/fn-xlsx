@@ -1,6 +1,12 @@
 package com.github.fnwib.annotation;
 
 public enum Operation {
-    LINE_NUM,
-    DEFAULT,
+	/**
+	 * 行号标记
+	 */
+	LINE_NUM,
+	/**
+	 * 读取的值
+	 */
+	DEFAULT,
 }

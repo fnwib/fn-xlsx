@@ -17,7 +17,7 @@ public interface BindMapper {
 	List<BindColumn> getColumns();
 
 	/**
-	 * poi row to String
+	 * 将POI一行数据row转成一个对象
 	 *
 	 * @param row
 	 * @return
@@ -25,6 +25,8 @@ public interface BindMapper {
 	Optional<?> getValue(Row row);
 
 	/**
+	 * 将一个对象装成一组Content
+	 *
 	 * @param value
 	 * @return
 	 */

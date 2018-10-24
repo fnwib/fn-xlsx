@@ -27,9 +27,21 @@ public abstract class AbstractContainerMapper implements FlatMapper {
 		return columns;
 	}
 
+	/**
+	 * 将POI row 转成一个 容器对象
+	 *
+	 * @param row
+	 * @return
+	 */
 	@Override
 	abstract public Optional<?> getValue(Row row);
 
+	/**
+	 * 将一个容器对象装成一组Content
+	 *
+	 * @param value should list or map
+	 * @return
+	 */
 	@Override
 	abstract public List<Content> getContents(Object value);
 

@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public enum Json {
-
+	/**
+	 * Jackson ObjectMapper
+	 */
 	Mapper;
 
 	private final ObjectMapper mapper;

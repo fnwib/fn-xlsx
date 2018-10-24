@@ -19,19 +19,14 @@ public class LocalDateCellDeserializer implements CellDeserializer<LocalDate> {
 
 	private DateTimeFormatter dateTimeFormatter;
 
-	private Map<Pattern, DateTimeFormatter> formats;
+	private static final Map<Pattern, DateTimeFormatter> FORMATS = Maps.newHashMap();
 
-	public LocalDateCellDeserializer() {
-		this.formats = Maps.newHashMap();
-		init();
-	}
-
-	private void init() {
-		formats.put(Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		formats.put(Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}$"), DateTimeFormatter.ofPattern("yyyy/M/d"));
-		formats.put(Pattern.compile("^\\d{4}\\.\\d{2}\\.\\d{2}$"), DateTimeFormatter.ofPattern("yyyy.M.d"));
-		formats.put(Pattern.compile("^\\d{4}\\\\\\d{2}\\\\\\d{2}$"), DateTimeFormatter.ofPattern("yyyy\\MM\\dd"));
-		formats.put(Pattern.compile("^\\d{4}\\d{2}\\d{2}$"), DateTimeFormatter.ofPattern("yyyyMMdd"));
+	static {
+		FORMATS.put(Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		FORMATS.put(Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}$"), DateTimeFormatter.ofPattern("yyyy/M/d"));
+		FORMATS.put(Pattern.compile("^\\d{4}\\.\\d{2}\\.\\d{2}$"), DateTimeFormatter.ofPattern("yyyy.M.d"));
+		FORMATS.put(Pattern.compile("^\\d{4}\\\\\\d{2}\\\\\\d{2}$"), DateTimeFormatter.ofPattern("yyyy\\MM\\dd"));
+		FORMATS.put(Pattern.compile("^\\d{4}\\d{2}\\d{2}$"), DateTimeFormatter.ofPattern("yyyyMMdd"));
 	}
 
 	@Override
@@ -81,7 +76,7 @@ public class LocalDateCellDeserializer implements CellDeserializer<LocalDate> {
 	}
 
 	public DateTimeFormatter getDateTimeFormatter(String value, Cell cell) {
-		for (Map.Entry<Pattern, DateTimeFormatter> entry : formats.entrySet()) {
+		for (Map.Entry<Pattern, DateTimeFormatter> entry : FORMATS.entrySet()) {
 			Pattern pattern = entry.getKey();
 			if (pattern.matcher(value).matches()) {
 				return entry.getValue();

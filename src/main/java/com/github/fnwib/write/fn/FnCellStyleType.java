@@ -11,8 +11,17 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
  * 默认的是三个实现
  */
 public enum FnCellStyleType {
+	/**
+	 * header之前的样式
+	 */
 	PRR_HEADER(new DefaultPreHeaderCellStyleImpl()),
+	/**
+	 * header的样式
+	 */
 	HEADER(new DefaultHeaderCellStyleImpl()),
+	/**
+	 * header之后内容的样式
+	 */
 	CONTENT(new DefaultContentCellStyleImpl());
 
 	private FnCellStyle style;

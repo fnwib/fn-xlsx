@@ -22,7 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public enum BeanResolver {
-
+	/**
+	 * singleton
+	 */
 	INSTANCE;
 	private static final Logger log = LoggerFactory.getLogger(BeanResolver.class);
 

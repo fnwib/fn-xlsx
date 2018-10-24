@@ -71,7 +71,7 @@ public class MatchConfig {
 			String mid = StringUtils.trimToEmpty(root.get());
 			Matcher titleMatcher = middlePattern.matcher(mid);
 			if (titleMatcher.matches()) {
-				if (StringUtils.isNotBlank(exclude) && excludePattern.matches(exclude, root.get().trim())) {
+				if (StringUtils.isNotBlank(exclude) && excludePattern.matcher(root.get().trim()).matches()) {
 					return;
 				}
 				bindColumns.add(new BindColumn(columnIndex, value, mid));
