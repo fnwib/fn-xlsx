@@ -156,7 +156,7 @@ public class FnSheetImpl implements FnSheet {
 			//从下一行开始合并
 			CellRangeAddress cellRangeAddress = new CellRangeAddress(begin, begin - 1 + rows.size(),
 					mergeIndex, mergeIndex);
-			sheet.addMergedRegion(cellRangeAddress);
+			sheet.addMergedRegionUnsafe(cellRangeAddress);
 		}
 		for (RowContent row : rows) {
 			addRow(row);
