@@ -2,6 +2,7 @@ package com.github.fnwib.mapper.cell;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.util.ExcelUtil;
+import com.monitorjbl.xlsx.exceptions.NotSupportedException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -42,33 +43,45 @@ public enum ErrorCellType {
 		int c = cell.getColumnIndex() + 1;
 		CellType typeEnum = cell.getCellType();
 		Object val = null;
-		switch (typeEnum) {
-			case _NONE:
-			case BLANK:
-				break;
-			case ERROR:
-				val = cell.getErrorCellValue();
-				break;
-			case STRING:
-				val = cell.getStringCellValue();
-				break;
-			case BOOLEAN:
-				val = cell.getBooleanCellValue();
-				break;
-			case FORMULA:
-				val = cell.getCellFormula();
-				break;
-			case NUMERIC:
-				val = cell.getNumericCellValue();
-				break;
-			default:
-				val = null;
-				break;
+		try {
+			switch (typeEnum) {
+				case _NONE:
+				case BLANK:
+					break;
+				case ERROR:
+					val = cell.getErrorCellValue();
+					break;
+				case STRING:
+					val = cell.getStringCellValue();
+					break;
+				case BOOLEAN:
+					val = cell.getBooleanCellValue();
+					break;
+				case FORMULA:
+					val = cell.getCellFormula();
+					break;
+				case NUMERIC:
+					val = cell.getNumericCellValue();
+					break;
+				default:
+					val = null;
+					break;
+			}
+			return new ExcelException(format, this.name(),
+					ExcelUtil.num2Column(c), r,
+					Objects.isNull(val) ? "" : val.toString(),
+					typeEnum.name());
+		} catch (NotSupportedException e) {
+			return new ExcelException(format, this.name(),
+					ExcelUtil.num2Column(c), r,
+					"",
+					"StreamingCell not support " + typeEnum.name());
+		} catch (RuntimeException e) {
+			return new ExcelException(format, this.name(),
+					ExcelUtil.num2Column(c), r,
+					"",
+					"Cell not support " + typeEnum.name());
 		}
-		return new ExcelException(format, this.name(),
-				ExcelUtil.num2Column(c), r,
-				Objects.isNull(val) ? "" : val.toString(),
-				typeEnum.name());
 	}
 
 }
