@@ -48,7 +48,7 @@ public class WriteHelper {
 					cell.setCellType(CellType.ERROR);
 					cell.setCellErrorValue(fromCell.getErrorCellValue());
 				} catch (NotSupportedException e) {
-					throw ErrorCellType.NOT_SUPPORT.getException(cell);
+					throw ErrorCellType.NOT_SUPPORT.getException(fromCell);
 				}
 				break;
 			case STRING:
