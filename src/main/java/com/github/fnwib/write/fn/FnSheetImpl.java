@@ -1,8 +1,8 @@
 package com.github.fnwib.write.fn;
 
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.model.*;
 import com.github.fnwib.model.Header;
+import com.github.fnwib.model.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -132,7 +132,7 @@ public class FnSheetImpl implements FnSheet {
 		}
 		List<Cell> cells = row.getCells();
 		for (Cell fromCell : cells) {
-			Cell cell = WriteHelper.setCellValue(sheet, startRowNum, fromCell);
+			Cell cell = WriteHelper.copyCellValue(sheet, startRowNum, fromCell);
 			CellStyle cellStyle = cellStyleFactory.copyCellStyle(fromCell.getCellStyle());
 			cell.setCellStyle(cellStyle);
 		}

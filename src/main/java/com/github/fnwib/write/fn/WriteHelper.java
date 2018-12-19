@@ -1,5 +1,8 @@
 package com.github.fnwib.write.fn;
 
+import com.github.fnwib.exception.ExcelException;
+import com.github.fnwib.mapper.cell.ErrorCellType;
+import com.monitorjbl.xlsx.exceptions.NotSupportedException;
 import org.apache.poi.ss.usermodel.*;
 
 public class WriteHelper {
@@ -19,14 +22,21 @@ public class WriteHelper {
 	 * @param value
 	 * @param cellStyle
 	 */
-	public static void setValue(Sheet sheet, int rowNum, int cellNum, String value, CellStyle cellStyle) {
+	public static void setValue(Sheet sheet, int rowNum, int cellNum, String value, CellStyle cellStyle) throws ExcelException {
 		Row row = getOrCreateRow(sheet, rowNum);
 		Cell cell = getOrCreateCell(row, cellNum);
 		cell.setCellValue(value);
 		cell.setCellStyle(cellStyle);
 	}
 
-	public static Cell setCellValue(Sheet sheet, int rowNum, Cell fromCell) {
+	/**
+	 * @param sheet    新表Sheet
+	 * @param rowNum   新表RowNum 从0开始
+	 * @param fromCell 原表Cell
+	 * @return 新表 Cell
+	 * @throws ExcelException StreamingCell NotSupportException
+	 */
+	public static Cell copyCellValue(Sheet sheet, int rowNum, Cell fromCell) throws ExcelException {
 		Row row = getOrCreateRow(sheet, rowNum);
 		Cell cell = getOrCreateCell(row, fromCell.getColumnIndex());
 		switch (fromCell.getCellType()) {
@@ -34,8 +44,12 @@ public class WriteHelper {
 			case BLANK:
 				break;
 			case ERROR:
-				cell.setCellType(CellType.ERROR);
-				cell.setCellErrorValue(fromCell.getErrorCellValue());
+				try {
+					cell.setCellType(CellType.ERROR);
+					cell.setCellErrorValue(fromCell.getErrorCellValue());
+				} catch (NotSupportedException e) {
+					throw ErrorCellType.NOT_SUPPORT.getException(cell);
+				}
 				break;
 			case STRING:
 				cell.setCellType(CellType.STRING);
