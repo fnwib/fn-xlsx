@@ -14,6 +14,16 @@ public class DefaultHeaderCellStyleImpl implements FnCellStyle {
 
 	private IndexedColorMap colorMap = new DefaultIndexedColorMap();
 
+	private final Color color;
+
+	public DefaultHeaderCellStyleImpl() {
+		this.color = new Color(254, 230, 153);
+	}
+
+	public DefaultHeaderCellStyleImpl(Color color) {
+		this.color = color;
+	}
+
 	@Override
 	public XSSFCellStyle createCellStyle(Workbook workbook) {
 		FnCellStyle fnCellStyle = FnCellStyleType.CONTENT.getStyle();
@@ -22,7 +32,6 @@ public class DefaultHeaderCellStyleImpl implements FnCellStyle {
 		font.setFontName("宋体");
 		font.setFontHeightInPoints(((short) 12));
 		cellStyle.setFont(font);
-		Color color = new Color(254, 230, 153);
 		XSSFColor myColor = new XSSFColor(color, colorMap);
 		cellStyle.setFillForegroundColor(myColor);
 		cellStyle.setFillBackgroundColor(myColor);
