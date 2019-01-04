@@ -105,7 +105,7 @@ public class SheetConfig {
 			throw new SettingException("存放结果的文件夹不能为空");
 		}
 		Path path = Paths.get(dir);
-		if (!Files.exists(path)) {
+		if (!path.toFile().exists()) {
 			throw new SettingException("存放结果的文件夹" + path.toString() + "不存在");
 		}
 		if (Files.isRegularFile(path)) {
