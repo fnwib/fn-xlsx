@@ -1,11 +1,13 @@
 package com.github.fnwib.write.fn;
 
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.mapper.cell.ErrorCellType;
 import com.monitorjbl.xlsx.exceptions.NotSupportedException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 
+@Slf4j
 public class WriteHelper {
+
 
 	private WriteHelper() {
 	}
@@ -48,10 +50,11 @@ public class WriteHelper {
 				break;
 			case ERROR:
 				try {
+					byte value = fromCell.getErrorCellValue();
 					cell.setCellType(CellType.ERROR);
-					cell.setCellErrorValue(fromCell.getErrorCellValue());
+					cell.setCellErrorValue(value);
 				} catch (NotSupportedException e) {
-					throw ErrorCellType.NOT_SUPPORT.getException(fromCell);
+					log.error("streaming not support error cell {}", e);
 				}
 				break;
 			case STRING:
