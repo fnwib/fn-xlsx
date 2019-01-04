@@ -64,7 +64,6 @@ public enum ErrorCellType {
 					val = cell.getNumericCellValue();
 					break;
 				default:
-					val = null;
 					break;
 			}
 			return new ExcelException(format, this.name(),

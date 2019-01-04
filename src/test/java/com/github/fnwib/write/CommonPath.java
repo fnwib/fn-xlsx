@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommonPathTest {
+public class CommonPath {
 
 	protected String basePath;
 

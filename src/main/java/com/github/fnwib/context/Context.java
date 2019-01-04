@@ -37,7 +37,7 @@ public enum Context {
 		this.deserializerConfig.register(cellDeserializer);
 	}
 
-	public CellDeserializer<?> findCellDeserializer(JavaType javaType) {
+	public CellDeserializer findCellDeserializer(JavaType javaType) {
 		return deserializerConfig.findCellDeserializer(javaType);
 	}
 

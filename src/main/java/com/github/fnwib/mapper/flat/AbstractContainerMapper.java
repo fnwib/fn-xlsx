@@ -2,12 +2,9 @@ package com.github.fnwib.mapper.flat;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.model.BindColumn;
-import com.github.fnwib.model.Content;
-import org.apache.poi.ss.usermodel.Row;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Map and Collection impl
@@ -26,24 +23,6 @@ public abstract class AbstractContainerMapper implements FlatMapper {
 	public List<BindColumn> getColumns() {
 		return columns;
 	}
-
-	/**
-	 * 将POI row 转成一个 容器对象
-	 *
-	 * @param row
-	 * @return
-	 */
-	@Override
-	abstract public Optional<?> getValue(Row row);
-
-	/**
-	 * 将一个容器对象装成一组Content
-	 *
-	 * @param value should list or map
-	 * @return
-	 */
-	@Override
-	abstract public List<Content> getContents(Object value);
 
 	public void check(int size) {
 		if (size > columns.size()) {

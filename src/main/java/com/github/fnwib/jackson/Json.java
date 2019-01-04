@@ -10,7 +10,7 @@ public enum Json {
 	/**
 	 * Jackson ObjectMapper
 	 */
-	Mapper;
+	MAPPER;
 
 	private final ObjectMapper mapper;
 
@@ -29,13 +29,12 @@ public enum Json {
 		try {
 			return mapper.writeValueAsString(value);
 		} catch (JsonProcessingException e) {
-			log.error("--> error", e);
-			throw new RuntimeException(e);
+			log.error("error {}", e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
-	public <T> T convertValue(Object fromValue, Class<T> toValueType)
-			throws IllegalArgumentException {
+	public <T> T convertValue(Object fromValue, Class<T> toValueType) {
 		return mapper.convertValue(fromValue, toValueType);
 	}
 

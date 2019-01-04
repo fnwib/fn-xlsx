@@ -16,7 +16,7 @@ public class DeserializerConfig {
 		this.deserializers.put(genericType, cellDeserializer);
 	}
 
-	public CellDeserializer<?> findCellDeserializer(JavaType javaType) {
+	public CellDeserializer findCellDeserializer(JavaType javaType) {
 		return deserializers.get(javaType);
 	}
 

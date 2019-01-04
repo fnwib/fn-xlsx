@@ -1,13 +1,17 @@
 package com.github.fnwib.annotation;
 
-public interface Ordered {
+public final class Ordered {
+
+	private Ordered() {
+	}
+
 	/**
 	 * 高优先级
 	 */
-	int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
+	public static final int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
 	/**
 	 * 低优先级
 	 */
-	int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
+	public static final int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
 
 }

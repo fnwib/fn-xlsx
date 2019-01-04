@@ -5,7 +5,7 @@ import com.github.fnwib.model.PreHeader;
 import com.github.fnwib.model.RowContent;
 import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.util.UUIDUtils;
-import com.github.fnwib.write.CommonPathTest;
+import com.github.fnwib.write.CommonPath;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class FnSheetImplTest extends CommonPathTest {
+public class FnSheetImplTest extends CommonPath {
 
 	/**
 	 * getSheet  test header

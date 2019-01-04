@@ -4,9 +4,9 @@ public enum ComplexEnum {
 	/**
 	 * 嵌套类型
 	 */
-	Nested,
+	NESTED,
 	/**
 	 * 非嵌套类型
 	 */
-	Flat
+	FLAT
 }

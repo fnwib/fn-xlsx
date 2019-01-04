@@ -22,7 +22,7 @@ public interface BindMapper {
 	 * @param row
 	 * @return
 	 */
-	Optional<?> getValue(Row row);
+	Optional getValue(Row row);
 
 	/**
 	 * 将一个对象装成一组Content

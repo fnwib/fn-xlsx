@@ -7,6 +7,9 @@ import org.apache.poi.ss.usermodel.*;
 
 public class WriteHelper {
 
+	private WriteHelper() {
+	}
+
 	public static void setColumnWidthIfGtZero(Sheet sheet, int cellNum, int width) {
 		if (width <= 0) {
 			return;
@@ -22,7 +25,7 @@ public class WriteHelper {
 	 * @param value
 	 * @param cellStyle
 	 */
-	public static void setValue(Sheet sheet, int rowNum, int cellNum, String value, CellStyle cellStyle) throws ExcelException {
+	public static void setValue(Sheet sheet, int rowNum, int cellNum, String value, CellStyle cellStyle) {
 		Row row = getOrCreateRow(sheet, rowNum);
 		Cell cell = getOrCreateCell(row, cellNum);
 		cell.setCellValue(value);
@@ -36,7 +39,7 @@ public class WriteHelper {
 	 * @return 新表 Cell
 	 * @throws ExcelException StreamingCell NotSupportException
 	 */
-	public static Cell copyCellValue(Sheet sheet, int rowNum, Cell fromCell) throws ExcelException {
+	public static Cell copyCellValue(Sheet sheet, int rowNum, Cell fromCell) {
 		Row row = getOrCreateRow(sheet, rowNum);
 		Cell cell = getOrCreateCell(row, fromCell.getColumnIndex());
 		switch (fromCell.getCellType()) {

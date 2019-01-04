@@ -76,7 +76,7 @@ public class BindProperty {
 	 * @return
 	 */
 	public boolean isNested() {
-		return featureConfig.getComplex() == ComplexEnum.Nested;
+		return featureConfig.getComplex() == ComplexEnum.NESTED;
 	}
 
 	/**

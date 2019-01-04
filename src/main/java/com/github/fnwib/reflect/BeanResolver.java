@@ -72,9 +72,7 @@ public enum BeanResolver {
 
 
 	private synchronized List<Property> resolve(final Class<?> clazz) {
-		if (clazz == null) {
-			throw new IllegalArgumentException("参数不能为null");
-		}
+		Objects.requireNonNull(clazz);
 		List<Property> properties = Lists.newArrayList();
 		Set<Class<?>> ca = Sets.newHashSet();
 		setSuperClassWithoutObject(clazz, ca);
@@ -116,9 +114,7 @@ public enum BeanResolver {
 	}
 
 	public synchronized List<Property> getProperties(final Class<?> clazz) {
-		if (clazz == null) {
-			throw new IllegalArgumentException("参数不能为null");
-		}
+		Objects.requireNonNull(clazz);
 		if (types.containsKey(clazz)) {
 			return types.get(clazz);
 		} else {
@@ -129,9 +125,8 @@ public enum BeanResolver {
 	}
 
 	public List<Property> getPropertiesWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotationType) {
-		if (clazz == null || annotationType == null) {
-			throw new IllegalArgumentException("参数不能为null");
-		}
+		Objects.requireNonNull(clazz);
+		Objects.requireNonNull(annotationType);
 		List<Property> properties = getProperties(clazz);
 		return properties.stream()
 				.filter(property -> property.getField().getAnnotation(annotationType) != null).collect(Collectors.toList());

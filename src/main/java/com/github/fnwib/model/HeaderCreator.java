@@ -9,6 +9,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HeaderCreator {
 
+	private HeaderCreator() {
+	}
+
 	public static List<Header> create(AtomicInteger incrementColumnIndex, Iterable<String> values) {
 		Objects.requireNonNull(incrementColumnIndex);
 		Objects.requireNonNull(values);

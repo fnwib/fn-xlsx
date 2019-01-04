@@ -18,6 +18,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 @Slf4j
 public class SheetConfig {
@@ -53,8 +54,8 @@ public class SheetConfig {
 	private FnCellStyle contentCellStyle;
 
 	public File getEmptyFile() {
-		String filename = fileNameProducer.getFilename(this.filename, EXTENSION);
-		return Paths.get(dir.toString(), filename).toFile();
+		String f = fileNameProducer.getFilename(this.filename, EXTENSION);
+		return Paths.get(dir.toString(), f).toFile();
 	}
 
 	public static Builder builder() {
@@ -116,8 +117,8 @@ public class SheetConfig {
 		if (!Files.isWritable(path)) {
 			throw new SettingException(path.toString() + "不可写");
 		}
-		try {
-			long size = Files.list(path).count();
+		try (Stream<Path> list = Files.list(path)) {
+			long size = list.count();
 			if (size > 0) {
 				String uuid = UUIDUtils.getHalfId();
 				log.info("[{}]不为空,将在该目录下创建[{}]目录并使用该目录", dir, uuid);

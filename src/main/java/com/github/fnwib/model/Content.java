@@ -21,4 +21,5 @@ public class Content {
 	public String getValue() {
 		return value;
 	}
+
 }

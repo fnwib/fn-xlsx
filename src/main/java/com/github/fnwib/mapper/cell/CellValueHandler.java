@@ -7,7 +7,7 @@ import java.util.Optional;
 @FunctionalInterface
 public interface CellValueHandler {
 
-	Optional<?> getValue(int indexColumn, Row row);
+	Optional getValue(int indexColumn, Row row);
 
 
 

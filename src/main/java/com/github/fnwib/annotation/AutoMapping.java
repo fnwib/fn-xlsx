@@ -83,7 +83,7 @@ public @interface AutoMapping {
 	 *
 	 * @return
 	 */
-	ComplexEnum complex() default ComplexEnum.Flat;
+	ComplexEnum complex() default ComplexEnum.FLAT;
 
 	/**
 	 * true 属性不参与序列化

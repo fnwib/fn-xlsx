@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ExcelWriterByMapTest extends CommonPathTest {
+public class ExcelWriterByMapTest extends CommonPath {
 
 	private List<Map<String, Object>> getRows(int rowSize, int columnSize) {
 		List<Map<String, Object>> rows = new ArrayList<>(rowSize);

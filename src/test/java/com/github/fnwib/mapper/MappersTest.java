@@ -51,16 +51,16 @@ public class MappersTest {
 	@Getter
 	@Setter
 	public class TestModel {
-		@AutoMapping(complex = ComplexEnum.Nested)
+		@AutoMapping(complex = ComplexEnum.NESTED)
 		private TestNested2 testNested2;
-		@AutoMapping(complex = ComplexEnum.Nested)
+		@AutoMapping(complex = ComplexEnum.NESTED)
 		private TestNested2 testNested3;
 	}
 
 	public class NoGetterSetter {
-		@AutoMapping(complex = ComplexEnum.Nested)
+		@AutoMapping(complex = ComplexEnum.NESTED)
 		private TestNested2 testNested2;
-		@AutoMapping(complex = ComplexEnum.Nested)
+		@AutoMapping(complex = ComplexEnum.NESTED)
 		private TestNested2 testNested3;
 	}
 

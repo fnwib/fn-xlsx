@@ -16,7 +16,7 @@ public class JsonTest {
 	public void convertValue() {
 		Map<String, Object> map = new HashMap<>();
 		map.put("lineNum", 11);
-		AutoMappingModel autoMappingModel = Json.Mapper.convertValue(map, AutoMappingModel.class);
+		AutoMappingModel autoMappingModel = Json.MAPPER.convertValue(map, AutoMappingModel.class);
 		Assert.assertSame("Optional support", 11, autoMappingModel.getLineNum());
 	}
 
@@ -24,7 +24,7 @@ public class JsonTest {
 	public void convertValue2() {
 		Map<String, Object> map = new HashMap<>();
 		map.put("text1", Optional.of("text1"));
-		AutoMappingModel autoMappingModel = Json.Mapper.convertValue(map, AutoMappingModel.class);
+		AutoMappingModel autoMappingModel = Json.MAPPER.convertValue(map, AutoMappingModel.class);
 		Assert.assertEquals("Optional support", "text1", autoMappingModel.getText1());
 	}
 
@@ -32,7 +32,7 @@ public class JsonTest {
 	public void convertValue3() {
 		Map<String, Object> map = new HashMap<>();
 		map.put("text1", "text1");
-		AutoMappingModel autoMappingModel = Json.Mapper.convertValue(map, AutoMappingModel.class);
+		AutoMappingModel autoMappingModel = Json.MAPPER.convertValue(map, AutoMappingModel.class);
 		Assert.assertEquals("Optional support", "text1", autoMappingModel.getText1());
 	}
 
@@ -40,7 +40,7 @@ public class JsonTest {
 	public void convertValue4() {
 		Map<String, Object> map = new HashMap<>();
 		map.put("localDateList", Lists.newArrayList(LocalDate.now()));
-		AutoMappingModel autoMappingModel = Json.Mapper.convertValue(map, AutoMappingModel.class);
+		AutoMappingModel autoMappingModel = Json.MAPPER.convertValue(map, AutoMappingModel.class);
 		Assert.assertEquals("Optional support",LocalDate.now(), autoMappingModel.getLocalDateList().get(0));
 	}
 }

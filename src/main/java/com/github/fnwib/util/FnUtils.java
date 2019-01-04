@@ -26,6 +26,10 @@ import java.util.List;
 
 @Slf4j
 public class FnUtils {
+
+	private FnUtils() {
+	}
+
 	/**
 	 * 只做匹配使用，不需要样式
 	 *
@@ -100,12 +104,11 @@ public class FnUtils {
 	}
 
 	public static <T> void merge(SheetConfig config, File template, RowMapper<T> mapper) {
-		try {
-			if (template == null) {
-				return;
-			}
-			SheetTemplateView view = config.getView();
-			XSSFWorkbook workbook = new XSSFWorkbook(template);
+		if (template == null) {
+			return;
+		}
+		SheetTemplateView view = config.getView();
+		try (XSSFWorkbook workbook = new XSSFWorkbook(template)) {
 			XSSFSheet sheet = workbook.getSheetAt(0);
 			for (Row row : sheet) {
 				if (mapper.isEmpty(row)) {

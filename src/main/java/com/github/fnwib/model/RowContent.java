@@ -1,6 +1,5 @@
 package com.github.fnwib.model;
 
-import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.util.Collections;
@@ -14,7 +13,6 @@ import java.util.List;
  * <p>
  * 因此在创建该对象时候做一下检查
  */
-@Getter
 public class RowContent {
 	private List<Cell> cells;
 	private List<Content> contents;
@@ -30,5 +28,13 @@ public class RowContent {
 
 	public boolean isEmpty() {
 		return cells.isEmpty() && contents.isEmpty();
+	}
+
+	public List<Cell> getCells() {
+		return cells;
+	}
+
+	public List<Content> getContents() {
+		return contents;
 	}
 }

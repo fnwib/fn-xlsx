@@ -10,6 +10,9 @@ import java.util.Optional;
 
 public class ValueUtil {
 
+	private ValueUtil() {
+	}
+
 	public static Optional<String> getCellValue(Cell cell) {
 		return getCellValue(cell, Collections.emptyList());
 	}

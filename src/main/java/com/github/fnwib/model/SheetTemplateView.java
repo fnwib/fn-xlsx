@@ -87,13 +87,13 @@ public class SheetTemplateView {
 	 * @return 数据副本 对返回值操作不会影响原值
 	 */
 	public List<Header> getHeaders() {
-		List<Header> headers = Lists.newArrayList(this.headers);
+		List<Header> hs = Lists.newArrayList(headers);
 		AtomicInteger maxColumnIndex = new AtomicInteger();
 		Header.HeaderBuilder builder = Header.builder();
-		if (!this.headers.isEmpty()) {
-			int max = this.headers.stream().mapToInt(Header::getColumnIndex).max().getAsInt();
+		if (!headers.isEmpty()) {
+			int max = headers.stream().mapToInt(Header::getColumnIndex).max().getAsInt();
 			maxColumnIndex.set(max);
-			Header header = this.headers.get(0);
+			Header header = headers.get(0);
 			FnCellStyle cellStyle = header.getCellStyle();
 			builder.cellStyle(cellStyle);
 			builder.width(header.getWidth());
@@ -102,21 +102,8 @@ public class SheetTemplateView {
 		for (String val : appendHeaders) {
 			Header header = builder.columnIndex(maxColumnIndex.incrementAndGet())
 					.value(val).build();
-			headers.add(header);
+			hs.add(header);
 		}
-//		checkRepeatHead(headers);
-		return headers;
+		return hs;
 	}
-//
-//	private void checkRepeatHead(List<Header> headers) {
-//		Map<String, Header> map = Maps.newHashMapWithExpectedSize(headers.size());
-//		for (Header header : headers) {
-//			String key = header.getValue().toLowerCase();
-//			if (map.containsKey(key)) {
-//				Header exist = map.get(key);
-//				throw new ExcelException("存在重复的title,index [%s,%s] value [%s] ", exist.getColumnIndex(), header.getColumnIndex(), header.getValue());
-//			}
-//			map.put(key, header);
-//		}
-//	}
 }

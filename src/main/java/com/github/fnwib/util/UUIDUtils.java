@@ -4,6 +4,9 @@ import java.util.UUID;
 
 public class UUIDUtils {
 
+    private UUIDUtils() {
+    }
+
     public static String getId() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString().replace("-", "");

@@ -68,7 +68,7 @@ public class NestedMapper<T> implements BindMapper {
 			BindMapper mapper = property.getMapper();
 			mapper.getValue(fromValue).ifPresent(v -> map.put(property.getPropertyName(), v));
 		}
-		T result = Json.Mapper.convertValue(map, type);
+		T result = Json.MAPPER.convertValue(map, type);
 		for (BindProperty property : afterJsonHandler) {
 			BindMapper mapper = property.getMapper();
 			Optional<?> value = mapper.getValue(fromValue);

@@ -1,12 +1,12 @@
 package com.github.fnwib.model;
 
 import com.github.fnwib.util.UUIDUtils;
-import com.github.fnwib.write.CommonPathTest;
+import com.github.fnwib.write.CommonPath;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SheetConfigTest extends CommonPathTest {
+public class SheetConfigTest extends CommonPath {
 
 	@Test
 	public void check() {

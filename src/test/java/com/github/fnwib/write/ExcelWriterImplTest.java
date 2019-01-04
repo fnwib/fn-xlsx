@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ExcelWriterImplTest extends CommonPathTest {
+public class ExcelWriterImplTest extends CommonPath {
 
 	private List<Header> getHeader() {
 		List<String> values = Lists.newArrayList();
@@ -181,7 +181,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		private Map<Integer, String> noMatchMap;
 		@AutoMapping("枚举")
 		private TestEnumType enumType;
-		@AutoMapping(complex = ComplexEnum.Nested, order = 1)
+		@AutoMapping(complex = ComplexEnum.NESTED, order = 1)
 		private TestNested testNested;
 	}
 
@@ -196,7 +196,7 @@ public class ExcelWriterImplTest extends CommonPathTest {
 		private String bb;
 		@AutoMapping("Nested A")
 		private String aa;
-		@AutoMapping(complex = ComplexEnum.Nested, order = 1)
+		@AutoMapping(complex = ComplexEnum.NESTED, order = 1)
 		private TestNested2 testNested2;
 	}
 

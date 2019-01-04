@@ -9,6 +9,9 @@ import java.util.Collection;
 
 public class CellValueHandlers {
 
+	private CellValueHandlers() {
+	}
+
 	public static CellValueHandler createCellValueHandler(JavaType type, Collection<ValueHandler> valueHandlers) {
 		CellDeserializer<?> deserializer = Context.INSTANCE.findCellDeserializer(type);
 		if (deserializer != null) {

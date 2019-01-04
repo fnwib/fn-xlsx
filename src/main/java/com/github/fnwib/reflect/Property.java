@@ -75,14 +75,14 @@ public class Property {
 			return Collections.emptyList();
 		}
 		if (valueHandlers == null) {
-			Collection<ValueHandler> valueHandlers = Lists.newArrayListWithCapacity(handler.value().length);
+			Collection<ValueHandler> handlers = Lists.newArrayListWithCapacity(handler.value().length);
 			for (Class<? extends ValueHandler> h : handler.value()) {
 				Constructor<?>[] constructors = h.getConstructors();
 				if (constructors.length == 1) {
 					Constructor<?> constructor = constructors[0];
 					try {
 						ValueHandler valueHandler = (ValueHandler) constructor.newInstance();
-						valueHandlers.add(valueHandler);
+						handlers.add(valueHandler);
 					} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 						throw new SettingException(h.getName() + " no found non args constructor");
 					}
@@ -90,19 +90,9 @@ public class Property {
 					throw new SettingException(h.getName() + " not support multi args constructor");
 				}
 			}
-			this.valueHandlers = valueHandlers;
+			this.valueHandlers = handlers;
 		}
 		return Lists.newArrayList(valueHandlers);
-	}
-
-	/**
-	 * please use getFieldType()
-	 *
-	 * @return
-	 */
-	@Deprecated
-	public JavaType getJavaType() {
-		return fieldType;
 	}
 
 	public JavaType getFieldType() {
