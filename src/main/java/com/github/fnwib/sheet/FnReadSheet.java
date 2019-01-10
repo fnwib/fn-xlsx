@@ -1,17 +1,12 @@
-package com.github.fnwib.read;
+package com.github.fnwib.sheet;
 
 import com.github.fnwib.model.FnRow;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Iterator;
 import java.util.List;
 
-public interface FnRowReader<T> extends AutoCloseable, Iterable<FnRow<T>> {
-	/**
-	 * @return current sheet
-	 */
-	Sheet getSheet();
+public interface FnReadSheet<T> extends Iterable<FnRow<T>> {
 
 	/**
 	 * @return
@@ -27,9 +22,4 @@ public interface FnRowReader<T> extends AutoCloseable, Iterable<FnRow<T>> {
 
 	Iterator<FnRow<T>> iterator();
 
-	/**
-	 * close workbook
-	 */
-	@Override
-	void close();
 }

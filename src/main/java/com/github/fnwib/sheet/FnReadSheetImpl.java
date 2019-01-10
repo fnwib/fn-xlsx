@@ -1,4 +1,4 @@
-package com.github.fnwib.read;
+package com.github.fnwib.sheet;
 
 import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.RowMapper;
@@ -7,9 +7,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -17,30 +15,20 @@ import java.util.*;
  * @author fengweibin
  */
 @Slf4j
-public class FnRowReaderImpl<T> implements FnRowReader<T> {
+public class FnReadSheetImpl<T> implements FnReadSheet<T> {
 	private final Map<Integer, Row> beforeHeader;
 	private Row title;
 	private int titleNum;
 	private final RowMapper<T> mapper;
-	private final Workbook workbook;
-	private final Sheet sheet;
 	private final Iterator<Row> iterator;
 	private final int lastRowNum;
-	private boolean closed = false;
 
-	public FnRowReaderImpl(RowMapper<T> mapper, Workbook workbook, int sheetNum) {
+	public FnReadSheetImpl(RowMapper<T> mapper, Sheet sheet) {
 		this.mapper = mapper;
-		this.workbook = workbook;
-		this.sheet = workbook.getSheetAt(Math.max(sheetNum, 0));
 		this.lastRowNum = sheet.getLastRowNum();
 		this.iterator = sheet.iterator();
 		this.titleNum = -1;
 		this.beforeHeader = new HashMap<>();
-	}
-
-	@Override
-	public Sheet getSheet() {
-		return sheet;
 	}
 
 	@Override
@@ -123,19 +111,6 @@ public class FnRowReaderImpl<T> implements FnRowReader<T> {
 			} catch (ExcelException e) {
 				return new FnRow<>(row, e.getMessage());
 			}
-		}
-	}
-
-
-	@Override
-	public void close() {
-		try {
-			if (!closed) {
-				closed = true;
-				workbook.close();
-			}
-		} catch (IOException e) {
-			log.error("workbook can not close {}", e);
 		}
 	}
 }
