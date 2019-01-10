@@ -118,5 +118,4 @@ public class ExcelReaderImplTest {
 		Assert.assertSame("'Map \\d+ (Chinese Name)' support", 2, model.getIntKeyMap3().size());
 		Assert.assertSame("map no match ", 0, model.getNoMatchMap().size());
 	}
-
 }

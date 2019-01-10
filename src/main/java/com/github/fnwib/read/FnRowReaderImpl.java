@@ -86,37 +86,46 @@ public class FnRowReaderImpl<T> implements FnRowReader<T> {
 	}
 
 	@Override
-	public boolean hasNext() {
+	public Iterator<FnRow<T>> iterator() {
 		if (!findTitle()) {
 			throw new ExcelException("模版错误");
 		}
-		boolean hasNext = iterator.hasNext();
-		if (!hasNext) {
-			close();
-		}
-		return hasNext;
+		return new Itr<>(mapper, iterator);
 	}
 
-	@Override
-	public FnRow<T> next() {
-		if (!findTitle()) {
-			throw new ExcelException("模版错误");
+	private static class Itr<T> implements Iterator<FnRow<T>> {
+		private final RowMapper<T> mapper;
+		private final Iterator<Row> iterator;
+
+		public Itr(RowMapper<T> mapper, Iterator<Row> iterator) {
+			this.mapper = mapper;
+			this.iterator = iterator;
 		}
-		Row next = iterator.next();
-		if (mapper.isEmpty(next)) {
-			return new FnRow<>(next, "空行");
+
+		@Override
+		public boolean hasNext() {
+			return iterator.hasNext();
 		}
-		try {
-			Optional<T> op = mapper.convert(next);
-			if (op.isPresent()) {
-				return new FnRow<>(next, op.get());
-			} else {
-				return new FnRow<>(next, "空行");
+
+		@Override
+		public FnRow<T> next() {
+			Row row = iterator.next();
+			if (mapper.isEmpty(row)) {
+				return new FnRow<>(row, "空行");
 			}
-		} catch (ExcelException e) {
-			return new FnRow<>(next, e.getMessage());
+			try {
+				Optional<T> op = mapper.convert(row);
+				if (op.isPresent()) {
+					return new FnRow<>(row, op.get());
+				} else {
+					return new FnRow<>(row, "空行");
+				}
+			} catch (ExcelException e) {
+				return new FnRow<>(row, e.getMessage());
+			}
 		}
 	}
+
 
 	@Override
 	public void close() {

@@ -4,9 +4,10 @@ import com.github.fnwib.model.FnRow;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import java.util.Iterator;
 import java.util.List;
 
-public interface FnRowReader<T> extends AutoCloseable {
+public interface FnRowReader<T> extends AutoCloseable, Iterable<FnRow<T>> {
 	/**
 	 * @return current sheet
 	 */
@@ -24,19 +25,7 @@ public interface FnRowReader<T> extends AutoCloseable {
 	 */
 	Row getHeader();
 
-	/**
-	 * hasNext
-	 *
-	 * @return
-	 */
-	boolean hasNext();
-
-	/**
-	 * next
-	 *
-	 * @return
-	 */
-	FnRow<T> next();
+	Iterator<FnRow<T>> iterator();
 
 	/**
 	 * close workbook
