@@ -1,7 +1,8 @@
 package com.github.fnwib.mapper.nested;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fnwib.context.Context;
 import com.github.fnwib.exception.ExcelException;
-import com.github.fnwib.jackson.Json;
 import com.github.fnwib.mapper.BindMapper;
 import com.github.fnwib.mapper.model.BindColumn;
 import com.github.fnwib.mapper.model.BindProperty;
@@ -26,6 +27,7 @@ public class NestedMapper<T> implements BindMapper {
 
 	private List<BindColumn> columns;
 	private Class<T> type;
+	private final ObjectMapper objectMapper;
 	/**
 	 * 支持List<Cell>类型 MappingHelper.listCellType
 	 */
@@ -37,6 +39,7 @@ public class NestedMapper<T> implements BindMapper {
 	private List<BindProperty> flatHandlers;
 
 	public NestedMapper(Class<T> type, List<BindProperty> properties) {
+		this.objectMapper = Context.INSTANCE.getObjectMapper();
 		afterJsonHandler = Lists.newArrayList();
 		flatHandlers = Lists.newArrayList();
 		columns = Lists.newArrayList();
@@ -68,7 +71,7 @@ public class NestedMapper<T> implements BindMapper {
 			BindMapper mapper = property.getMapper();
 			mapper.getValue(fromValue).ifPresent(v -> map.put(property.getPropertyName(), v));
 		}
-		T result = Json.MAPPER.convertValue(map, type);
+		T result = objectMapper.convertValue(map, type);
 		for (BindProperty property : afterJsonHandler) {
 			BindMapper mapper = property.getMapper();
 			Optional<?> value = mapper.getValue(fromValue);
