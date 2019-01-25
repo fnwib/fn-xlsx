@@ -110,6 +110,12 @@ public class FnReadSheetImpl<T> implements FnReadSheet<T> {
 				}
 			} catch (ExcelException e) {
 				return new FnRow<>(row, e.getMessage());
+			} catch (IllegalArgumentException e) {
+				log.error("param error {}", e);
+				return new FnRow<>(row, e.getMessage());
+			} catch (Exception e) {
+				log.error("unknown error {}", e);
+				return new FnRow<>(row, e.getMessage());
 			}
 		}
 	}
