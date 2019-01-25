@@ -22,10 +22,10 @@ public class LocalDateCellDeserializer implements CellDeserializer<LocalDate> {
 	private static final Map<Pattern, DateTimeFormatter> FORMATS = Maps.newHashMap();
 
 	static {
-		FORMATS.put(Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}$"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		FORMATS.put(Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		FORMATS.put(Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}$"), DateTimeFormatter.ofPattern("yyyy/M/d"));
 		FORMATS.put(Pattern.compile("^\\d{4}\\.\\d{1,2}\\.\\d{1,2}$"), DateTimeFormatter.ofPattern("yyyy.M.d"));
-		FORMATS.put(Pattern.compile("^\\d{4}\\\\\\d{1,2}\\\\\\d{1,2}$"), DateTimeFormatter.ofPattern("yyyy\\MM\\dd"));
+		FORMATS.put(Pattern.compile("^\\d{4}\\\\\\d{2}\\\\\\d{2}$"), DateTimeFormatter.ofPattern("yyyy\\MM\\dd"));
 		FORMATS.put(Pattern.compile("^\\d{4}\\d{2}\\d{2}$"), DateTimeFormatter.ofPattern("yyyyMMdd"));
 	}
 
