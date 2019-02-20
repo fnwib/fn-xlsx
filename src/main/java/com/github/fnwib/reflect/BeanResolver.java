@@ -71,7 +71,7 @@ public enum BeanResolver {
 	}
 
 
-	private synchronized List<Property> resolve(final Class<?> clazz) {
+	private List<Property> resolve(final Class<?> clazz) {
 		Objects.requireNonNull(clazz);
 		List<Property> properties = Lists.newArrayList();
 		Set<Class<?>> ca = Sets.newHashSet();
@@ -113,14 +113,19 @@ public enum BeanResolver {
 		}
 	}
 
-	public synchronized List<Property> getProperties(final Class<?> clazz) {
-		Objects.requireNonNull(clazz);
-		if (types.containsKey(clazz)) {
-			return types.get(clazz);
+	public List<Property> getProperties(final Class<?> type) {
+		Objects.requireNonNull(type);
+		if (types.containsKey(type)) {
+			return types.get(type);
 		} else {
-			List<Property> resolve = resolve(clazz);
-			types.put(clazz, resolve);
-			return resolve;
+			synchronized (type) {
+				if (types.containsKey(type)) {
+					return types.get(type);
+				}
+				List<Property> list = resolve(type);
+				types.put(type, list);
+				return list;
+			}
 		}
 	}
 
