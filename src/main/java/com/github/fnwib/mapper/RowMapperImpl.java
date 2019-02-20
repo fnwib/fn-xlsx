@@ -52,6 +52,14 @@ public class RowMapperImpl<T> implements RowMapper<T> {
 	}
 
 	@Override
+	public boolean support(Class<?> type) {
+		if (type == null) {
+			return false;
+		}
+		return this.type == type;
+	}
+
+	@Override
 	public RowMapper<T> of(int from, int to) {
 		return new RowMapperImpl<>(type, localConfig, from, to);
 	}

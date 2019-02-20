@@ -12,6 +12,8 @@ import java.util.Optional;
  */
 public interface RowMapper<T> {
 
+	boolean support(Class<?> type);
+
 	/**
 	 * 创建一个新的RowMapper
 	 *
