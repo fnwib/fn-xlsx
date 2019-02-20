@@ -89,11 +89,11 @@ public class ExcelTypeWriter {
 		return cells;
 	}
 
-	List<Content> toContents(Object... values) {
+	List<Content> toContents(List values) {
 		List<Content> contents = Lists.newArrayListWithCapacity(size);
 		for (int i = 0; i < mappers.size(); i++) {
 			RowMapper mapper = mappers.get(i);
-			Object value = values[i];
+			Object value = values.get(i);
 			if (value == null) {
 				continue;
 			}
@@ -106,17 +106,21 @@ public class ExcelTypeWriter {
 	}
 
 	public void write(Row row, Object... values) {
+		write(row, Lists.newArrayList(values));
+	}
+
+	public void write(Row row, List<Object> values) {
 		if (values == null) {
-			write(row, Collections.emptyList());
-		} else if (values.length != mappers.size()) {
+			writeContents(row, Collections.emptyList());
+		} else if (values.size() != mappers.size()) {
 			throw new IllegalArgumentException("types size  against values size");
 		} else {
 			List<Content> contents = toContents(values);
-			write(row, Lists.newArrayList(contents));
+			writeContents(row, contents);
 		}
 	}
 
-	public void write(Row row, List<Content> contents) {
+	public void writeContents(Row row, List<Content> contents) {
 		List<Cell> cells = rowToCells(row);
 		RowContent rowContent = new RowContent(cells, contents);
 		writer.write(rowContent);

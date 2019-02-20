@@ -3,6 +3,7 @@ package com.github.fnwib.write;
 import com.github.fnwib.annotation.AutoMapping;
 import com.github.fnwib.annotation.ComplexEnum;
 import com.github.fnwib.model.Content;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,8 @@ public class ExcelTypeWriterTest extends CommonPath {
 	public void toContents() {
 		ExcelTypeWriter writer = ExcelTypeWriter.create(null, basePath, A.class, B.class);
 		A a = new A("a1", new B("a2", "a3"), "a4");
-		List<Content> contents = writer.toContents(a, new B("a5", "a6"));
+		B b = new B("a5", "a6");
+		List<Content> contents = writer.toContents(Lists.newArrayList(a,b));
 		int i = 0;
 		for (Content content : contents) {
 			System.out.println(content);
