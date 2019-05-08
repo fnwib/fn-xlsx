@@ -28,6 +28,10 @@ public final class FnRow<T> {
 		this.errorMsg = errorMsg;
 	}
 
+	public int getLineNum() {
+		return row.getRowNum() +1;
+	}
+
 	public Row getRow() {
 		return row;
 	}

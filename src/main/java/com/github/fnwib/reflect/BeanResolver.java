@@ -118,7 +118,7 @@ public enum BeanResolver {
 		if (types.containsKey(type)) {
 			return types.get(type);
 		} else {
-			synchronized (type) {
+			synchronized (types) {
 				if (types.containsKey(type)) {
 					return types.get(type);
 				}

@@ -1,11 +1,13 @@
 package com.github.fnwib.write;
 
+import com.github.fnwib.exception.ExcelException;
 import com.github.fnwib.mapper.RowMapper;
 import com.github.fnwib.mapper.RowMapperImpl;
 import com.github.fnwib.model.Content;
 import com.github.fnwib.model.Header;
 import com.github.fnwib.model.RowContent;
 import com.github.fnwib.model.SheetConfig;
+import com.github.fnwib.usermodel.GroupHeader;
 import com.github.fnwib.util.FnUtils;
 import com.github.fnwib.util.UUIDUtils;
 import com.google.common.collect.Lists;
@@ -34,12 +36,11 @@ public class ExcelTypeWriter {
 	private int size;
 
 
-	public static ExcelTypeWriter create(Row row, String dir, Class<?>... types) {
-		return create(row, dir, null, types);
+	public static ExcelTypeWriter create(Row row, String dir, List<GroupHeader> groupHeaders) {
+		return create(row, dir, null, groupHeaders);
 	}
 
-	public static ExcelTypeWriter create(Row row, String dir, Consumer<SheetConfig.Builder> consumer, Class<?>... types) {
-		Objects.requireNonNull(types);
+	public static ExcelTypeWriter create(Row row, String dir, Consumer<SheetConfig.Builder> consumer, List<GroupHeader> groupHeaders) {
 		List<Header> beforeHeaders = FnUtils.toHeadersWithoutStyle(row).stream().map(header -> Header.builder()
 				.columnIndex(header.getColumnIndex())
 				.value(header.getValue())
@@ -52,11 +53,14 @@ public class ExcelTypeWriter {
 		} else {
 			sequence = new AtomicInteger(row.getLastCellNum());
 		}
-		List<RowMapper<?>> mappers = new ArrayList<>(types.length);
-		List<Header> appendHeaders = new ArrayList<>(types.length * 10);
-		for (Class<?> type : types) {
-			RowMapper<?> mapper = new RowMapperImpl<>(type);
-			List<Header> headers = FnUtils.getHeaders(sequence, type);
+		List<RowMapper<?>> mappers = new ArrayList<>(groupHeaders.size());
+		List<Header> appendHeaders = new ArrayList<>(groupHeaders.size() * 10);
+		for (GroupHeader groupHeader : groupHeaders) {
+			RowMapper<?> mapper = new RowMapperImpl<>(groupHeader.getType());
+			List<Header> headers = FnUtils.getHeaders(sequence, groupHeader);
+			if (headers.isEmpty()) {
+				throw new ExcelException("%s 没有找到AutoMapping注解的属性", groupHeader.getType().getName());
+			}
 			boolean match = mapper.match(headers);
 			if (!match) {
 				throw new IllegalArgumentException("unknown error");
@@ -96,7 +100,7 @@ public class ExcelTypeWriter {
 
 	List<Content> toContents(List values) {
 		List<Content> contents = Lists.newArrayListWithCapacity(size);
-		for (int i = 0; i < mappers.size(); i++) {
+		for (int i = 0; i < values.size(); i++) {
 			RowMapper mapper = mappers.get(i);
 			Object value = values.get(i);
 			if (value == null) {
@@ -117,8 +121,8 @@ public class ExcelTypeWriter {
 	public void write(Row row, List<Object> values) {
 		if (values == null) {
 			writeContents(row, Collections.emptyList());
-		} else if (values.size() != mappers.size()) {
-			throw new IllegalArgumentException("types size  against values size");
+		} else if (values.size() > mappers.size()) {
+			throw new IllegalArgumentException("values size > mappers size");
 		} else {
 			List<Content> contents = toContents(values);
 			writeContents(row, contents);

@@ -10,6 +10,9 @@ import com.github.fnwib.model.SheetConfig;
 import com.github.fnwib.model.SheetTemplateView;
 import com.github.fnwib.reflect.BeanResolver;
 import com.github.fnwib.reflect.Property;
+import com.github.fnwib.usermodel.GroupHeader;
+import com.github.fnwib.write.fn.DefaultHeaderCellStyleImpl;
+import com.github.fnwib.write.fn.FnCellStyle;
 import com.github.fnwib.write.fn.FnCellStyleType;
 import com.github.fnwib.write.fn.FnDataValidation;
 import com.google.common.collect.Lists;
@@ -24,9 +27,12 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -58,16 +64,54 @@ public class FnUtils {
 		return headers;
 	}
 
-	private static void addHeader(Class<?> type, AtomicInteger seq, List<Header> headers) {
+	private static final class Wrap implements Comparable<Wrap> {
+		private Class<?> rawType;
+		private AutoMapping mapping;
+
+		public Wrap(Class<?> rawType, AutoMapping mapping) {
+			this.rawType = rawType;
+			this.mapping = mapping;
+		}
+
+		@Override
+		public int compareTo(Wrap o) {
+			return this.mapping.order() - o.mapping.order();
+		}
+
+		public String getMappingValue() {
+			return mapping.prefix() + mapping.value() + mapping.suffix();
+		}
+
+		public int getOrder() {
+			return mapping.order();
+		}
+
+		@Override
+		public String toString() {
+			return "Wrap{" +
+					"value =" + getMappingValue() +
+					", order =" + getOrder() +
+					'}';
+		}
+	}
+
+	private static void addHeader(Class<?> type, AtomicInteger seq, List<Header> headers, FnCellStyle cellStyle) {
 		List<Property> properties = BeanResolver.INSTANCE.getProperties(type);
-		TreeMap<AutoMapping, Class<?>> map = new TreeMap<>(Comparator.comparing(AutoMapping::order));
+		List<Wrap> list = new ArrayList<>();
 		for (Property property : properties) {
 			AutoMapping mapping = property.getAnnotation(AutoMapping.class);
-			map.put(mapping, property.getFieldType().getRawClass());
+			if (mapping == null) {
+				continue;
+			}
+			Wrap wrap = new Wrap(property.getFieldType().getRawClass(), mapping);
+			list.add(wrap);
 		}
-		map.forEach((mapping, clazz) -> {
+		Collections.sort(list);
+		for (Wrap wrap : list) {
+			AutoMapping mapping = wrap.mapping;
+			Class<?> clazz = wrap.rawType;
 			if (mapping.complex() == ComplexEnum.NESTED) {
-				addHeader(clazz, seq, headers);
+				addHeader(clazz, seq, headers, cellStyle);
 			} else {
 				String value = mapping.prefix() + mapping.value() + mapping.suffix();
 				Header header = Header.builder()
@@ -75,15 +119,24 @@ public class FnUtils {
 						.value(value)
 						.height((short) (20 * 25))
 						.width(500 * 10)
+						.cellStyle(cellStyle)
 						.build();
 				headers.add(header);
 			}
-		});
+		}
 	}
 
-	public static List<Header> getHeaders(AtomicInteger sequence, Class<?> type) {
+	public static List<Header> getHeaders(AtomicInteger sequence, GroupHeader groupHeader) {
 		List<Header> headers = new ArrayList<>();
-		addHeader(type, sequence, headers);
+		Class<?> type = groupHeader.getType();
+		Color color = groupHeader.getColor();
+		FnCellStyle cellStyle;
+		if (color != null) {
+			cellStyle = new DefaultHeaderCellStyleImpl(color);
+		} else {
+			cellStyle = new DefaultHeaderCellStyleImpl();
+		}
+		addHeader(type, sequence, headers, cellStyle);
 		return headers;
 	}
 
