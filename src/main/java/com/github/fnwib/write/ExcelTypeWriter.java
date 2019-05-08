@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Row;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +35,10 @@ public class ExcelTypeWriter {
 
 
 	public static ExcelTypeWriter create(Row row, String dir, Class<?>... types) {
+		return create(row, dir, null, types);
+	}
+
+	public static ExcelTypeWriter create(Row row, String dir, Consumer<SheetConfig.Builder> consumer, Class<?>... types) {
 		Objects.requireNonNull(types);
 		List<Header> beforeHeaders = FnUtils.toHeadersWithoutStyle(row).stream().map(header -> Header.builder()
 				.columnIndex(header.getColumnIndex())
@@ -59,17 +64,17 @@ public class ExcelTypeWriter {
 			mappers.add(mapper);
 			appendHeaders.addAll(headers);
 		}
-
-		SheetConfig sheetConfig = SheetConfig.builder()
+		SheetConfig.Builder builder = SheetConfig.builder()
 				.addHeaders(beforeHeaders)
 				.addHeaders(appendHeaders)
 				.maxRowNumCanWrite(200000)
 				.fileName(UUIDUtils.getId())
-				.dir(dir)
-				.build();
-		return new ExcelTypeWriter(sheetConfig, mappers, appendHeaders.size());
+				.dir(dir);
+		if (consumer != null) {
+			consumer.accept(builder);
+		}
+		return new ExcelTypeWriter(builder.build(), mappers, appendHeaders.size());
 	}
-
 
 	private ExcelTypeWriter(SheetConfig sheetConfig, List<RowMapper<?>> mappers, int size) {
 		state = false;
